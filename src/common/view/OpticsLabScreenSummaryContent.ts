@@ -5,7 +5,7 @@
  * OpticsLab screens (they all extend RayTracingCommonView). Describes the optical
  * bench play area and the controls, and gives an interaction hint.
  *
- * Follows the OpenPhysics accessibility convention; see the canonical
+ * Follows the OpenLyceum accessibility convention; see the canonical
  * SceneryStackTemplate/SimScreenSummaryContent.ts. The current-details paragraph is
  * static here because the scene's optical elements are held in a PhetioGroup
  * rather than a count Property; it can be made live by deriving a count.

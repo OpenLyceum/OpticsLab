@@ -1,6 +1,6 @@
 # CLAUDE.md — OpticsLab
 
-Sim-specific context for AI assistants. General SceneryStack guidance: [OpenPhysics/.github/CLAUDE.md](https://github.com/OpenPhysics/.github/blob/main/CLAUDE.md).
+Sim-specific context for AI assistants. General SceneryStack guidance: [OpenLyceum/.github/CLAUDE.md](https://github.com/OpenLyceum/.github/blob/main/CLAUDE.md).
 
 ## Project
 
@@ -11,7 +11,7 @@ Geometric optics simulation: ray tracing through lenses, mirrors, beam splitters
 - **Presets** — curated demonstration scenes
 - **Diffraction** — gratings-focused carousel
 
-**Upstream reference:** `../Baseline/OpticsLab/ray-optics` (OpenPhysics/Baseline); not part of the shipped sim.
+**Upstream reference:** `../Baseline/OpticsLab/ray-optics` (OpenLyceum/Baseline); not part of the shipped sim.
 
 Physics for educators: `doc/model.md`. Architecture: `doc/implementation-notes.md`.
 
@@ -44,7 +44,7 @@ Ray brightness tracks s/p polarization energy; weak rays are dropped to keep the
 
 ## Accessibility
 
-Follows the shared [OpenPhysics accessibility convention](https://github.com/OpenPhysics/Baton/blob/main/ACCESSIBILITY.md).
+Follows the shared [OpenLyceum accessibility convention](https://github.com/OpenLyceum/Baton/blob/main/ACCESSIBILITY.md).
 All four screens share `RayTracingCommonView`, which registers `OpticsLabScreenSummaryContent`
 via the `screenSummaryContent` super-option and orders the PDOM through a wrapper `Node`'s
 `pdomOrder`. A11y strings live under the top-level `a11y` key in each locale JSON, via

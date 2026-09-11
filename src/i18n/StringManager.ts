@@ -84,7 +84,7 @@ export class StringManager {
 
   /**
    * Accessibility (Interactive Description) StringProperties: the screen-summary
-   * regions and current-details paragraph. See the shared OpenPhysics
+   * regions and current-details paragraph. See the shared OpenLyceum
    * ACCESSIBILITY.md convention.
    */
   public getA11yStrings() {
