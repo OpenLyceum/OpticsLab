@@ -1,6 +1,6 @@
-# CLAUDE.md — OpticsLab
+# AGENTS.md — OpticsLab
 
-Sim-specific context for AI assistants. General SceneryStack guidance: [OpenLyceum/.github/CLAUDE.md](https://github.com/OpenLyceum/.github/blob/main/CLAUDE.md).
+Sim-specific context for AI assistants. General SceneryStack guidance: [OpenLyceum/.github/AGENTS.md](https://github.com/OpenLyceum/.github/blob/main/AGENTS.md).
 
 ## Project
 
@@ -53,7 +53,7 @@ it can be made live by deriving an element-count Property.
 
 ## Agent / Cursor Cloud notes
 
-Client-only sim (no backend). Prefer `CLAUDE.md` over any `AGENTS.md` — org convention.
+Client-only sim (no backend). Prefer `AGENTS.md` over any `AGENTS.md` — org convention.
 
 - Dependencies: `npm ci` (startup script). Do not re-install unless deps changed. Node ≥ 24 (`engines`); npm only.
 - Dev server: `npm start` (Vite `http://localhost:5173`). Do not use production `build` output for interactive UI testing.
