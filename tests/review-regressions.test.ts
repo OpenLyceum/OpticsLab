@@ -38,7 +38,7 @@ import { ArcMirror } from "../src/common/model/mirrors/ArcMirror.js";
 import { CommandHistory } from "../src/common/model/optics/CommandHistory.js";
 import { deserializeElement } from "../src/common/model/optics/elementSerialization.js";
 import { arcBounds, point } from "../src/common/model/optics/Geometry.js";
-import OpticalElementPhetioObject from "../src/common/model/optics/OpticalElementPhetioObject.js";
+import { OpticalElementPhetioObject } from "../src/common/model/optics/OpticalElementPhetioObject.js";
 import { OpticsScene } from "../src/common/model/optics/OpticsScene.js";
 import type { OpticalElement, SimulationRay } from "../src/common/model/optics/OpticsTypes.js";
 import { RayTracer } from "../src/common/model/optics/RayTracer.js";

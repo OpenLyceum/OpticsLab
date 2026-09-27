@@ -11,7 +11,7 @@ import type { OpticalElement } from "./OpticsTypes.js";
 
 type ElementStateRecord = Record<string, unknown>;
 
-export default class OpticalElementPhetioObject extends PhetioObject {
+export class OpticalElementPhetioObject extends PhetioObject {
   public opticalElement: OpticalElement;
   /** Fires when PhET-iO state replaces the wrapped model object. */
   public readonly opticalElementReplacedEmitter = new Emitter<[OpticalElement, OpticalElement]>();

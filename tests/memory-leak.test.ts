@@ -44,10 +44,12 @@ import { Tandem } from "scenerystack/tandem";
 import { describe, expect, it } from "vitest";
 import { type ComponentKey, createDefaultElement } from "../src/common/model/ComponentFactory.js";
 import { OpticsScene } from "../src/common/model/optics/OpticsScene.js";
+import { TimeModel } from "../src/common/TimeModel.js";
 import type { BaseOpticalElementView } from "../src/common/view/BaseOpticalElementView.js";
 import { createOpticalElementView } from "../src/common/view/OpticalElementViewFactory.js";
 import { trackRegistry } from "../src/common/view/TrackRegistry.js";
 import { ViewOptionsModel } from "../src/common/view/ViewOptionsModel.js";
+import { describeDisposalLeaks, forceGC } from "./helpers/memoryLeak.js";
 
 // Shared default ViewOptionsModel used across all tests that construct views.
 // Not disposed between tests — it acts as a long-lived sentinel with default values.
@@ -98,27 +100,6 @@ const ALL_KEYS: ComponentKey[] = [
 ];
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
-
-/**
- * Force garbage collection with multiple passes. When `earlyExitRefs` is supplied
- * the loop bails as soon as every referenced object is confirmed collected. The
- * setTimeout(0) yield after a live deref() avoids the WeakRef macrotask-liveness pin.
- * Without early-exit refs the loop always runs all passes, which on a slow `gc()`
- * can exceed the Vitest testTimeout — always pass refs when you have them.
- */
-async function forceGC(earlyExitRefs?: WeakRef<object> | readonly WeakRef<object>[]): Promise<void> {
-  const refs = earlyExitRefs === undefined ? [] : Array.isArray(earlyExitRefs) ? earlyExitRefs : [earlyExitRefs];
-  for (let i = 0; i < 15; i++) {
-    globalThis.gc?.();
-    await new Promise<void>((r) => setTimeout(r, 50));
-    if (refs.length > 0 && refs.every((ref) => ref.deref() === undefined)) {
-      return;
-    }
-    if (refs.length > 0) {
-      await new Promise<void>((r) => setTimeout(r, 0));
-    }
-  }
-}
 
 /** Create a model element in a function scope, dispose it, return WeakRef. */
 function createModelOnly(key: ComponentKey): WeakRef<object> {
@@ -258,19 +239,6 @@ function createSceneDefaultHistory(key: ComponentKey): { sceneRef: WeakRef<objec
 
 describe("Memory leak regression", () => {
   const mvt = ModelViewTransform2.createSinglePointScaleInvertedYMapping(Vector2.ZERO, new Vector2(500, 400), 100);
-
-  it("global.gc is available (--expose-gc)", () => {
-    expect(globalThis.gc).toBeDefined();
-  });
-
-  it("sanity: plain object is collected", async () => {
-    const ref = (() => {
-      const obj = { hello: "world" };
-      return new WeakRef(obj);
-    })();
-    await forceGC(ref);
-    expect(ref.deref()).toBeUndefined();
-  });
 
   // ── 1. Model-only (no view created) ──────────────────────────────────────
   describe("model-only (no view)", () => {
@@ -706,3 +674,8 @@ describe("Memory leak regression", () => {
     }
   });
 });
+
+describeDisposalLeaks([
+  { name: "TimeModel", create: () => new TimeModel(), idempotentDispose: true },
+  { name: "ViewOptionsModel", create: () => new ViewOptionsModel() },
+]);

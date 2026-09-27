@@ -29,7 +29,7 @@ import { VIEW_MODE_OBSERVER, VIEW_MODE_RAYS } from "../../../OpticsLabStrings.js
 import { ARCHETYPE_ELEMENT_STATE, deserializeElement, LIVE_ELEMENT_STATE_KEY } from "./elementSerialization.js";
 import type { Point } from "./Geometry.js";
 import { point } from "./Geometry.js";
-import OpticalElementPhetioObject from "./OpticalElementPhetioObject.js";
+import { OpticalElementPhetioObject } from "./OpticalElementPhetioObject.js";
 import { isAcquirable, isCompound, type Observer, type OpticalElement, type ViewMode } from "./OpticsTypes.js";
 import { RayTracer, type RayTracerConfig, type TraceResult } from "./RayTracer.js";
 
