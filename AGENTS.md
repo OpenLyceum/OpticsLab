@@ -66,6 +66,7 @@ Client-only sim (no backend). Prefer `AGENTS.md` over any `AGENTS.md` — org co
 
 - **Hardcoded colors:** wavelength-derived `rgba(...)` / canvas strokes in ray/SVG exporters and light-source views — physically tinted optics rendering, not UI theme tokens.
 - **PWA icons:** `npm run icons` prefixes `generate-svg-icon` so `public/icons/icon.svg` is regenerated from `scripts/opticsToSVG.ts` before the fleet-standard rasterizer.
+- **Template drift (Baton `check-template-drift.sh`):** `icons` (the SVG step above).
 
 
 ### `package.json` overrides
