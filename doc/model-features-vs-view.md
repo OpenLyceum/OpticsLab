@@ -40,7 +40,7 @@ Most other `OpticsScene` properties (`modeProperty`, `rayDensityProperty`, `show
 
 - **`DetectedImage.brightness`** — Used in `ImageOverlayNode` for marker opacity.
 - Observer-related segment metadata (`isObserverRay`, `observerEntryPoint`, etc.) — Part of the traced segment pipeline consumed by `RayPropagationView` in observer mode.
-- **Preferences ↔ scene** — Grid, snap, partial reflection, and lens rim blocking are synced in `SimScreenView`.
+- **Preferences ↔ scene** — Grid, snap, partial reflection, and lens rim blocking are synced in `RayTracingCommonView`.
 
 ---
 
@@ -48,6 +48,6 @@ Most other `OpticsScene` properties (`modeProperty`, `rayDensityProperty`, `show
 
 - Scene: `src/common/model/optics/OpticsScene.ts`, `src/common/model/optics/CommandHistory.ts`
 - Trace: `src/common/model/optics/RayTracer.ts`, `src/common/model/optics/OpticsTypes.ts`
-- View: `src/common/view/SimScreenView.ts`, `src/common/view/RayPropagationView.ts`, `src/common/view/ImageOverlayNode.ts`
+- View: `src/common/view/RayTracingCommonView.ts`, `src/common/view/RayPropagationView.ts`, `src/common/view/ImageOverlayNode.ts`
 - Detector: `src/common/model/detectors/DetectorElement.ts`, `src/common/view/detectors/DetectorChartPanel.ts`
-- Model construction: `src/common/model/SimModel.ts`, `src/preferences/opticsLabQueryParameters.ts`
+- Model construction: `src/common/model/RayTracingCommonModel.ts`, `src/preferences/opticsLabQueryParameters.ts`
