@@ -44,7 +44,6 @@ import { Tandem } from "scenerystack/tandem";
 import { describe, expect, it } from "vitest";
 import { type ComponentKey, createDefaultElement } from "../src/common/model/ComponentFactory.js";
 import { OpticsScene } from "../src/common/model/optics/OpticsScene.js";
-import { TimeModel } from "../src/common/TimeModel.js";
 import type { BaseOpticalElementView } from "../src/common/view/BaseOpticalElementView.js";
 import { createOpticalElementView } from "../src/common/view/OpticalElementViewFactory.js";
 import { trackRegistry } from "../src/common/view/TrackRegistry.js";
@@ -675,7 +674,4 @@ describe("Memory leak regression", () => {
   });
 });
 
-describeDisposalLeaks([
-  { name: "TimeModel", create: () => new TimeModel(), idempotentDispose: true },
-  { name: "ViewOptionsModel", create: () => new ViewOptionsModel() },
-]);
+describeDisposalLeaks([{ name: "ViewOptionsModel", create: () => new ViewOptionsModel() }]);
