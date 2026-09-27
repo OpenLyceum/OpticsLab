@@ -23,8 +23,8 @@ Physics for educators: `doc/model.md`. Architecture: `doc/implementation-notes.m
 | Scene model | `src/common/model/RayTracingCommonModel.ts`, `optics/OpticsScene.ts`, `RayTracer.ts` |
 | Elements | `src/common/model/{glass,mirrors,light-sources,blockers,gratings,detectors}/` |
 | Views | `src/common/view/RayTracingCommonView.ts`, `OpticalElementViewFactory.ts`, `RayPropagationView.ts`, `OpticsLabScreenSummaryContent.ts` |
-| Screens | `src/intro/`, `src/lab/`, `src/presets/`, `src/diffraction/` |
-| Presets | `src/presets/PresetScenes.ts`, `PresetsScreenView.ts` |
+| Screens | `src/intro/`, `src/lab/`, `src/presets/`, `src/diffraction/` — each `<Name>Screen.ts` + `model/` + `view/` |
+| Presets | `src/presets/model/PresetScenes.ts`, `src/presets/view/PresetsScreenView.ts` |
 | Serialization | `src/common/model/optics/elementSerialization.ts`, `CommandHistory.ts` |
 | Colors / constants | `OpticsLabColors.ts`, `OpticsLabConstants.ts`, `src/i18n/StringManager.ts` |
 

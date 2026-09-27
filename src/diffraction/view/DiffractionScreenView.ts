@@ -1,5 +1,5 @@
-import { RayTracingCommonView } from "../common/view/RayTracingCommonView.js";
-import OpticsLabNamespace from "../OpticsLabNamespace.js";
+import { RayTracingCommonView } from "../../common/view/RayTracingCommonView.js";
+import OpticsLabNamespace from "../../OpticsLabNamespace.js";
 
 export class DiffractionScreenView extends RayTracingCommonView {}
 

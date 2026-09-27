@@ -3,8 +3,8 @@ import { Screen, type ScreenOptions } from "scenerystack/sim";
 import type { OpticsLabScreenOptions } from "../common/RayTracingCommonScreen.js";
 import { OpticsLabKeyboardHelpContent } from "../common/view/OpticsLabKeyboardHelpContent.js";
 import OpticsLabNamespace from "../OpticsLabNamespace.js";
-import { DiffractionModel } from "./DiffractionModel.js";
-import { DiffractionScreenView } from "./DiffractionScreenView.js";
+import { DiffractionModel } from "./model/DiffractionModel.js";
+import { DiffractionScreenView } from "./view/DiffractionScreenView.js";
 
 export class DiffractionScreen extends Screen<DiffractionModel, DiffractionScreenView> {
   public constructor(options: OpticsLabScreenOptions) {

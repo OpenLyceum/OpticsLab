@@ -2,16 +2,16 @@ import { type EmptySelfOptions, optionize } from "scenerystack/phet-core";
 import { Node, Text } from "scenerystack/scenery";
 import { ComboBox, type ComboBoxItem } from "scenerystack/sun";
 import { Tandem } from "scenerystack/tandem";
-import type { ComponentKey } from "../common/view/ComponentCarousel.js";
-import { createOpticalElementView } from "../common/view/OpticalElementViewFactory.js";
-import { RayTracingCommonView, type RayTracingCommonViewOptions } from "../common/view/RayTracingCommonView.js";
-import { StringManager } from "../i18n/StringManager.js";
-import OpticsLabColors from "../OpticsLabColors.js";
-import { FONT_13PX, FONT_BOLD_13PX, PANEL_CORNER_RADIUS } from "../OpticsLabConstants.js";
-import OpticsLabNamespace from "../OpticsLabNamespace.js";
-import type { OpticsLabPreferencesModel } from "../preferences/OpticsLabPreferencesModel.js";
-import { getPresetDescriptors, type PresetId } from "./PresetScenes.js";
-import type { PresetsModel } from "./PresetsModel.js";
+import type { ComponentKey } from "../../common/view/ComponentCarousel.js";
+import { createOpticalElementView } from "../../common/view/OpticalElementViewFactory.js";
+import { RayTracingCommonView, type RayTracingCommonViewOptions } from "../../common/view/RayTracingCommonView.js";
+import { StringManager } from "../../i18n/StringManager.js";
+import OpticsLabColors from "../../OpticsLabColors.js";
+import { FONT_13PX, FONT_BOLD_13PX, PANEL_CORNER_RADIUS } from "../../OpticsLabConstants.js";
+import OpticsLabNamespace from "../../OpticsLabNamespace.js";
+import type { OpticsLabPreferencesModel } from "../../preferences/OpticsLabPreferencesModel.js";
+import { getPresetDescriptors, type PresetId } from "../model/PresetScenes.js";
+import type { PresetsModel } from "../model/PresetsModel.js";
 
 export type PresetsScreenViewOptions = RayTracingCommonViewOptions;
 

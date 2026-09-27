@@ -3,8 +3,8 @@ import { Screen, type ScreenOptions } from "scenerystack/sim";
 import type { OpticsLabScreenOptions } from "../common/RayTracingCommonScreen.js";
 import { OpticsLabKeyboardHelpContent } from "../common/view/OpticsLabKeyboardHelpContent.js";
 import OpticsLabNamespace from "../OpticsLabNamespace.js";
-import { PresetsModel } from "./PresetsModel.js";
-import { PresetsScreenView } from "./PresetsScreenView.js";
+import { PresetsModel } from "./model/PresetsModel.js";
+import { PresetsScreenView } from "./view/PresetsScreenView.js";
 
 export class PresetsScreen extends Screen<PresetsModel, PresetsScreenView> {
   public constructor(options: OpticsLabScreenOptions) {

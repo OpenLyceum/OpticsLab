@@ -1,5 +1,5 @@
-import { RayTracingCommonModel } from "../common/model/RayTracingCommonModel.js";
-import OpticsLabNamespace from "../OpticsLabNamespace.js";
+import { RayTracingCommonModel } from "../../common/model/RayTracingCommonModel.js";
+import OpticsLabNamespace from "../../OpticsLabNamespace.js";
 
 /**
  * Diffraction screen uses the same ray-tracing scene as other lab screens.

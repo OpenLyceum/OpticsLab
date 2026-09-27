@@ -7,26 +7,26 @@
  */
 
 import type { ReadOnlyProperty } from "scenerystack/axon";
-import { BiconcaveLens } from "../common/model/glass/BiconcaveLens.js";
-import { Glass } from "../common/model/glass/Glass.js";
-import { PlanoConvexLens } from "../common/model/glass/PlanoConvexLens.js";
-import { SlabGlass } from "../common/model/glass/SlabGlass.js";
-import { SphericalLens } from "../common/model/glass/SphericalLens.js";
-import { BeamSource } from "../common/model/light-sources/BeamSource.js";
-import { SingleRaySource } from "../common/model/light-sources/SingleRaySource.js";
-import { BeamSplitterElement } from "../common/model/mirrors/BeamSplitterElement.js";
-import { ParabolicMirror } from "../common/model/mirrors/ParabolicMirror.js";
-import { SegmentMirror } from "../common/model/mirrors/SegmentMirror.js";
-import type { OpticalElement } from "../common/model/optics/OpticsTypes.js";
-import { StringManager } from "../i18n/StringManager.js";
+import { BiconcaveLens } from "../../common/model/glass/BiconcaveLens.js";
+import { Glass } from "../../common/model/glass/Glass.js";
+import { PlanoConvexLens } from "../../common/model/glass/PlanoConvexLens.js";
+import { SlabGlass } from "../../common/model/glass/SlabGlass.js";
+import { SphericalLens } from "../../common/model/glass/SphericalLens.js";
+import { BeamSource } from "../../common/model/light-sources/BeamSource.js";
+import { SingleRaySource } from "../../common/model/light-sources/SingleRaySource.js";
+import { BeamSplitterElement } from "../../common/model/mirrors/BeamSplitterElement.js";
+import { ParabolicMirror } from "../../common/model/mirrors/ParabolicMirror.js";
+import { SegmentMirror } from "../../common/model/mirrors/SegmentMirror.js";
+import type { OpticalElement } from "../../common/model/optics/OpticsTypes.js";
+import { StringManager } from "../../i18n/StringManager.js";
 import {
   DEFAULT_BEAM_BRIGHTNESS,
   DEFAULT_BEAM_SPLITTER_TRANSMIT,
   DEFAULT_BEAM_WAVELENGTH_NM,
   DEFAULT_COMPONENT_GLASS_INDEX,
   DEFAULT_SINGLE_RAY_BRIGHTNESS,
-} from "../OpticsLabConstants.js";
-import OpticsLabNamespace from "../OpticsLabNamespace.js";
+} from "../../OpticsLabConstants.js";
+import OpticsLabNamespace from "../../OpticsLabNamespace.js";
 
 // ── Preset identifiers ──────────────────────────────────────────────────────
 
