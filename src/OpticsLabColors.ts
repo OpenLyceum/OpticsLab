@@ -14,223 +14,348 @@ const BLACK = new Color(0, 0, 0);
 const WHITE = new Color(255, 255, 255);
 
 // ── ProfileColorProperty factory ──────────────────────────────────────────
-function profileColor(
-  name: string,
-  defaultColor: Color | string,
-  projectorColor: Color | string,
-): ProfileColorProperty {
-  return new ProfileColorProperty(OpticsLabNamespace, name, {
-    default: defaultColor,
-    projector: projectorColor,
-  });
-}
-
 const OpticsLabColors = {
   // Background
-  backgroundColorProperty: profileColor("backgroundColor", BLACK, WHITE),
+  backgroundColorProperty: new ProfileColorProperty(OpticsLabNamespace, "backgroundColor", {
+    default: BLACK,
+    projector: WHITE,
+  }),
 
   // Panels
-  panelFillProperty: profileColor("panelFill", new Color(25, 25, 45, 0.95), new Color(245, 245, 250, 0.98)),
-  panelStrokeProperty: profileColor("panelStroke", new Color(120, 120, 140), new Color(180, 180, 200)),
+  panelFillProperty: new ProfileColorProperty(OpticsLabNamespace, "panelFill", {
+    default: new Color(25, 25, 45, 0.95),
+    projector: new Color(245, 245, 250, 0.98),
+  }),
+  panelStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "panelStroke", {
+    default: new Color(120, 120, 140),
+    projector: new Color(180, 180, 200),
+  }),
 
   // Selection frame drawn around the active optical element
-  selectionFrameStrokeProperty: profileColor(
-    "selectionFrameStroke",
-    new Color(255, 220, 0, 0.75),
-    new Color(255, 220, 0, 0.75),
-  ),
+  selectionFrameStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "selectionFrameStroke", {
+    default: new Color(255, 220, 0, 0.75),
+    projector: new Color(255, 220, 0, 0.75),
+  }),
 
   // Preferences checkboxes
-  checkboxPreferencesColorProperty: profileColor(
-    "checkboxPreferencesColor",
-    new Color(40, 40, 40),
-    new Color(40, 40, 40),
-  ),
-  checkboxPreferencesColorBackgroundProperty: profileColor(
+  checkboxPreferencesColorProperty: new ProfileColorProperty(OpticsLabNamespace, "checkboxPreferencesColor", {
+    default: new Color(40, 40, 40),
+    projector: new Color(40, 40, 40),
+  }),
+  checkboxPreferencesColorBackgroundProperty: new ProfileColorProperty(
+    OpticsLabNamespace,
     "checkboxPreferencesColorBackground",
-    new Color(200, 200, 220, 0.5),
-    new Color(200, 200, 220, 0.5),
+    { default: new Color(200, 200, 220, 0.5), projector: new Color(200, 200, 220, 0.5) },
   ),
-  controlPanelBackgroundColorProperty: profileColor(
-    "controlPanelBackgroundColor",
-    new Color(255, 255, 255, 0.9),
-    new Color(255, 255, 255, 0.9),
-  ),
-  controlPanelBorderColorProperty: profileColor(
-    "controlPanelBorderColor",
-    new Color(150, 150, 150),
-    new Color(150, 150, 150),
-  ),
-  controlPanelTextColorProperty: profileColor("controlPanelTextColor", new Color(30, 30, 30), new Color(30, 30, 30)),
+  controlPanelBackgroundColorProperty: new ProfileColorProperty(OpticsLabNamespace, "controlPanelBackgroundColor", {
+    default: new Color(255, 255, 255, 0.9),
+    projector: new Color(255, 255, 255, 0.9),
+  }),
+  controlPanelBorderColorProperty: new ProfileColorProperty(OpticsLabNamespace, "controlPanelBorderColor", {
+    default: new Color(150, 150, 150),
+    projector: new Color(150, 150, 150),
+  }),
+  controlPanelTextColorProperty: new ProfileColorProperty(OpticsLabNamespace, "controlPanelTextColor", {
+    default: new Color(30, 30, 30),
+    projector: new Color(30, 30, 30),
+  }),
 
   // Preferences dialog
-  preferencesTextProperty: profileColor("preferencesText", BLACK, BLACK),
-  preferencesTextSecondaryProperty: profileColor(
-    "preferencesTextSecondary",
-    new Color(102, 102, 102),
-    new Color(80, 80, 80),
-  ),
+  preferencesTextProperty: new ProfileColorProperty(OpticsLabNamespace, "preferencesText", {
+    default: BLACK,
+    projector: BLACK,
+  }),
+  preferencesTextSecondaryProperty: new ProfileColorProperty(OpticsLabNamespace, "preferencesTextSecondary", {
+    default: new Color(102, 102, 102),
+    projector: new Color(80, 80, 80),
+  }),
 
   // ── Drag handles ───────────────────────────────────────────────────────────
-  handleFillProperty: profileColor("handleFill", "rgba(255, 255, 255, 0.88)", "rgba(0, 0, 0, 0.65)"),
+  handleFillProperty: new ProfileColorProperty(OpticsLabNamespace, "handleFill", {
+    default: "rgba(255, 255, 255, 0.88)",
+    projector: "rgba(0, 0, 0, 0.65)",
+  }),
   // Stroke contrasts with fill: dark on near-white (default), light on near-black (projector).
-  handleStrokeProperty: profileColor("handleStroke", "#333", "#ccc"),
+  handleStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "handleStroke", {
+    default: "#333",
+    projector: "#ccc",
+  }),
 
   // ── Mirror rendering ───────────────────────────────────────────────────────
-  mirrorBackStrokeProperty: profileColor("mirrorBackStroke", "#666", "#444"),
+  mirrorBackStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "mirrorBackStroke", {
+    default: "#666",
+    projector: "#444",
+  }),
   // Front edge must stay visible on both black (default) and white (projector) backgrounds.
-  mirrorFrontStrokeProperty: profileColor("mirrorFrontStroke", "#d8d8d8", "#555"),
-  beamSplitterBackStrokeProperty: profileColor(
-    "beamSplitterBackStroke",
-    "rgba(100, 90, 0, 0.5)",
-    "rgba(100, 90, 0, 0.5)",
-  ),
-  beamSplitterFrontStrokeProperty: profileColor(
-    "beamSplitterFrontStroke",
-    "rgba(220, 200, 60, 0.85)",
-    "rgba(220, 200, 60, 0.85)",
-  ),
-  beamSplitterIconBodyStrokeProperty: profileColor("beamSplitterIconBodyStroke", "#999", "#666"),
+  mirrorFrontStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "mirrorFrontStroke", {
+    default: "#d8d8d8",
+    projector: "#555",
+  }),
+  beamSplitterBackStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "beamSplitterBackStroke", {
+    default: "rgba(100, 90, 0, 0.5)",
+    projector: "rgba(100, 90, 0, 0.5)",
+  }),
+  beamSplitterFrontStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "beamSplitterFrontStroke", {
+    default: "rgba(220, 200, 60, 0.85)",
+    projector: "rgba(220, 200, 60, 0.85)",
+  }),
+  beamSplitterIconBodyStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "beamSplitterIconBodyStroke", {
+    default: "#999",
+    projector: "#666",
+  }),
 
   // ── Blocker rendering ──────────────────────────────────────────────────────
-  blockerBackStrokeProperty: profileColor("blockerBackStroke", "#555", "#333"),
+  blockerBackStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "blockerBackStroke", {
+    default: "#555",
+    projector: "#333",
+  }),
   // Front stroke is brighter than back so the silhouette reads on the black default background.
-  blockerFrontStrokeProperty: profileColor("blockerFrontStroke", "#aaa", "#111"),
+  blockerFrontStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "blockerFrontStroke", {
+    default: "#aaa",
+    projector: "#111",
+  }),
 
   // ── Detector rendering ────────────────────────────────────────────────────
-  detectorBackStrokeProperty: profileColor("detectorBackStroke", "#00696B", "#004D4F"),
-  detectorFrontStrokeProperty: profileColor("detectorFrontStroke", "#00BCD4", "#008C9E"),
+  detectorBackStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "detectorBackStroke", {
+    default: "#00696B",
+    projector: "#004D4F",
+  }),
+  detectorFrontStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "detectorFrontStroke", {
+    default: "#00BCD4",
+    projector: "#008C9E",
+  }),
   /** Red record-dot fill inside the detector Acquire RoundPushButton. */
-  detectorRecordDotFillProperty: profileColor("detectorRecordDotFill", "#ff0000", "#cc0000"),
-  detectorChartBackgroundProperty: profileColor(
-    "detectorChartBackground",
-    "rgba(0,30,40,0.85)",
-    "rgba(230,240,245,0.9)",
-  ),
-  detectorChartBarFillProperty: profileColor("detectorChartBarFill", "#00E5FF", "#0097A7"),
-  detectorTickStrokeProperty: profileColor("detectorTickStroke", "rgba(255,255,255,0.75)", "rgba(0,70,80,0.8)"),
+  detectorRecordDotFillProperty: new ProfileColorProperty(OpticsLabNamespace, "detectorRecordDotFill", {
+    default: "#ff0000",
+    projector: "#cc0000",
+  }),
+  detectorChartBackgroundProperty: new ProfileColorProperty(OpticsLabNamespace, "detectorChartBackground", {
+    default: "rgba(0,30,40,0.85)",
+    projector: "rgba(230,240,245,0.9)",
+  }),
+  detectorChartBarFillProperty: new ProfileColorProperty(OpticsLabNamespace, "detectorChartBarFill", {
+    default: "#00E5FF",
+    projector: "#0097A7",
+  }),
+  detectorTickStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "detectorTickStroke", {
+    default: "rgba(255,255,255,0.75)",
+    projector: "rgba(0,70,80,0.8)",
+  }),
 
   // ── Ideal optical elements ─────────────────────────────────────────────────
-  idealMirrorStrokeProperty: profileColor("idealMirrorStroke", "#e8c000", "#c8a000"),
-  idealMirrorTickStrokeProperty: profileColor("idealMirrorTickStroke", "#b89000", "#987000"),
-  idealLensStrokeProperty: profileColor("idealLensStroke", "#44cc88", "#22aa66"),
-  idealLensArrowStrokeProperty: profileColor("idealLensArrowStroke", "#ffee44", "#ddcc00"),
-  alignmentMarkStrokeProperty: profileColor("alignmentMarkStroke", "rgba(255,255,255,0.55)", "rgba(0,0,0,0.40)"),
+  idealMirrorStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "idealMirrorStroke", {
+    default: "#e8c000",
+    projector: "#c8a000",
+  }),
+  idealMirrorTickStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "idealMirrorTickStroke", {
+    default: "#b89000",
+    projector: "#987000",
+  }),
+  idealLensStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "idealLensStroke", {
+    default: "#44cc88",
+    projector: "#22aa66",
+  }),
+  idealLensArrowStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "idealLensArrowStroke", {
+    default: "#ffee44",
+    projector: "#ddcc00",
+  }),
+  alignmentMarkStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "alignmentMarkStroke", {
+    default: "rgba(255,255,255,0.55)",
+    projector: "rgba(0,0,0,0.40)",
+  }),
 
   // ── Glass / lens rendering ─────────────────────────────────────────────────
-  glassFillProperty: profileColor("glassFill", "rgba(100, 180, 255, 0.22)", "rgba(60, 130, 210, 0.25)"),
-  glassStrokeProperty: profileColor("glassStroke", "rgba(60, 130, 210, 0.8)", "rgba(60, 130, 210, 0.8)"),
+  glassFillProperty: new ProfileColorProperty(OpticsLabNamespace, "glassFill", {
+    default: "rgba(100, 180, 255, 0.22)",
+    projector: "rgba(60, 130, 210, 0.25)",
+  }),
+  glassStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "glassStroke", {
+    default: "rgba(60, 130, 210, 0.8)",
+    projector: "rgba(60, 130, 210, 0.8)",
+  }),
 
   // ── Fiber optic rendering ──────────────────────────────────────────────────
   /** Warm amber fill for the inner core, suggesting guided light. */
-  fiberCoreFillProperty: profileColor("fiberCoreFill", "rgba(255, 190, 50, 0.75)", "rgba(220, 150, 30, 0.80)"),
-  fiberCoreStrokeProperty: profileColor("fiberCoreStroke", "rgba(200, 140, 20, 0.6)", "rgba(160, 100, 10, 0.6)"),
-  glassHatchStrokeProperty: profileColor("glassHatchStroke", "rgba(60, 130, 210, 0.5)", "rgba(60, 130, 210, 0.5)"),
-  prismAddFillProperty: profileColor("prismAddFill", "rgba(100, 220, 100, 0.9)", "rgba(100, 220, 100, 0.9)"),
-  prismAddStrokeProperty: profileColor("prismAddStroke", "#2a7a2a", "#2a7a2a"),
-  prismRemoveFillProperty: profileColor("prismRemoveFill", "rgba(255, 120, 120, 0.9)", "rgba(255, 120, 120, 0.9)"),
-  prismRemoveStrokeProperty: profileColor("prismRemoveStroke", "#a03030", "#a03030"),
+  fiberCoreFillProperty: new ProfileColorProperty(OpticsLabNamespace, "fiberCoreFill", {
+    default: "rgba(255, 190, 50, 0.75)",
+    projector: "rgba(220, 150, 30, 0.80)",
+  }),
+  fiberCoreStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "fiberCoreStroke", {
+    default: "rgba(200, 140, 20, 0.6)",
+    projector: "rgba(160, 100, 10, 0.6)",
+  }),
+  glassHatchStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "glassHatchStroke", {
+    default: "rgba(60, 130, 210, 0.5)",
+    projector: "rgba(60, 130, 210, 0.5)",
+  }),
+  prismAddFillProperty: new ProfileColorProperty(OpticsLabNamespace, "prismAddFill", {
+    default: "rgba(100, 220, 100, 0.9)",
+    projector: "rgba(100, 220, 100, 0.9)",
+  }),
+  prismAddStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "prismAddStroke", {
+    default: "#2a7a2a",
+    projector: "#2a7a2a",
+  }),
+  prismRemoveFillProperty: new ProfileColorProperty(OpticsLabNamespace, "prismRemoveFill", {
+    default: "rgba(255, 120, 120, 0.9)",
+    projector: "rgba(255, 120, 120, 0.9)",
+  }),
+  prismRemoveStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "prismRemoveStroke", {
+    default: "#a03030",
+    projector: "#a03030",
+  }),
 
   // ── Spherical lens special handles ────────────────────────────────────────
-  focalMarkerFillProperty: profileColor("focalMarkerFill", "rgb(255,0,255)", "rgb(180,0,180)"),
-  rotationHandleFillProperty: profileColor("rotationHandleFill", "rgba(255, 200, 50, 0.9)", "rgba(255, 200, 50, 0.9)"),
-  rotationHandleStrokeProperty: profileColor("rotationHandleStroke", "#996600", "#996600"),
-  rotationIndicatorStrokeProperty: profileColor(
-    "rotationIndicatorStroke",
-    "rgba(150, 120, 0, 0.7)",
-    "rgba(150, 120, 0, 0.7)",
-  ),
-  curvatureHandleFillProperty: profileColor(
-    "curvatureHandleFill",
-    "rgba(100, 220, 255, 0.9)",
-    "rgba(100, 220, 255, 0.9)",
-  ),
-  curvatureHandleStrokeProperty: profileColor("curvatureHandleStroke", "#006090", "#006090"),
+  focalMarkerFillProperty: new ProfileColorProperty(OpticsLabNamespace, "focalMarkerFill", {
+    default: "rgb(255,0,255)",
+    projector: "rgb(180,0,180)",
+  }),
+  rotationHandleFillProperty: new ProfileColorProperty(OpticsLabNamespace, "rotationHandleFill", {
+    default: "rgba(255, 200, 50, 0.9)",
+    projector: "rgba(255, 200, 50, 0.9)",
+  }),
+  rotationHandleStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "rotationHandleStroke", {
+    default: "#996600",
+    projector: "#996600",
+  }),
+  rotationIndicatorStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "rotationIndicatorStroke", {
+    default: "rgba(150, 120, 0, 0.7)",
+    projector: "rgba(150, 120, 0, 0.7)",
+  }),
+  curvatureHandleFillProperty: new ProfileColorProperty(OpticsLabNamespace, "curvatureHandleFill", {
+    default: "rgba(100, 220, 255, 0.9)",
+    projector: "rgba(100, 220, 255, 0.9)",
+  }),
+  curvatureHandleStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "curvatureHandleStroke", {
+    default: "#006090",
+    projector: "#006090",
+  }),
 
   // ── Arc / point light source ───────────────────────────────────────────────
-  arcSourceGlowFillProperty: profileColor("arcSourceGlowFill", "rgba(255, 220, 80, 0.28)", "rgba(255, 220, 80, 0.28)"),
-  arcSourceGlowStrokeProperty: profileColor(
-    "arcSourceGlowStroke",
-    "rgba(255, 220, 80, 0.90)",
-    "rgba(255, 220, 80, 0.90)",
-  ),
-  arcSourceSectorFillProperty: profileColor(
-    "arcSourceSectorFill",
-    "rgba(255, 215, 60, 0.13)",
-    "rgba(255, 215, 60, 0.13)",
-  ),
-  arcSourceSectorStrokeProperty: profileColor(
-    "arcSourceSectorStroke",
-    "rgba(255, 215, 60, 0.65)",
-    "rgba(255, 215, 60, 0.65)",
-  ),
-  arcSourceRimStrokeProperty: profileColor(
-    "arcSourceRimStroke",
-    "rgba(255, 215, 60, 0.25)",
-    "rgba(255, 215, 60, 0.25)",
-  ),
-  arcSourceBoundaryStrokeProperty: profileColor(
-    "arcSourceBoundaryStroke",
-    "rgba(255, 215, 60, 0.55)",
-    "rgba(255, 215, 60, 0.55)",
-  ),
-  arcSourceSpokeStrokeProperty: profileColor(
-    "arcSourceSpokeStroke",
-    "rgba(255, 210, 60, 0.55)",
-    "rgba(255, 210, 60, 0.55)",
-  ),
+  arcSourceGlowFillProperty: new ProfileColorProperty(OpticsLabNamespace, "arcSourceGlowFill", {
+    default: "rgba(255, 220, 80, 0.28)",
+    projector: "rgba(255, 220, 80, 0.28)",
+  }),
+  arcSourceGlowStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "arcSourceGlowStroke", {
+    default: "rgba(255, 220, 80, 0.90)",
+    projector: "rgba(255, 220, 80, 0.90)",
+  }),
+  arcSourceSectorFillProperty: new ProfileColorProperty(OpticsLabNamespace, "arcSourceSectorFill", {
+    default: "rgba(255, 215, 60, 0.13)",
+    projector: "rgba(255, 215, 60, 0.13)",
+  }),
+  arcSourceSectorStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "arcSourceSectorStroke", {
+    default: "rgba(255, 215, 60, 0.65)",
+    projector: "rgba(255, 215, 60, 0.65)",
+  }),
+  arcSourceRimStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "arcSourceRimStroke", {
+    default: "rgba(255, 215, 60, 0.25)",
+    projector: "rgba(255, 215, 60, 0.25)",
+  }),
+  arcSourceBoundaryStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "arcSourceBoundaryStroke", {
+    default: "rgba(255, 215, 60, 0.55)",
+    projector: "rgba(255, 215, 60, 0.55)",
+  }),
+  arcSourceSpokeStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "arcSourceSpokeStroke", {
+    default: "rgba(255, 210, 60, 0.55)",
+    projector: "rgba(255, 210, 60, 0.55)",
+  }),
 
   // ── Direction indicators (wavelength-independent sources) ──────────────────
-  sourceDirLineStrokeProperty: profileColor("sourceDirLineStroke", "rgba(255,255,255,0.70)", "rgba(0,0,0,0.50)"),
-  sourceDirArrowStrokeProperty: profileColor("sourceDirArrowStroke", "rgba(255,255,255,0.90)", "rgba(0,0,0,0.70)"),
+  sourceDirLineStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "sourceDirLineStroke", {
+    default: "rgba(255,255,255,0.70)",
+    projector: "rgba(0,0,0,0.50)",
+  }),
+  sourceDirArrowStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "sourceDirArrowStroke", {
+    default: "rgba(255,255,255,0.90)",
+    projector: "rgba(0,0,0,0.70)",
+  }),
 
   // ── Grid ───────────────────────────────────────────────────────────────────
-  gridLineStrokeProperty: profileColor("gridLineStroke", "rgba(255,255,255,0.15)", "rgba(0,0,0,0.15)"),
+  gridLineStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "gridLineStroke", {
+    default: "rgba(255,255,255,0.15)",
+    projector: "rgba(0,0,0,0.15)",
+  }),
 
   // ── Overlay UI (panels, labels on dark/light background) ──────────────────
-  overlayLabelFillProperty: profileColor("overlayLabelFill", "#bbb", "#444"),
-  comboBoxHighlightFillProperty: profileColor(
-    "comboBoxHighlightFill",
-    new Color(80, 100, 180, 0.55),
-    new Color(60, 90, 200, 0.2),
-  ),
-  overlayValueFillProperty: profileColor("overlayValueFill", "#eee", "#111"),
-  overlayInputBackgroundProperty: profileColor("overlayInputBackground", "rgba(0,0,0,0.35)", "rgba(0,0,0,0.08)"),
-  overlayInputBorderProperty: profileColor("overlayInputBorder", "rgba(100,100,120,0.6)", "rgba(100,100,120,0.6)"),
-  deleteButtonBaseColorProperty: profileColor("deleteButtonBaseColor", "#883333", "#883333"),
+  overlayLabelFillProperty: new ProfileColorProperty(OpticsLabNamespace, "overlayLabelFill", {
+    default: "#bbb",
+    projector: "#444",
+  }),
+  comboBoxHighlightFillProperty: new ProfileColorProperty(OpticsLabNamespace, "comboBoxHighlightFill", {
+    default: new Color(80, 100, 180, 0.55),
+    projector: new Color(60, 90, 200, 0.2),
+  }),
+  overlayValueFillProperty: new ProfileColorProperty(OpticsLabNamespace, "overlayValueFill", {
+    default: "#eee",
+    projector: "#111",
+  }),
+  overlayInputBackgroundProperty: new ProfileColorProperty(OpticsLabNamespace, "overlayInputBackground", {
+    default: "rgba(0,0,0,0.35)",
+    projector: "rgba(0,0,0,0.08)",
+  }),
+  overlayInputBorderProperty: new ProfileColorProperty(OpticsLabNamespace, "overlayInputBorder", {
+    default: "rgba(100,100,120,0.6)",
+    projector: "rgba(100,100,120,0.6)",
+  }),
+  deleteButtonBaseColorProperty: new ProfileColorProperty(OpticsLabNamespace, "deleteButtonBaseColor", {
+    default: "#883333",
+    projector: "#883333",
+  }),
 
   // ── Track (guide rail) ──────────────────────────────────────────────────────
-  trackStrokeProperty: profileColor("trackStroke", "rgba(100, 200, 180, 0.55)", "rgba(60, 140, 120, 0.55)"),
+  trackStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "trackStroke", {
+    default: "rgba(100, 200, 180, 0.55)",
+    projector: "rgba(60, 140, 120, 0.55)",
+  }),
 
   // ── Carousel ────────────────────────────────────────────────────────────────
-  carouselSeparatorStrokeProperty: profileColor(
-    "carouselSeparatorStroke",
-    "rgba(120, 120, 140, 0.45)",
-    "rgba(160, 160, 180, 0.45)",
-  ),
-  carouselButtonBaseColorProperty: profileColor(
-    "carouselButtonBaseColor",
-    "rgba(80, 80, 100, 0.6)",
-    "rgba(200, 200, 220, 0.8)",
-  ),
-  carouselArrowStrokeProperty: profileColor("carouselArrowStroke", "#ccc", "#444"),
-  carouselLabelFillProperty: profileColor("carouselLabelFill", "#ccc", "#444"),
-  pageControlCurrentFillProperty: profileColor("pageControlCurrentFill", "#ccc", "#444"),
-  pageControlInactiveFillProperty: profileColor(
-    "pageControlInactiveFill",
-    "rgba(180, 180, 200, 0.35)",
-    "rgba(80, 80, 100, 0.35)",
-  ),
+  carouselSeparatorStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "carouselSeparatorStroke", {
+    default: "rgba(120, 120, 140, 0.45)",
+    projector: "rgba(160, 160, 180, 0.45)",
+  }),
+  carouselButtonBaseColorProperty: new ProfileColorProperty(OpticsLabNamespace, "carouselButtonBaseColor", {
+    default: "rgba(80, 80, 100, 0.6)",
+    projector: "rgba(200, 200, 220, 0.8)",
+  }),
+  carouselArrowStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "carouselArrowStroke", {
+    default: "#ccc",
+    projector: "#444",
+  }),
+  carouselLabelFillProperty: new ProfileColorProperty(OpticsLabNamespace, "carouselLabelFill", {
+    default: "#ccc",
+    projector: "#444",
+  }),
+  pageControlCurrentFillProperty: new ProfileColorProperty(OpticsLabNamespace, "pageControlCurrentFill", {
+    default: "#ccc",
+    projector: "#444",
+  }),
+  pageControlInactiveFillProperty: new ProfileColorProperty(OpticsLabNamespace, "pageControlInactiveFill", {
+    default: "rgba(180, 180, 200, 0.35)",
+    projector: "rgba(80, 80, 100, 0.35)",
+  }),
 
   // ── Carousel icons ──────────────────────────────────────────────────────────
-  iconRayStrokeProperty: profileColor("iconRayStroke", "#44ee66", "#22cc44"),
-  pointSourceFillProperty: profileColor("pointSourceFill", "#ff8844", "#ff8844"),
+  iconRayStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "iconRayStroke", {
+    default: "#44ee66",
+    projector: "#22cc44",
+  }),
+  pointSourceFillProperty: new ProfileColorProperty(OpticsLabNamespace, "pointSourceFill", {
+    default: "#ff8844",
+    projector: "#ff8844",
+  }),
 
   // ── Blocker fill ────────────────────────────────────────────────────────────
-  blockerFillProperty: profileColor("blockerFill", "rgba(30, 30, 30, 0.5)", "rgba(30, 30, 30, 0.5)"),
+  blockerFillProperty: new ProfileColorProperty(OpticsLabNamespace, "blockerFill", {
+    default: "rgba(30, 30, 30, 0.5)",
+    projector: "rgba(30, 30, 30, 0.5)",
+  }),
 
   // ── Glass border (high-opacity stroke for half-plane boundary line) ─────────
-  glassBorderStrokeProperty: profileColor("glassBorderStroke", "rgba(60, 130, 210, 0.95)", "rgba(60, 130, 210, 0.95)"),
+  glassBorderStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "glassBorderStroke", {
+    default: "rgba(60, 130, 210, 0.95)",
+    projector: "rgba(60, 130, 210, 0.95)",
+  }),
 
   // ── Hit-area fill (invisible but non-null so Scenery includes it in hit-testing) ──
   /**
@@ -238,115 +363,149 @@ const OpticsLabColors = {
    * A non-zero alpha is required so Scenery includes the fill area in
    * containsPoint() — the path remains visually invisible.
    */
-  hitAreaFillProperty: profileColor("hitAreaFill", "rgba(0,0,0,0.001)", "rgba(0,0,0,0.001)"),
+  hitAreaFillProperty: new ProfileColorProperty(OpticsLabNamespace, "hitAreaFill", {
+    default: "rgba(0,0,0,0.001)",
+    projector: "rgba(0,0,0,0.001)",
+  }),
 
   // ── Image overlay markers (real / virtual image positions) ─────────────────
   /** Base fill colour for real-image markers (yellow-orange). */
-  imageRealFillBaseColorProperty: profileColor(
-    "imageRealFillBase",
-    "rgba(255, 200, 0, 0.85)",
-    "rgba(200, 150, 0, 0.85)",
-  ),
+  imageRealFillBaseColorProperty: new ProfileColorProperty(OpticsLabNamespace, "imageRealFillBase", {
+    default: "rgba(255, 200, 0, 0.85)",
+    projector: "rgba(200, 150, 0, 0.85)",
+  }),
   /** Base stroke colour for real-image markers. */
-  imageRealStrokeBaseColorProperty: profileColor("imageRealStrokeBase", "rgba(200, 150, 0, 1)", "rgba(150, 100, 0, 1)"),
+  imageRealStrokeBaseColorProperty: new ProfileColorProperty(OpticsLabNamespace, "imageRealStrokeBase", {
+    default: "rgba(200, 150, 0, 1)",
+    projector: "rgba(150, 100, 0, 1)",
+  }),
   /** Label fill for real-image markers. */
-  imageRealLabelFillProperty: profileColor("imageRealLabelFill", "rgba(255, 220, 80, 0.95)", "rgba(180, 130, 0, 0.95)"),
+  imageRealLabelFillProperty: new ProfileColorProperty(OpticsLabNamespace, "imageRealLabelFill", {
+    default: "rgba(255, 220, 80, 0.95)",
+    projector: "rgba(180, 130, 0, 0.95)",
+  }),
   /** Base stroke colour for virtual-object markers (red). */
-  imageVirtualObjectStrokeBaseColorProperty: profileColor(
+  imageVirtualObjectStrokeBaseColorProperty: new ProfileColorProperty(
+    OpticsLabNamespace,
     "imageVirtualObjectStrokeBase",
-    "rgba(255, 80, 80, 1)",
-    "rgba(200, 40, 40, 1)",
+    { default: "rgba(255, 80, 80, 1)", projector: "rgba(200, 40, 40, 1)" },
   ),
   /** Label fill for virtual-object markers. */
-  imageVirtualObjectLabelFillProperty: profileColor(
-    "imageVirtualObjectLabelFill",
-    "rgba(255, 100, 100, 0.95)",
-    "rgba(200, 50, 50, 0.95)",
-  ),
+  imageVirtualObjectLabelFillProperty: new ProfileColorProperty(OpticsLabNamespace, "imageVirtualObjectLabelFill", {
+    default: "rgba(255, 100, 100, 0.95)",
+    projector: "rgba(200, 50, 50, 0.95)",
+  }),
   /** Base stroke colour for virtual-image markers (cyan). */
-  imageVirtualStrokeBaseColorProperty: profileColor(
-    "imageVirtualStrokeBase",
-    "rgba(0, 210, 255, 1)",
-    "rgba(0, 150, 200, 1)",
-  ),
+  imageVirtualStrokeBaseColorProperty: new ProfileColorProperty(OpticsLabNamespace, "imageVirtualStrokeBase", {
+    default: "rgba(0, 210, 255, 1)",
+    projector: "rgba(0, 150, 200, 1)",
+  }),
   /** Label fill for virtual-image markers. */
-  imageVirtualLabelFillProperty: profileColor(
-    "imageVirtualLabelFill",
-    "rgba(80, 210, 255, 0.95)",
-    "rgba(0, 130, 180, 0.95)",
-  ),
+  imageVirtualLabelFillProperty: new ProfileColorProperty(OpticsLabNamespace, "imageVirtualLabelFill", {
+    default: "rgba(80, 210, 255, 0.95)",
+    projector: "rgba(0, 130, 180, 0.95)",
+  }),
 
   // ── Measuring tape ──────────────────────────────────────────────────────────
-  measuringTapeTextColorProperty: profileColor("measuringTapeTextColor", "white", "black"),
-  measuringTapeBackgroundColorProperty: profileColor(
-    "measuringTapeBackground",
-    "rgba(0,0,0,0.65)",
-    "rgba(255,255,255,0.65)",
-  ),
+  measuringTapeTextColorProperty: new ProfileColorProperty(OpticsLabNamespace, "measuringTapeTextColor", {
+    default: "white",
+    projector: "black",
+  }),
+  measuringTapeBackgroundColorProperty: new ProfileColorProperty(OpticsLabNamespace, "measuringTapeBackground", {
+    default: "rgba(0,0,0,0.65)",
+    projector: "rgba(255,255,255,0.65)",
+  }),
 
   // ── Wavelength thumb outline ────────────────────────────────────────────────
-  wavelengthThumbStrokeProperty: profileColor("wavelengthThumbStroke", "rgba(0,0,0,0.55)", "rgba(0,0,0,0.55)"),
+  wavelengthThumbStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "wavelengthThumbStroke", {
+    default: "rgba(0,0,0,0.55)",
+    projector: "rgba(0,0,0,0.55)",
+  }),
 
   // ── Observer node ──────────────────────────────────────────────────────────
-  observerCircleStrokeProperty: profileColor(
-    "observerCircleStroke",
-    "rgba(255, 220, 80, 0.65)",
-    "rgba(180, 140, 0, 0.80)",
-  ),
-  observerCircleFillProperty: profileColor(
-    "observerCircleFill",
-    "rgba(255, 220, 80, 0.06)",
-    "rgba(255, 220, 80, 0.06)",
-  ),
-  observerDotFillProperty: profileColor("observerDotFill", "rgba(255, 220, 80, 0.9)", "rgba(180, 140, 0, 0.9)"),
-  observerDotStrokeProperty: profileColor("observerDotStroke", "rgba(160, 120, 0, 1.0)", "rgba(160, 120, 0, 1.0)"),
-  observerLabelFillProperty: profileColor("observerLabelFill", "rgba(255, 220, 80, 0.85)", "rgba(140, 100, 0, 0.90)"),
-  observerRimFillProperty: profileColor("observerRimFill", "rgba(255, 220, 80, 0.55)", "rgba(180, 140, 0, 0.65)"),
-  observerRimStrokeProperty: profileColor("observerRimStroke", "rgba(160, 120, 0, 0.9)", "rgba(160, 120, 0, 0.9)"),
+  observerCircleStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "observerCircleStroke", {
+    default: "rgba(255, 220, 80, 0.65)",
+    projector: "rgba(180, 140, 0, 0.80)",
+  }),
+  observerCircleFillProperty: new ProfileColorProperty(OpticsLabNamespace, "observerCircleFill", {
+    default: "rgba(255, 220, 80, 0.06)",
+    projector: "rgba(255, 220, 80, 0.06)",
+  }),
+  observerDotFillProperty: new ProfileColorProperty(OpticsLabNamespace, "observerDotFill", {
+    default: "rgba(255, 220, 80, 0.9)",
+    projector: "rgba(180, 140, 0, 0.9)",
+  }),
+  observerDotStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "observerDotStroke", {
+    default: "rgba(160, 120, 0, 1.0)",
+    projector: "rgba(160, 120, 0, 1.0)",
+  }),
+  observerLabelFillProperty: new ProfileColorProperty(OpticsLabNamespace, "observerLabelFill", {
+    default: "rgba(255, 220, 80, 0.85)",
+    projector: "rgba(140, 100, 0, 0.90)",
+  }),
+  observerRimFillProperty: new ProfileColorProperty(OpticsLabNamespace, "observerRimFill", {
+    default: "rgba(255, 220, 80, 0.55)",
+    projector: "rgba(180, 140, 0, 0.65)",
+  }),
+  observerRimStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "observerRimStroke", {
+    default: "rgba(160, 120, 0, 0.9)",
+    projector: "rgba(160, 120, 0, 0.9)",
+  }),
 
   // ── Fiber optic carousel icon ─────────────────────────────────────────────
   /** Cladding fill used in the fiber-optic carousel icon (glass-blue, icon opacity). */
-  fiberIconCladdingFillProperty: profileColor(
-    "fiberIconCladdingFill",
-    "rgba(100, 160, 255, 0.28)",
-    "rgba(60, 100, 200, 0.28)",
-  ),
+  fiberIconCladdingFillProperty: new ProfileColorProperty(OpticsLabNamespace, "fiberIconCladdingFill", {
+    default: "rgba(100, 160, 255, 0.28)",
+    projector: "rgba(60, 100, 200, 0.28)",
+  }),
   /** Cladding stroke used in the fiber-optic carousel icon. */
-  fiberIconCladdingStrokeProperty: profileColor(
-    "fiberIconCladdingStroke",
-    "rgba(60, 130, 210, 0.75)",
-    "rgba(60, 130, 210, 0.75)",
-  ),
+  fiberIconCladdingStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "fiberIconCladdingStroke", {
+    default: "rgba(60, 130, 210, 0.75)",
+    projector: "rgba(60, 130, 210, 0.75)",
+  }),
   /** Core fill used in the fiber-optic carousel icon (amber, icon opacity). */
-  fiberIconCoreFillProperty: profileColor("fiberIconCoreFill", "rgba(255, 190, 50, 0.80)", "rgba(220, 150, 30, 0.85)"),
+  fiberIconCoreFillProperty: new ProfileColorProperty(OpticsLabNamespace, "fiberIconCoreFill", {
+    default: "rgba(255, 190, 50, 0.80)",
+    projector: "rgba(220, 150, 30, 0.85)",
+  }),
   /** Core stroke used in the fiber-optic carousel icon. */
-  fiberIconCoreStrokeProperty: profileColor(
-    "fiberIconCoreStroke",
-    "rgba(200, 140, 20, 0.5)",
-    "rgba(160, 100, 10, 0.5)",
-  ),
+  fiberIconCoreStrokeProperty: new ProfileColorProperty(OpticsLabNamespace, "fiberIconCoreStroke", {
+    default: "rgba(200, 140, 20, 0.5)",
+    projector: "rgba(160, 100, 10, 0.5)",
+  }),
 
   // Fleet-standard aliases for shared Panel + ButtonOptions modules.
-  panelBackgroundColorProperty: profileColor(
-    "panelBackground",
-    new Color(25, 25, 45, 0.95),
-    new Color(245, 245, 250, 0.98),
-  ),
-  panelBorderColorProperty: profileColor("panelBorder", new Color(120, 120, 140), new Color(180, 180, 200)),
-  textColorProperty: profileColor("text", WHITE, BLACK),
+  panelBackgroundColorProperty: new ProfileColorProperty(OpticsLabNamespace, "panelBackground", {
+    default: new Color(25, 25, 45, 0.95),
+    projector: new Color(245, 245, 250, 0.98),
+  }),
+  panelBorderColorProperty: new ProfileColorProperty(OpticsLabNamespace, "panelBorder", {
+    default: new Color(120, 120, 140),
+    projector: new Color(180, 180, 200),
+  }),
+  textColorProperty: new ProfileColorProperty(OpticsLabNamespace, "text", { default: WHITE, projector: BLACK }),
 
   // ── Light control surfaces ───────────────────────────────────────────────────
   // White chrome (combo boxes, flat push buttons, editable input fields) stays light
   // in both profiles; its text stays dark.
 
   /** Fill of light control surfaces: combo-box button/list, editable input fields. */
-  controlSurfaceColorProperty: profileColor("controlSurface", "#ffffff", "#ffffff"),
+  controlSurfaceColorProperty: new ProfileColorProperty(OpticsLabNamespace, "controlSurface", {
+    default: "#ffffff",
+    projector: "#ffffff",
+  }),
 
   /** Fill of a disabled control surface (grayed-out editable input field). */
-  controlSurfaceDisabledColorProperty: profileColor("controlSurfaceDisabled", "#cccccc", "#cccccc"),
+  controlSurfaceDisabledColorProperty: new ProfileColorProperty(OpticsLabNamespace, "controlSurfaceDisabled", {
+    default: "#cccccc",
+    projector: "#cccccc",
+  }),
 
   /** Text on light control surfaces: combo items, flat-button labels, field values, preferences. */
-  controlSurfaceTextColorProperty: profileColor("controlSurfaceText", "#1a1a1a", "#1a1a1a"),
+  controlSurfaceTextColorProperty: new ProfileColorProperty(OpticsLabNamespace, "controlSurfaceText", {
+    default: "#1a1a1a",
+    projector: "#1a1a1a",
+  }),
 };
 
 /**
