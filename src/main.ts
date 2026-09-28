@@ -106,6 +106,7 @@ onReadyToLaunch(() => {
 
   const screens = [
     new IntroScreen({
+      // The screen name Property updates automatically when the locale changes
       name: screenNames.introStringProperty,
       tandem: Tandem.ROOT.createTandem(TANDEM_INTRO_SCREEN),
       carouselComponents: standardComponents,
@@ -113,6 +114,7 @@ onReadyToLaunch(() => {
       ...commonScreenOptions,
     }),
     new LabScreen({
+      // The screen name Property updates automatically when the locale changes
       name: screenNames.labStringProperty,
       tandem: Tandem.ROOT.createTandem(TANDEM_LAB_SCREEN),
       carouselComponents: standardComponents,
@@ -120,6 +122,7 @@ onReadyToLaunch(() => {
       ...commonScreenOptions,
     }),
     new PresetsScreen({
+      // The screen name Property updates automatically when the locale changes
       name: screenNames.presetsStringProperty,
       tandem: Tandem.ROOT.createTandem(TANDEM_PRESETS_SCREEN),
       carouselComponents: standardComponents,
@@ -127,6 +130,7 @@ onReadyToLaunch(() => {
       ...commonScreenOptions,
     }),
     new DiffractionScreen({
+      // The screen name Property updates automatically when the locale changes
       name: screenNames.diffractionStringProperty,
       tandem: Tandem.ROOT.createTandem(TANDEM_DIFFRACTION_SCREEN),
       carouselComponents: diffractionComponents,
@@ -135,11 +139,12 @@ onReadyToLaunch(() => {
     }),
   ];
 
-  const simOptions = {
-    webgl: true,
+  const sim = new Sim(stringManager.getTitleStringProperty(), screens, {
     preferencesModel: new PreferencesModel({
       visualOptions: {
+        // Adds a "Projector Mode" toggle in Preferences → Visual
         supportsProjectorMode: true,
+        // Enables keyboard-navigation highlight outlines
         supportsInteractiveHighlights: true,
       },
       simulationOptions: {
@@ -149,15 +154,15 @@ onReadyToLaunch(() => {
           },
         ],
       },
+      localizationOptions: {
+        // Adds a language picker in Preferences → Language
+        supportsDynamicLocale: true,
+      },
       inputOptions: {
         supportsGestureControl: true,
       },
-      localizationOptions: {
-        supportsDynamicLocale: true,
-      },
     }),
-  };
-
-  const sim = new Sim(stringManager.getTitleStringProperty(), screens, simOptions);
+    webgl: true,
+  });
   sim.start();
 });
