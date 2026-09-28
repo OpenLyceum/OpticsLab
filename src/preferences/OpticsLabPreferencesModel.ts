@@ -1,7 +1,9 @@
 /**
- * OpticsLabPreferencesModel - Model for OpticsLab simulation preferences.
+ * OpticsLabPreferencesModel.ts
  *
- * Manages user preferences for the OpticsLab simulation.
+ * Model for the simulation-specific preferences shown in Preferences →
+ * Simulation. Each preference Property takes its initial value from the
+ * corresponding query parameter in opticsLabQueryParameters.
  */
 
 import { BooleanProperty, NumberProperty, StringUnionProperty } from "scenerystack/axon";
