@@ -1,5 +1,17 @@
 /**
- * Query parameters for OpticsLab startup configuration.
+ * opticsLabQueryParameters.ts
+ *
+ * Sim-specific startup query parameters. This is the single place where every
+ * sim-specific query parameter is declared and documented. Public-facing
+ * parameters (intended for end users / sharing links) must set `public: true`.
+ *
+ * ── How to add a query parameter ──────────────────────────────────────────────
+ * 1. Add an entry below with a `type`, `defaultValue`, and (if user-facing)
+ *    `public: true`. Add `isValidValue` to bound numeric ranges.
+ * 2. If it should also be user-editable at runtime, surface it as a preference
+ *    in OpticsLabPreferencesModel (initialize that Property from this query parameter).
+ *
+ * Usage: append e.g. `?snapToGrid=true&gridSpacing=2` to the sim URL.
  */
 
 import { logGlobal } from "scenerystack/phet-core";
@@ -37,9 +49,9 @@ const opticsLabQueryParameters = QueryStringMachine.getAll({
   maximumLightRayDepth: {
     type: "number" as const,
     defaultValue: QUERY_DEFAULT_MAX_RAY_DEPTH,
-    public: true,
     isValidValue: (value: number) =>
       Number.isInteger(value) && value >= MAX_RAY_DEPTH_PROPERTY_MIN && value <= MAX_RAY_DEPTH_PROPERTY_MAX,
+    public: true,
   },
 
   // Whether components snap to grid.
@@ -53,8 +65,8 @@ const opticsLabQueryParameters = QueryStringMachine.getAll({
   gridSpacing: {
     type: "number" as const,
     defaultValue: GRID_SPACING_M,
-    public: true,
     isValidValue: (value: number) => value >= GRID_SPACING_MIN_M && value <= GRID_SPACING_MAX_M,
+    public: true,
   },
 
   // ── Tools panel (RayTracingCommonView) ─────────────────────────────────────
@@ -112,8 +124,8 @@ const opticsLabQueryParameters = QueryStringMachine.getAll({
   rayStubLength: {
     type: "number" as const,
     defaultValue: RAY_STUB_LENGTH_DEFAULT_PX,
-    public: true,
     isValidValue: (value: number) => value >= RAY_STUB_LENGTH_MIN_PX && value <= RAY_STUB_LENGTH_MAX_PX,
+    public: true,
   },
 
   /** Show the background grid at startup. */
@@ -127,8 +139,8 @@ const opticsLabQueryParameters = QueryStringMachine.getAll({
   rayDensity: {
     type: "number" as const,
     defaultValue: DEFAULT_RAY_DENSITY,
-    public: true,
     isValidValue: (value: number) => value >= RAY_DENSITY_MIN && value <= RAY_DENSITY_MAX,
+    public: true,
   },
 
   /** When true, flat aperture-rim edges of SphericalLens elements absorb rays instead of refracting them. */
@@ -141,8 +153,7 @@ const opticsLabQueryParameters = QueryStringMachine.getAll({
 
 OpticsLabNamespace.register("opticsLabQueryParameters", opticsLabQueryParameters);
 
-// Log query parameters
+// Log query parameters (for the console / PhET-iO).
 logGlobal("phet.chipper.queryParameters");
-logGlobal("phet.opticsLab.opticsLabQueryParameters");
 
 export default opticsLabQueryParameters;
