@@ -461,7 +461,6 @@ export class SphericalLensView extends GlassView {
    * Called after each curvature drag event and rebuild. Subclasses can
    * override this to enforce additional constraints (e.g., symmetry).
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected onCurvatureDragged(_surface: "r1" | "r2"): void {
     // no-op in base class
   }
