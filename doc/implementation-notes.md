@@ -1,7 +1,7 @@
 # Implementation Notes - OpticsLab
 
 Developer-facing notes on the architecture. The physics is documented for educators in
-[model.md](./model.md). Model-vs-view feature mapping: [model-features-vs-view.md](./model-features-vs-view.md).
+[model.md](./model.md).
 
 ## Architecture Overview
 

@@ -51,17 +51,6 @@ via the `screenSummaryContent` super-option and orders the PDOM through a wrappe
 `StringManager.getA11yStrings()`. Current-details is static (scene elements are a PhetioGroup);
 it can be made live by deriving an element-count Property.
 
-## Agent / Cursor Cloud notes
-
-Client-only sim (no backend). Prefer `AGENTS.md` over any `AGENTS.md` — org convention.
-
-- Dependencies: `npm ci` (startup script). Do not re-install unless deps changed. Node ≥ 24 (`engines`); npm only.
-- Dev server: `npm start` (Vite `http://localhost:5173`). Do not use production `build` output for interactive UI testing.
-- Commands: `npm run lint` / `check` / `test` / `build` — see `README.md`.
-- `npm test` is slow (~90s, 400+ tests) because of ray-tracing model coverage — expected, not a hang.
-- Git hooks via `prepare` (`core.hooksPath .githooks`): pre-commit formats with Biome; pre-push runs lint + check.
-- `npm run icons` is optional unless changing PWA icons.
-
 ## Compliance carve-outs
 
 - **Hardcoded colors:** wavelength-derived `rgba(...)` / canvas strokes in ray/SVG exporters and light-source views — physically tinted optics rendering, not UI theme tokens.
@@ -114,3 +103,14 @@ npm run generate-svg-icon   # regenerate icon SVG before icons
 
 - Model classes must not import from view. Boolean properties use verb prefixes (`is`, `has`, `show`).
 - **ES2024 target** — `tsconfig.json` and Vite `build.target` use ES2024 (Vite 8+). If build fails on unknown target, run `npm ci`.
+
+### Agent / Cursor Cloud notes
+
+Client-only sim (no backend). Prefer `AGENTS.md` over any `AGENTS.md` — org convention.
+
+- Dependencies: `npm ci` (startup script). Do not re-install unless deps changed. Node ≥ 24 (`engines`); npm only.
+- Dev server: `npm start` (Vite `http://localhost:5173`). Do not use production `build` output for interactive UI testing.
+- Commands: `npm run lint` / `check` / `test` / `build` — see `README.md`.
+- `npm test` is slow (~90s, 400+ tests) because of ray-tracing model coverage — expected, not a hang.
+- Git hooks via `prepare` (`core.hooksPath .githooks`): pre-commit formats with Biome; pre-push runs lint + check.
+- `npm run icons` is optional unless changing PWA icons.
