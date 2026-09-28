@@ -198,7 +198,7 @@ export default defineConfig(({ mode }) => {
               id: name,
               name: "Optics Lab",
               // biome-ignore lint/style/useNamingConvention: Web App Manifest spec requires snake_case keys
-              short_name: "OpticsLab",
+              short_name: "Optics Lab",
               description,
               categories: ["education", "science"],
               // biome-ignore lint/style/useNamingConvention: Web App Manifest spec requires snake_case keys
@@ -235,7 +235,7 @@ export default defineConfig(({ mode }) => {
                   type: "image/png",
                   // biome-ignore lint/style/useNamingConvention: Web App Manifest spec requires snake_case keys
                   form_factor: "wide",
-                  label: "OpticsLab",
+                  label: "Optics Lab",
                 },
                 {
                   src: "screenshots/narrow.png",
@@ -243,7 +243,7 @@ export default defineConfig(({ mode }) => {
                   type: "image/png",
                   // biome-ignore lint/style/useNamingConvention: Web App Manifest spec requires snake_case keys
                   form_factor: "narrow",
-                  label: "OpticsLab",
+                  label: "Optics Lab",
                 },
               ],
             },
