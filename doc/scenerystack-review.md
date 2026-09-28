@@ -1,6 +1,6 @@
 # SceneryStack Code Review — Findings
 
-**Date:** 2026-07-21
+**Date:** 2026-07-21 (citations refreshed 2026-09-27 to name symbols, not line numbers)
 **Scope:** OpticsLab shared stack (`src/common/`) and screens, reviewed against the six SceneryStack
 pillars: architecture, memory, accessibility, layout, numerics, i18n.
 **Focus:** architecture, a11y, and i18n pillars (not a full physics/deserialization audit).
@@ -26,16 +26,17 @@ of accessibility strings** and a couple of **frame-rate-coupling** rough edges.
 
 ## FINDING #1 — Optical-element accessible names bypass i18n (English-only)
 
-**File:** `src/common/view/RayTracingCommonView.ts:780` (and helper at `:853`)
+**Where:** `RayTracingCommonView._setupView` assigns `accessibleName`; the English fallback is
+`ElementTypeToAccessibleName` in the same file. Localized names come from
+`StringManager.getElementTypeNameProperty`.
 **Pillars:** 6 (i18n) + 3 (a11y) — **Severity: MEDIUM**
 
-### Code
+### Code (current)
 
 ```typescript
-// :780
-view.accessibleName = ElementTypeToAccessibleName(element.type);
+view.accessibleName =
+  StringManager.getInstance().getElementTypeNameProperty(element.type) ?? ElementTypeToAccessibleName(element.type);
 
-// :853 — regex-splits the English class name
 function ElementTypeToAccessibleName(type: string): string {
   return type.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/^./, (c) => c.toUpperCase());
 }
@@ -43,67 +44,65 @@ function ElementTypeToAccessibleName(type: string): string {
 
 ### Problem
 
-Every draggable optical element's screen-reader name is derived by splitting its **English** type
-string (`"IdealLens"` → `"Ideal Lens"`). Every *other* accessible name in the same file goes through
-`StringManager` string Properties — e.g. `resetAllStringProperty` (`:529`), `downloadSceneStringProperty`
-(`:564`). OpticsLab ships a French UI, so:
+Every draggable optical element's screen-reader name used to be derived by splitting its **English**
+type string (`"IdealLens"` → `"Ideal Lens"`). Every *other* accessible name in
+`RayTracingCommonView` already went through `StringManager` string Properties (the reset-all and
+download-scene buttons). OpticsLab ships a French UI, so:
 
-- Screen-reader users on `fr` (or any non-English locale) hear English element names.
-- `accessibleName` is assigned a **plain string**, not a `StringProperty`, so it does **not** update when
-  the locale changes at runtime — it is frozen to whatever the class name spells.
-
-This is the single clearest i18n Fail in the view layer: the PDOM, which is precisely the surface a11y
-users depend on, is the one place still hardcoded to English.
+- Screen-reader users on `fr` (or any non-English locale) heard English element names.
+- `accessibleName` was a **plain string**, not a `StringProperty`, so it did **not** update when the
+  locale changed at runtime.
 
 ### Fix — applied
 
-Added `StringManager.getElementTypeNameProperty(type)`, which maps each `ELEMENT_TYPE_*` constant to its
-localized component `StringProperty`. `RayTracingCommonView` now assigns that Property to `accessibleName`,
-falling back to the generated `ElementTypeToAccessibleName` only for internal types with no component label
-(e.g. `FiberCoreGlass`). Names now localize and stay reactive to locale changes.
+`StringManager.getElementTypeNameProperty` maps each `ELEMENT_TYPE_*` constant to its localized
+component `StringProperty`. `RayTracingCommonView._setupView` assigns that Property to
+`accessibleName`, and falls back to `ElementTypeToAccessibleName` only for internal types with no
+component label (e.g. `FiberCoreGlass`). Names localize and stay reactive to locale changes.
 
 ---
 
 ## FINDING #2 — Hardcoded `"∫I ="` label in the detector chart
 
-**File:** `src/common/view/detectors/DetectorChartPanel.ts:169`
+**Where:** `DetectorChartPanel` constructor, the `powerLabel` `Text` next to `hitCountLabel`.
 **Pillar:** 6 (i18n) — **Severity: LOW–MEDIUM**
 
-### Code
+### Code (current)
 
 ```typescript
-const hitCountLabel = new Text(StringManager.getInstance().getUIStrings().detectorHitsStringProperty, { … }); // :159 — localized
-…
-const powerLabel = new Text("∫I =", { … }); // :169 — raw literal
+const hitCountLabel = new Text(StringManager.getInstance().getUIStrings().detectorHitsStringProperty, { … });
+const powerLabel = new Text(StringManager.getInstance().getUIStrings().detectorIntegratedIntensityStringProperty, { … });
 ```
 
 ### Problem
 
-The two readout labels are built side by side, but only one is localized. `"∫I ="` is a raw string
-literal, so translators can't reach it and it can't adapt (the `=` sign, spacing, and any locale-specific
-notation are fixed). The neighbouring `hitCountLabel` shows the intended pattern.
+The two readout labels are built side by side, but `powerLabel` used to be the raw literal `"∫I ="`.
+Translators could not reach it. `hitCountLabel` already showed the intended pattern.
 
 ### Fix — applied
 
-Added a `detectorIntegratedIntensity` key to all three locale files and exposed it via
-`StringManager.getUIStrings()`; `DetectorChartPanel` now passes that Property to the `Text` node, as
-`hitCountLabel` already did.
+Added a `detectorIntegratedIntensity` key to all three locale files and exposed it as
+`detectorIntegratedIntensityStringProperty` via `StringManager.getUIStrings()`. `DetectorChartPanel`
+passes that Property to the `Text` node, as `hitCountLabel` already did.
 
 ---
 
 ## FINDING #3 — No `dt` cap; acquisition sampling is frame-rate-coupled
 
-**Files:** `src/common/TimeModel.ts:66`, `src/common/model/detectors/DetectorAcquisition.ts:50`,
-`src/common/view/RayTracingCommonView.ts:814`
+**Where:**
+- `RayTracingCommonModel.step` forwards raw `dt` to each detector
+- `DetectorAcquisition.step` accumulates that `dt` (the old `TimeModel` clock is gone)
+- `RayTracingCommonView.updateRayPropagation` runs a fixed `ACQUISITION_PASSES_PER_FRAME` loop
+- `ACQUISITION_DURATION_S` and `ACQUISITION_PASSES_PER_FRAME` in `OpticsLabConstants.ts`
+
 **Pillar:** 5 (numerics / variable frame rate) — **Severity: LOW–MEDIUM**
 
 ### Problem
 
-There is no `dt = Math.min(dt, MAX_DT)` anywhere in the codebase. `TimeModel.step` accumulates raw `dt`,
-and `DetectorAcquisition.step` accumulates raw `dt` toward `ACQUISITION_DURATION_S = 2.0`
-(`OpticsLabConstants.ts:391`). Meanwhile the jittered sample passes that fill the acquisition histogram
-run a **fixed** `ACQUISITION_PASSES_PER_FRAME = 100` per animation frame (`RayTracingCommonView.ts:814`),
-independent of `dt`.
+There is no `dt = Math.min(dt, MAX_DT)` anywhere in the codebase. `DetectorAcquisition.step` adds the
+raw `dt` toward `ACQUISITION_DURATION_S` (2.0 s). The jittered sample passes that fill the acquisition
+histogram run a **fixed** `ACQUISITION_PASSES_PER_FRAME` (100) per animation frame inside
+`RayTracingCommonView.updateRayPropagation`, independent of `dt`.
 
 Consequences of the frame-count coupling:
 
@@ -117,18 +116,18 @@ is low–medium rather than high. But it violates the "resilient to variable fra
 
 ### Fix
 
-Cap `dt` at the model boundary (`RayTracingCommonModel.step` / `TimeModel.step`) and/or drive the number
+Cap `dt` at `RayTracingCommonModel.step` (or inside `DetectorAcquisition.step`) and/or drive the number
 of jitter passes from `dt` rather than a fixed per-frame count, so total sample count tracks physical
-acquisition time.
+acquisition time. This is a numerics change; leave it until someone is ready to retune acquisition.
 
 ---
 
 ## FINDING #4 — Element geometry is plain objects, not Axon Properties
 
-**File:** `src/common/view/RayTracingCommonView.ts:714–717`
+**Where:** `RayTracingCommonView._setupView`, the `rebuildListener` on `BaseOpticalElementView.rebuildEmitter`.
 **Pillar:** 1 (Property hygiene) — **Severity: LOW (deliberate tradeoff, but fragile)**
 
-### Code / comment (verbatim)
+### Code (current)
 
 ```typescript
 // Element positions are plain objects (not axon Properties), so dragging
@@ -140,15 +139,14 @@ this.model.scene.invalidate();
 ### Problem
 
 Element position/geometry is imperative mutable state rather than reactive `Property` state. Nothing
-observes it, so the view must remember to call `scene.invalidate()` by hand after any geometry change.
-Today there is exactly one such call site, which is fine — but the invariant "every geometry mutation must
-be followed by `invalidate()`" is enforced by nothing. A future drag path, a preset loader, or a
-programmatic move that forgets the call will silently render a **stale ray trace** with no error.
+observes it, so the view must remember to call `OpticsScene.invalidate()` by hand after any geometry
+change. The call sits in that rebuild listener. The invariant "every geometry mutation must be followed
+by `invalidate()`" is enforced by nothing. A future drag path, a preset loader, or a programmatic move
+that forgets the call will silently render a **stale ray trace** with no error.
 
 This is a conscious performance tradeoff (Properties on every control point would be heavier), so it is
-not a defect to "fix" blindly — but per the pillar-1 guideline it is the one place raw state escapes the
-Axon reactivity model, and it should be documented as a load-bearing invariant (or centralized behind a
-single `moveElement()`/`setGeometry()` helper that invalidates internally).
+not a defect to "fix" blindly. It should stay documented as a load-bearing invariant, or be centralized
+behind a single helper that invalidates internally.
 
 ---
 
@@ -156,9 +154,9 @@ single `moveElement()`/`setGeometry()` helper that invalidates internally).
 
 - **Architecture (model–view).** No `scenerystack/scenery`, `scenerystack/sun`, or `common/view` imports
   under `src/common/model/**`. Data flows Model → View through Properties and `OpticsScene` invalidation.
-- **Memory / disposal.** `DetectorChartPanel` disposes every node it owns via an explicit `disposeNodes`
-  array (`:214`, `:228`); `RayTracingCommonView` unlinks selection/rebuild listeners on `disposeEmitter`
-  (`:720`, `:733`). Dynamic element add/remove is covered by `tests/memory-leak.test.ts`.
-- **Per-frame allocation.** `updateRayPropagation` (`:807`) reuses the cached `TraceResult` for static
-  scenes; the allocation-heavy path only runs while a detector is actively acquiring — a documented,
-  intentional optimization.
+- **Memory / disposal.** `DetectorChartPanel.dispose` disposes every node listed in `disposeNodes`.
+  `RayTracingCommonView._setupView` removes the rebuild listener, the selection link, the body-drag
+  link, and the selection input listener on each view's `disposeEmitter`. Dynamic element add/remove is
+  covered by `tests/memory-leak.test.ts`.
+- **Per-frame allocation.** `RayTracingCommonView.updateRayPropagation` reuses the cached `TraceResult`
+  for static scenes; the allocation-heavy path only runs while a detector is actively acquiring.
