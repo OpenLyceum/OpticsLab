@@ -132,6 +132,7 @@ export class StringManager {
     observerLabelStringProperty: ReadOnlyProperty<string>;
     detectorIntensityAxisStringProperty: ReadOnlyProperty<string>;
     detectorHitsStringProperty: ReadOnlyProperty<string>;
+    detectorCountPlaceholderStringProperty: ReadOnlyProperty<string>;
     detectorIntegratedIntensityStringProperty: ReadOnlyProperty<string>;
   } {
     return {
@@ -153,6 +154,7 @@ export class StringManager {
       observerLabelStringProperty: stringProperties.ui.observerLabelStringProperty,
       detectorIntensityAxisStringProperty: stringProperties.ui.detectorIntensityAxisStringProperty,
       detectorHitsStringProperty: stringProperties.ui.detectorHitsStringProperty,
+      detectorCountPlaceholderStringProperty: stringProperties.ui.detectorCountPlaceholderStringProperty,
       detectorIntegratedIntensityStringProperty: stringProperties.ui.detectorIntegratedIntensityStringProperty,
     };
   }

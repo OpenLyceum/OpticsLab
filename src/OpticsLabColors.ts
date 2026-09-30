@@ -506,6 +506,24 @@ const OpticsLabColors = {
     default: "#1a1a1a",
     projector: "#1a1a1a",
   }),
+
+  /** Ray stroke on home-screen icons. */
+  iconRayColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconRay", {
+    default: "#55ee77",
+    projector: "#1b8a3a",
+  }),
+
+  /** Softer companion ray on home-screen icons. */
+  iconRaySoftColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconRaySoft", {
+    default: "#88dd99",
+    projector: "#4caf6a",
+  }),
+
+  /** Accent mark (source or focus) on home-screen icons. */
+  iconAccentColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconAccent", {
+    default: "#ffaa55",
+    projector: "#e65100",
+  }),
 };
 
 /**

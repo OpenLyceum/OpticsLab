@@ -6,6 +6,7 @@
  * segment within a finite divergence half-angle.
  */
 
+import { dotRandom } from "scenerystack/dot";
 import { DEFAULT_BEAM_BRIGHTNESS, DIVERGENT_BEAM_DEFAULT_EMIS_ANGLE_DEG } from "../../../OpticsLabConstants.js";
 import { ELEMENT_TYPE_DIVERGENT_BEAM } from "../../../OpticsLabStrings.js";
 import type { Bounds, Point } from "../optics/Geometry.js";
@@ -71,7 +72,7 @@ export class DivergentBeam extends BaseLightSource {
     // into one shared group, producing spurious cross-source image markers).
     let idx = 0;
     for (let i = 0.5; i <= n; i++) {
-      const jitterFrac = jitter ? Math.random() - 0.5 : 0;
+      const jitterFrac = jitter ? dotRandom.nextDouble() - 0.5 : 0;
       const x = this.p1.x + (i + jitterFrac) * stepX;
       const y = this.p1.y + (i + jitterFrac) * stepY;
 

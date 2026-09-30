@@ -47,6 +47,7 @@
     "observerLabel": "observer",
     "detectorIntensityAxis": "Intensity (a.u.)",
     "detectorHits": "Hits:",
+    "detectorCountPlaceholder": "0",
     "detectorIntegratedIntensity": "∫I ="
   },
   "controls": {

@@ -6,6 +6,7 @@
  * the segment.
  */
 
+import { dotRandom } from "scenerystack/dot";
 import { DEFAULT_BEAM_BRIGHTNESS } from "../../../OpticsLabConstants.js";
 import { ELEMENT_TYPE_BEAM } from "../../../OpticsLabStrings.js";
 
@@ -52,7 +53,7 @@ export class BeamSource extends BaseLightSource {
 
     let idx = 0;
     for (let i = 0.5; i <= n; i++) {
-      const jitterFrac = jitter ? Math.random() - 0.5 : 0;
+      const jitterFrac = jitter ? dotRandom.nextDouble() - 0.5 : 0;
       const x = this.p1.x + (i + jitterFrac) * stepX;
       const y = this.p1.y + (i + jitterFrac) * stepY;
       const dir = normalize(subtract(point(x + Math.sin(normal), y + Math.cos(normal)), point(x, y)));

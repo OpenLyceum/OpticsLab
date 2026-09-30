@@ -17,6 +17,7 @@
  * A rotated y-axis label identifies the quantity as "Intensity (a.u.)".
  */
 
+import { StringProperty } from "scenerystack/axon";
 import { BarPlot, ChartRectangle, ChartTransform } from "scenerystack/bamboo";
 import { Range, Vector2 } from "scenerystack/dot";
 import { Shape } from "scenerystack/kite";
@@ -80,8 +81,8 @@ export class DetectorChartPanel extends Panel {
   private readonly liveBars: BarPlot;
   private readonly acquiredBars: BarPlot;
   private currentNumBins: number;
-  private readonly hitCountText: Text;
-  private readonly totalPowerText: Text;
+  private readonly hitCountStringProperty: StringProperty;
+  private readonly totalPowerStringProperty: StringProperty;
 
   /**
    * Descendant nodes that link to long-lived global Properties — the
@@ -163,7 +164,9 @@ export class DetectorChartPanel extends Panel {
       fill: OpticsLabColors.detectorFrontStrokeProperty,
       pickable: false,
     });
-    const hitCountValue = new Text("0", {
+    const uiStrings = StringManager.getInstance().getUIStrings();
+    const hitCountStringProperty = new StringProperty(uiStrings.detectorCountPlaceholderStringProperty.value);
+    const hitCountValue = new Text(hitCountStringProperty, {
       font: FONT_BOLD_9PX,
       fill: OpticsLabColors.detectorFrontStrokeProperty,
       pickable: false,
@@ -173,7 +176,8 @@ export class DetectorChartPanel extends Panel {
       fill: OpticsLabColors.detectorFrontStrokeProperty,
       pickable: false,
     });
-    const totalPowerValue = new Text("0", {
+    const totalPowerStringProperty = new StringProperty(uiStrings.detectorCountPlaceholderStringProperty.value);
+    const totalPowerValue = new Text(totalPowerStringProperty, {
       font: FONT_BOLD_9PX,
       fill: OpticsLabColors.detectorFrontStrokeProperty,
       pickable: false,
@@ -207,8 +211,8 @@ export class DetectorChartPanel extends Panel {
     this.liveBars = liveBars;
     this.acquiredBars = acquiredBars;
     this.currentNumBins = DETECTOR_NUM_BINS;
-    this.hitCountText = hitCountValue;
-    this.totalPowerText = totalPowerValue;
+    this.hitCountStringProperty = hitCountStringProperty;
+    this.totalPowerStringProperty = totalPowerStringProperty;
 
     // Every node created here that links to a global color/string Property.
     // The bars and ChartRectangle also observe chartTransform, so they are
@@ -231,6 +235,8 @@ export class DetectorChartPanel extends Panel {
     for (const node of this.disposeNodes) {
       node.dispose();
     }
+    this.hitCountStringProperty.dispose();
+    this.totalPowerStringProperty.dispose();
     this.chartTransform.dispose();
     super.dispose();
   }
@@ -288,8 +294,8 @@ export class DetectorChartPanel extends Panel {
     }
 
     // Update integrated intensity readouts
-    this.hitCountText.setString(totalHitCount.toLocaleString());
-    this.totalPowerText.setString(formatPower(totalPower));
+    this.hitCountStringProperty.value = totalHitCount.toLocaleString();
+    this.totalPowerStringProperty.value = formatPower(totalPower);
   }
 }
 

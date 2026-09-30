@@ -8,6 +8,7 @@
  * π/2 = down (positive y-axis), consistent with Math.atan2(dy, dx).
  */
 
+import { dotRandom } from "scenerystack/dot";
 import { DEFAULT_ARC_BRIGHTNESS, DEFAULT_ARC_CONE_HALF_ANGLE_RAD } from "../../../OpticsLabConstants.js";
 import { ELEMENT_TYPE_ARC_SOURCE } from "../../../OpticsLabStrings.js";
 import type { Bounds, Point } from "../optics/Geometry.js";
@@ -75,7 +76,7 @@ export class ArcLightSource extends BaseLightSource {
     let idx = 0;
 
     for (let angle = startAngle; angle < endAngle - 1e-9; angle += angularStep) {
-      const jitterOffset = jitter ? (Math.random() - 0.5) * angularStep : 0;
+      const jitterOffset = jitter ? (dotRandom.nextDouble() - 0.5) * angularStep : 0;
       const jitteredAngle = angle + jitterOffset;
       rays.push(
         this.makeRay(

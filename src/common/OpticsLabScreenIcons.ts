@@ -21,12 +21,12 @@ import { ScreenIcon } from "scenerystack/sim";
 import OpticsLabColors from "../OpticsLabColors.js";
 
 // ── Shared icon palette ────────────────────────────────────────────────────────
-const RAY = "#55ee77";
-const RAY_SOFT = "#88dd99";
+const RAY = OpticsLabColors.iconRayColorProperty;
+const RAY_SOFT = OpticsLabColors.iconRaySoftColorProperty;
 const LENS_STROKE = "rgba(140, 200, 255, 0.95)";
 const LENS_FILL = "rgba(100, 180, 255, 0.35)";
 const MIRROR = "rgba(210, 210, 220, 0.9)";
-const ACCENT = "#ffaa55";
+const ACCENT = OpticsLabColors.iconAccentColorProperty;
 const WHITE_RAY = "rgba(255, 255, 235, 0.95)";
 const GLASS_FILL = "rgba(120, 165, 215, 0.22)";
 const GLASS_STROKE = "rgba(165, 205, 248, 0.9)";

@@ -260,8 +260,8 @@ export class Glass extends BaseGlass {
     // across repeated calls and across wavelength components of the same ray.
     // The irrational y-component minimises the chance of the test ray passing
     // exactly through a vertex of any axis-aligned or common-angle glass path.
-    // (Previous code used Math.random() which made the same ray classify
-    //  differently on successive frames — a physics non-determinism bug.)
+    // A nondeterministic direction made the same ray classify differently on
+    // successive frames.
     const testDir = point(1.0, 1e-6);
 
     let count = 0;

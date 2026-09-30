@@ -9,6 +9,7 @@
  * Acquisition / histogram logic is delegated to DetectorAcquisition.
  */
 
+import { dotRandom } from "scenerystack/dot";
 import { DETECTOR_MAX_HITS, DETECTOR_NUM_BINS } from "../../../OpticsLabConstants.js";
 import { ELEMENT_CATEGORY_BLOCKER, ELEMENT_TYPE_DETECTOR } from "../../../OpticsLabStrings.js";
 import { BaseSegmentElement } from "../optics/BaseSegmentElement.js";
@@ -190,7 +191,7 @@ export class DetectorElement extends BaseSegmentElement implements IAcquirable {
     if (this.hits.length < DETECTOR_MAX_HITS) {
       this.hits.push({ t, brightness });
     } else {
-      const idx = Math.floor(Math.random() * this.totalHitCount);
+      const idx = dotRandom.nextInt(this.totalHitCount);
       if (idx < DETECTOR_MAX_HITS) {
         this.hits[idx] = { t, brightness };
       }

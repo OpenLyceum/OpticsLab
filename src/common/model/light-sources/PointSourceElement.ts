@@ -5,6 +5,7 @@
  * directions. The angular spacing of rays depends on rayDensity.
  */
 
+import { dotRandom } from "scenerystack/dot";
 import { DEFAULT_POINT_SOURCE_BRIGHTNESS } from "../../../OpticsLabConstants.js";
 import { ELEMENT_TYPE_POINT_SOURCE } from "../../../OpticsLabStrings.js";
 
@@ -46,7 +47,7 @@ export class PointSourceElement extends BaseLightSource {
     let idx = 0;
 
     for (let angle = startAngle; angle < Math.PI * 2 - 1e-5; angle += angularStep) {
-      const jitterOffset = jitter ? (Math.random() - 0.5) * angularStep : 0;
+      const jitterOffset = jitter ? (dotRandom.nextDouble() - 0.5) * angularStep : 0;
       const jitteredAngle = angle + jitterOffset;
       rays.push(
         this.makeRay(
