@@ -519,6 +519,116 @@ const OpticsLabColors = {
     projector: "#4caf6a",
   }),
 
+  /** Lens outline on home-screen icons. */
+  iconLensStrokeColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconLensStroke", {
+    default: "rgba(140, 200, 255, 0.95)",
+  }),
+
+  /** Lens body on home-screen icons. */
+  iconLensFillColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconLensFill", {
+    default: "rgba(100, 180, 255, 0.35)",
+  }),
+
+  /** Mirror surface on home-screen icons. */
+  iconMirrorColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconMirror", {
+    default: "rgba(210, 210, 220, 0.9)",
+  }),
+
+  /** Incoming white light on home-screen icons. */
+  iconWhiteRayColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconWhiteRay", {
+    default: "rgba(255, 255, 235, 0.95)",
+  }),
+
+  /** White light inside the prism on home-screen icons. */
+  iconWhiteRayFaintColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconWhiteRayFaint", {
+    default: "rgba(255,255,235,0.55)",
+  }),
+
+  /** Glass body (prisms) on home-screen icons. */
+  iconGlassFillColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconGlassFill", {
+    default: "rgba(120, 165, 215, 0.22)",
+  }),
+
+  /** Glass outline (prisms) on home-screen icons. */
+  iconGlassStrokeColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconGlassStroke", {
+    default: "rgba(165, 205, 248, 0.9)",
+  }),
+
+  /** Preset card fill on home-screen icons. */
+  iconPresetRowColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconPresetRow", {
+    default: "rgba(160, 175, 200, 0.55)",
+  }),
+
+  /** Preset card outline on home-screen icons. */
+  iconPresetRowStrokeColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconPresetRowStroke", {
+    default: "rgba(200, 210, 230, 0.5)",
+  }),
+
+  /** Optical-bench rail on home-screen icons. */
+  iconBenchRailColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconBenchRail", {
+    default: "rgba(135, 150, 182, 0.9)",
+  }),
+
+  /** Optical-bench rail ticks on home-screen icons. */
+  iconBenchTickColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconBenchTick", {
+    default: "rgba(85, 98, 128, 0.85)",
+  }),
+
+  /** Stands rising from the bench rail on home-screen icons. */
+  iconBenchStandColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconBenchStand", {
+    default: "rgba(108, 124, 158, 0.85)",
+  }),
+
+  /** Off-axis rays converging to the focus on home-screen icons. */
+  iconRayConvergingColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconRayConverging", {
+    default: "rgba(85, 238, 119, 0.6)",
+  }),
+
+  /** Point-source core outline on home-screen icons. */
+  iconSourceRimColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconSourceRim", {
+    default: "rgba(255, 195, 85, 0.9)",
+  }),
+
+  /** Point-source inner glow ring on home-screen icons. */
+  iconSourceGlowInnerColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconSourceGlowInner", {
+    default: "rgba(255, 190, 80, 0.35)",
+  }),
+
+  /** Point-source outer glow ring on home-screen icons. */
+  iconSourceGlowOuterColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconSourceGlowOuter", {
+    default: "rgba(255, 185, 75, 0.15)",
+  }),
+
+  /** Detector screen body on home-screen icons. */
+  iconDetectorFillColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconDetectorFill", {
+    default: "rgba(75, 90, 122, 0.4)",
+  }),
+
+  /** Detector screen outline on home-screen icons. */
+  iconDetectorStrokeColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconDetectorStroke", {
+    default: "rgba(152, 168, 205, 0.9)",
+  }),
+
+  /** Focal-spot outline on home-screen icons. */
+  iconFocalSpotRimColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconFocalSpotRim", {
+    default: "rgba(85, 238, 119, 0.5)",
+  }),
+
+  /** Focus-mark outline on the reflector card on home-screen icons. */
+  iconFocusMarkRimColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconFocusMarkRim", {
+    default: "rgba(255, 195, 85, 0.6)",
+  }),
+
+  /** Spectroscope prism outline on home-screen icons. */
+  iconPrismStrokeColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconPrismStroke", {
+    default: "rgba(155, 195, 238, 0.75)",
+  }),
+
+  /** Grating rulings on home-screen icons. */
+  iconGratingLineColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconGratingLine", {
+    default: "rgba(200, 210, 230, 0.85)",
+  }),
+
   /** Accent mark (source or focus) on home-screen icons. */
   iconAccentColorProperty: new ProfileColorProperty(OpticsLabNamespace, "iconAccent", {
     default: "#ffaa55",

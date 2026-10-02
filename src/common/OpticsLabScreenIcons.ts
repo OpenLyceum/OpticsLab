@@ -23,15 +23,15 @@ import OpticsLabColors from "../OpticsLabColors.js";
 // ── Shared icon palette ────────────────────────────────────────────────────────
 const RAY = OpticsLabColors.iconRayColorProperty;
 const RAY_SOFT = OpticsLabColors.iconRaySoftColorProperty;
-const LENS_STROKE = "rgba(140, 200, 255, 0.95)";
-const LENS_FILL = "rgba(100, 180, 255, 0.35)";
-const MIRROR = "rgba(210, 210, 220, 0.9)";
+const LENS_STROKE = OpticsLabColors.iconLensStrokeColorProperty;
+const LENS_FILL = OpticsLabColors.iconLensFillColorProperty;
+const MIRROR = OpticsLabColors.iconMirrorColorProperty;
 const ACCENT = OpticsLabColors.iconAccentColorProperty;
-const WHITE_RAY = "rgba(255, 255, 235, 0.95)";
-const GLASS_FILL = "rgba(120, 165, 215, 0.22)";
-const GLASS_STROKE = "rgba(165, 205, 248, 0.9)";
-const PRESET_ROW = "rgba(160, 175, 200, 0.55)";
-const PRESET_ROW_STROKE = "rgba(200, 210, 230, 0.5)";
+const WHITE_RAY = OpticsLabColors.iconWhiteRayColorProperty;
+const GLASS_FILL = OpticsLabColors.iconGlassFillColorProperty;
+const GLASS_STROKE = OpticsLabColors.iconGlassStrokeColorProperty;
+const PRESET_ROW = OpticsLabColors.iconPresetRowColorProperty;
+const PRESET_ROW_STROKE = OpticsLabColors.iconPresetRowStrokeColorProperty;
 
 // Sampled visible wavelengths in nm, violet → red. Used to build accurate spectra.
 const SPECTRUM_WL = [410, 440, 470, 510, 555, 590, 650];
@@ -71,7 +71,11 @@ function wrapIntroIcon(): Node {
   root.addChild(new Line(-94, -26, entry.x, entry.y, { stroke: WHITE_RAY, lineWidth: 5, lineCap: "round" }));
   // Faint white ray traversing the glass.
   root.addChild(
-    new Line(entry.x, entry.y, exit.x, exit.y, { stroke: "rgba(255,255,235,0.55)", lineWidth: 3, lineCap: "round" }),
+    new Line(entry.x, entry.y, exit.x, exit.y, {
+      stroke: OpticsLabColors.iconWhiteRayFaintColorProperty,
+      lineWidth: 3,
+      lineCap: "round",
+    }),
   );
 
   // Dispersed spectrum exiting the right face: violet deviates most (largest downward angle).
@@ -104,10 +108,16 @@ function wrapLabIcon(): Node {
 
   // Bench rail with tick marks.
   root.addChild(
-    new Line(-96, railY, 96, railY, { stroke: "rgba(135, 150, 182, 0.9)", lineWidth: 7, lineCap: "round" }),
+    new Line(-96, railY, 96, railY, {
+      stroke: OpticsLabColors.iconBenchRailColorProperty,
+      lineWidth: 7,
+      lineCap: "round",
+    }),
   );
   for (const x of [-72, -48, -24, 0, 24, 48, 72]) {
-    root.addChild(new Line(x, railY - 4, x, railY + 4, { stroke: "rgba(85, 98, 128, 0.85)", lineWidth: 1.5 }));
+    root.addChild(
+      new Line(x, railY - 4, x, railY + 4, { stroke: OpticsLabColors.iconBenchTickColorProperty, lineWidth: 1.5 }),
+    );
   }
 
   // Rays: diverging from the source to the lens, then converging to the focal spot.
@@ -122,7 +132,7 @@ function wrapLabIcon(): Node {
     );
     root.addChild(
       new Line(0, yLens, focus.x, focus.y, {
-        stroke: isAxis ? RAY : "rgba(85, 238, 119, 0.6)",
+        stroke: isAxis ? RAY : OpticsLabColors.iconRayConvergingColorProperty,
         lineWidth: isAxis ? 2.4 : 2.0,
         lineCap: "round",
       }),
@@ -132,16 +142,24 @@ function wrapLabIcon(): Node {
   // Element stands rising from the rail.
   root.addChild(
     new Line(source.x, source.y + 10, source.x, railY, {
-      stroke: "rgba(108, 124, 158, 0.85)",
+      stroke: OpticsLabColors.iconBenchStandColorProperty,
       lineWidth: 3,
       lineCap: "round",
     }),
   );
   root.addChild(
-    new Line(0, lensHalfHeight, 0, railY, { stroke: "rgba(108, 124, 158, 0.85)", lineWidth: 3, lineCap: "round" }),
+    new Line(0, lensHalfHeight, 0, railY, {
+      stroke: OpticsLabColors.iconBenchStandColorProperty,
+      lineWidth: 3,
+      lineCap: "round",
+    }),
   );
   root.addChild(
-    new Line(focus.x, 28, focus.x, railY, { stroke: "rgba(108, 124, 158, 0.85)", lineWidth: 3, lineCap: "round" }),
+    new Line(focus.x, 28, focus.x, railY, {
+      stroke: OpticsLabColors.iconBenchStandColorProperty,
+      lineWidth: 3,
+      lineCap: "round",
+    }),
   );
 
   // Biconvex lens at x = 0.
@@ -158,25 +176,41 @@ function wrapLabIcon(): Node {
 
   // Point source: bright core with glow rings.
   root.addChild(
-    new Path(Shape.circle(source.x, source.y, 10), { fill: ACCENT, stroke: "rgba(255, 195, 85, 0.9)", lineWidth: 2.5 }),
+    new Path(Shape.circle(source.x, source.y, 10), {
+      fill: ACCENT,
+      stroke: OpticsLabColors.iconSourceRimColorProperty,
+      lineWidth: 2.5,
+    }),
   );
   root.addChild(
-    new Path(Shape.circle(source.x, source.y, 18), { fill: null, stroke: "rgba(255, 190, 80, 0.35)", lineWidth: 2 }),
+    new Path(Shape.circle(source.x, source.y, 18), {
+      fill: null,
+      stroke: OpticsLabColors.iconSourceGlowInnerColorProperty,
+      lineWidth: 2,
+    }),
   );
   root.addChild(
-    new Path(Shape.circle(source.x, source.y, 27), { fill: null, stroke: "rgba(255, 185, 75, 0.15)", lineWidth: 1.5 }),
+    new Path(Shape.circle(source.x, source.y, 27), {
+      fill: null,
+      stroke: OpticsLabColors.iconSourceGlowOuterColorProperty,
+      lineWidth: 1.5,
+    }),
   );
 
   // Detector screen with the bright focal spot.
   root.addChild(
     new Path(Shape.roundRect(focus.x - 4, -28, 9, 56, 3, 3), {
-      fill: "rgba(75, 90, 122, 0.4)",
-      stroke: "rgba(152, 168, 205, 0.9)",
+      fill: OpticsLabColors.iconDetectorFillColorProperty,
+      stroke: OpticsLabColors.iconDetectorStrokeColorProperty,
       lineWidth: 2.5,
     }),
   );
   root.addChild(
-    new Path(Shape.circle(focus.x, focus.y, 7), { fill: RAY, stroke: "rgba(85, 238, 119, 0.5)", lineWidth: 2.5 }),
+    new Path(Shape.circle(focus.x, focus.y, 7), {
+      fill: RAY,
+      stroke: OpticsLabColors.iconFocalSpotRimColorProperty,
+      lineWidth: 2.5,
+    }),
   );
 
   return root;
@@ -257,7 +291,13 @@ function wrapPresetsIcon(): Node {
     root.addChild(new Line(40, y - 7, 24, y, { stroke: RAY_SOFT, lineWidth: 1.8, lineCap: "round" }));
     root.addChild(new Line(40, y, 24, y, { stroke: RAY, lineWidth: 2, lineCap: "round" }));
     root.addChild(new Line(40, y + 7, 24, y, { stroke: RAY_SOFT, lineWidth: 1.8, lineCap: "round" }));
-    root.addChild(new Path(Shape.circle(24, y, 5), { fill: ACCENT, stroke: "rgba(255, 195, 85, 0.6)", lineWidth: 2 }));
+    root.addChild(
+      new Path(Shape.circle(24, y, 5), {
+        fill: ACCENT,
+        stroke: OpticsLabColors.iconFocusMarkRimColorProperty,
+        lineWidth: 2,
+      }),
+    );
   }
 
   // ── Card 3: spectroscope — prism dispersing to a spectrum (violet deviates most). ──
@@ -272,7 +312,7 @@ function wrapPresetsIcon(): Node {
           .close(),
         {
           fill: GLASS_FILL,
-          stroke: "rgba(155, 195, 238, 0.75)",
+          stroke: OpticsLabColors.iconPrismStrokeColorProperty,
           lineWidth: 1.8,
         },
       ),
@@ -300,7 +340,9 @@ function wrapDiffractionIcon(): Node {
   // Ruled grating: a stack of fine vertical lines.
   for (let i = -3; i <= 3; i++) {
     const x = i * 7;
-    root.addChild(new Line(x, -46, x, 46, { stroke: "rgba(200, 210, 230, 0.85)", lineWidth: 3, lineCap: "round" }));
+    root.addChild(
+      new Line(x, -46, x, 46, { stroke: OpticsLabColors.iconGratingLineColorProperty, lineWidth: 3, lineCap: "round" }),
+    );
   }
 
   const origin = { x: 20, y: 0 };
