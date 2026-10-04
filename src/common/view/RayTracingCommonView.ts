@@ -756,7 +756,7 @@ export class RayTracingCommonView extends ScreenView {
     this.elementViewMap.set(element.id, view);
 
     // For views that can change geometry via drag handles, sync the edit panel
-    // and clear any completed detector acquisitions (scene geometry changed).
+    // and cancel detector acquisitions (scene geometry changed).
     if (view instanceof BaseOpticalElementView) {
       const rebuildListener = (): void => {
         this.editContainerNode.refresh();
@@ -848,7 +848,7 @@ export class RayTracingCommonView extends ScreenView {
     });
   }
 
-  /** Clear completed acquisition data on all detectors (scene has changed). */
+  /** Cancel acquisition and discard data on all detectors (scene has changed). */
   private _clearAllDetectorAcquisitions(): void {
     for (const element of this.model.scene.getAllElements()) {
       if (element instanceof DetectorElement) {

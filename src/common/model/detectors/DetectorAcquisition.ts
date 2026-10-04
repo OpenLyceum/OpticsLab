@@ -69,7 +69,15 @@ export class DetectorAcquisition {
     this.bins[bin] = (this.bins[bin] ?? 0) + brightness;
   }
 
-  /** Clear completed acquisition data (e.g. when the scene changes). */
+  /** Cancel acquisition and discard samples when the scene changes. */
+  public clear(): void {
+    this.isAcquiring = false;
+    this.isComplete = false;
+    this.bins = [];
+    this.elapsed = 0;
+  }
+
+  /** Clear completed acquisition data. */
   public clearIfComplete(): void {
     if (this.isComplete) {
       this.isComplete = false;

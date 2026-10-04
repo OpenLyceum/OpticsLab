@@ -241,9 +241,9 @@ export class DetectorElement extends BaseSegmentElement implements IAcquirable {
     return Math.min(1, Math.max(0, t));
   }
 
-  /** Clear any completed acquisition data (e.g. when the scene changes). */
+  /** Cancel acquisition and clear its data when the scene changes. */
   public clearAcquisition(): void {
-    this.acquisition.clearIfComplete();
+    this.acquisition.clear();
   }
 
   /** Reset all hit data before a new simulation pass. */
