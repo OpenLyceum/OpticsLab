@@ -84,8 +84,13 @@ Fleet-standard Vitest layout:
 
 Actual specs:
 
-- `tests/duplicate-element.test.ts`
-- `tests/memory-leak.test.ts`
+- `tests/detector-acquisition.test.ts` — acquisition cancels when the scene changes
+- `tests/drag-interactions.test.ts` — element drag constraints
+- `tests/duplicate-element.test.ts` — scene and serialization invariants
+- `tests/memory-leak.test.ts` — WeakRef / GC dispose regression
+- `tests/physics-invariants.test.ts` — exit refraction, grating truncation, fiber bend loss
+- `tests/review-regressions.test.ts` — ideal-lens sign, deserialization, arc bounds, source ids
+- `tests/fuzz/fuzz.spec.ts` — Playwright smoke (not part of `npm test`)
 
 Run `npm test`. CI runs the suite when a `test` script is present.
 
@@ -111,6 +116,6 @@ Client-only sim (no backend). Prefer `AGENTS.md` over any `AGENTS.md` — org co
 - Dependencies: `npm ci` (startup script). Do not re-install unless deps changed. Node ≥ 24 (`engines`); npm only.
 - Dev server: `npm start` (Vite `http://localhost:5173`). Do not use production `build` output for interactive UI testing.
 - Commands: `npm run lint` / `check` / `test` / `build` — see `README.md`.
-- `npm test` is slow (~90s, 400+ tests) because of ray-tracing model coverage — expected, not a hang.
+- `npm test` runs about 430 tests and takes around a minute. That duration is the ray-tracing coverage, not a hang.
 - Git hooks via `prepare` (`core.hooksPath .githooks`): pre-commit formats with Biome; pre-push runs lint + check.
 - `npm run icons` is optional unless changing PWA icons.

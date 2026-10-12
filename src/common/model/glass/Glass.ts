@@ -37,6 +37,9 @@ import { MIN_RAY_LENGTH_SQ } from "../optics/OpticsConstants.js";
 import type { IntersectionResult, RayCallConfig, RayInteractionResult, SimulationRay } from "../optics/OpticsTypes.js";
 import { BaseGlass } from "./BaseGlass.js";
 
+/** Ignore only a parity-probe hit that is numerically the sample point itself. */
+const PARITY_MIN_DISTANCE_SQ = 1e-16;
+
 export interface GlassPathPoint {
   x: number;
   y: number;
@@ -226,7 +229,7 @@ export class Glass extends BaseGlass {
       return { isAbsorbed: true };
     }
 
-    const incidentType = this.getIncidentType(ray);
+    const incidentType = this.getIncidentType(ray, intersection.point);
 
     if (incidentType === 0) {
       return {
@@ -255,7 +258,11 @@ export class Glass extends BaseGlass {
 
   // ── Inside/outside determination ─────────────────────────────────────────
 
-  public getIncidentType(ray: SimulationRay): number {
+  public getIncidentType(ray: SimulationRay, surfacePoint: Point): number {
+    // Sample the open segment, not the ray origin. After entry the origin lies
+    // on the surface, and a parity test from that point depends on which way
+    // the fixed probe points.
+    const sample = this.incidentSample(ray, surfacePoint);
     // Use a fixed, slightly off-axis direction so the parity test is deterministic
     // across repeated calls and across wavelength components of the same ray.
     // The irrational y-component minimises the chance of the test ray passing
@@ -273,9 +280,9 @@ export class Glass extends BaseGlass {
 
       if (next.arc && !current.arc) {
         const after = this.path[(i + 2) % n] as GlassPathPoint;
-        count += this.countArcIntersections(ray.origin, testDir, current, next, after);
+        count += this.countArcIntersections(sample, testDir, current, next, after);
       } else if (!(next.arc || current.arc)) {
-        count += this.countSegmentIntersections(ray.origin, testDir, current, next);
+        count += this.countSegmentIntersections(sample, testDir, current, next);
       }
     }
 
@@ -304,7 +311,10 @@ export class Glass extends BaseGlass {
     let count = 0;
 
     for (const hit of hits) {
-      if (distanceSquared(hit.point, origin) < MIN_RAY_LENGTH_SQ) {
+      // The sample sits in the incident medium, so a wall a fraction of a
+      // millimetre away must still count. Skipping MIN_RAY_LENGTH_SQ here
+      // dropped that crossing and flipped inside/outside.
+      if (distanceSquared(hit.point, origin) < PARITY_MIN_DISTANCE_SQ) {
         continue;
       }
       if (!isHitOnArc(hit.point, p1, p2, p3)) {
@@ -318,7 +328,7 @@ export class Glass extends BaseGlass {
   private countSegmentIntersections(origin: Point, dir: Point, a: GlassPathPoint, b: GlassPathPoint): number {
     const seg = segment(point(a.x, a.y), point(b.x, b.y));
     const hit = raySegmentIntersection(origin, dir, seg);
-    if (hit && distanceSquared(hit.point, origin) >= MIN_RAY_LENGTH_SQ) {
+    if (hit && distanceSquared(hit.point, origin) >= PARITY_MIN_DISTANCE_SQ) {
       return 1;
     }
     return 0;

@@ -70,6 +70,16 @@ export function midpoint(p1: Point, p2: Point): Point {
   return point((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
 }
 
+/**
+ * A point on the open segment from a ray origin to its surface hit.
+ * After a refraction the next ray starts on the surface it just left, so an
+ * inside/outside test at that origin is ambiguous. The midpoint lies in the
+ * medium the ray is crossing.
+ */
+export function incidentMediumPoint(origin: Point, hit: Point): Point {
+  return midpoint(origin, hit);
+}
+
 /** Projects point p onto the infinite line through lineP1 and lineP2. */
 export function projectPointOntoLine(p: Point, lineP1: Point, lineP2: Point): Point {
   const dx = lineP2.x - lineP1.x;

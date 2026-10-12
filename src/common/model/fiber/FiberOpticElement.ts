@@ -128,7 +128,7 @@ export class FiberCoreGlass extends Glass {
     intersection: IntersectionResult,
     config?: RayCallConfig,
   ): RayInteractionResult {
-    const incidentType = this.getIncidentType(ray);
+    const incidentType = this.getIncidentType(ray, intersection.point);
 
     if (incidentType === 0) {
       return { isAbsorbed: false, outgoingRay: { ...ray, origin: intersection.point } };
@@ -153,19 +153,28 @@ export class FiberCoreGlass extends Glass {
 
     const result = this.refractRay(ray, intersection.point, normal, n1, config?.partialReflectionEnabled ?? true);
 
-    // Apply bend loss attenuation to outgoing rays at tight bends.
+    // Apply bend loss attenuation to outgoing rays at tight bends, and record
+    // the removed power so the tracer's truncation budget still balances.
     const curvature = this.getLocalCurvature(intersection.point);
     const factor = this.bendLossFactor(curvature);
     if (factor < 1) {
+      let lost = 0;
       if (result.outgoingRay) {
+        const before = result.outgoingRay.brightnessS + result.outgoingRay.brightnessP;
         result.outgoingRay.brightnessS *= factor;
         result.outgoingRay.brightnessP *= factor;
+        lost += before * (1 - factor);
       }
       if (result.newRays) {
         for (const r of result.newRays) {
+          const before = r.brightnessS + r.brightnessP;
           r.brightnessS *= factor;
           r.brightnessP *= factor;
+          lost += before * (1 - factor);
         }
+      }
+      if (lost > 0) {
+        result.truncation = (result.truncation ?? 0) + lost;
       }
     }
 

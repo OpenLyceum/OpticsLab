@@ -41,12 +41,14 @@ export class HalfPlaneGlass extends BaseGlass {
   }
 
   /**
-   * Returns -1 when the ray origin is on the outside (normal side, air→glass),
-   * 1 when on the inside (glass→air).
+   * Returns -1 when the ray is on the outside (normal side, air→glass),
+   * 1 when on the inside (glass→air). Classifies the midpoint of the segment
+   * up to the hit so a ray that starts on the boundary is not stuck there.
    */
-  public getIncidentType(ray: SimulationRay): number {
+  public getIncidentType(ray: SimulationRay, surfacePoint: Point): number {
+    const sample = this.incidentSample(ray, surfacePoint);
     const n = segmentNormal(segment(this.p1, this.p2));
-    const side = (ray.origin.x - this.p1.x) * n.x + (ray.origin.y - this.p1.y) * n.y;
+    const side = (sample.x - this.p1.x) * n.x + (sample.y - this.p1.y) * n.y;
     return side > 0 ? -1 : 1;
   }
 
@@ -55,7 +57,7 @@ export class HalfPlaneGlass extends BaseGlass {
     intersection: IntersectionResult,
     config?: RayCallConfig,
   ): RayInteractionResult {
-    const incidentType = this.getIncidentType(ray);
+    const incidentType = this.getIncidentType(ray, intersection.point);
     const n1 =
       incidentType === 1
         ? this.getRefIndexAt(intersection.point, ray)

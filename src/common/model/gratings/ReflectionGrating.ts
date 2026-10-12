@@ -4,7 +4,7 @@
  * A reflection diffraction grating defined by a line segment.
  * Light bounces off the grooved, mirrored surface and is dispersed into
  * multiple diffraction orders, according to the grating equation:
- *   d (sin θ_m + sin θ_i) = m λ   (reflection geometry)
+ *   d (sin θ_m − sin θ_i) = m λ
  *
  * Properties:
  *  - linesDensity: groove density in lines/mm (1–2500)

@@ -24,7 +24,7 @@ Optical elements and tools (Intro / Lab / Presets unless noted):
 - Tools panel: grid, ray density, measuring tape, protractor, extended rays, and related view options
 - **Undo / redo** for add and remove element actions (keyboard shortcuts; see a11y strings)
 
-- English and French UI, projector color profile, and PWA support
+- English, Spanish, and French UI, projector color profile, and PWA support
 - Vitest unit tests for core optics model logic
 
 ## Quick Start

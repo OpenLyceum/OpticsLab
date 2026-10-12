@@ -85,8 +85,10 @@ not Snell tracing through volumetric glass.
 d (sin θ_m − sin θ_i) = m λ
 ```
 
-Several orders m are emitted; relative strengths use a **sinc²** factor from duty cycle; intensities
-renormalize across emitted orders. Orders requiring |sin θ| > 1 are skipped.
+Several orders m are emitted; relative strengths use a **sinc²** factor from duty cycle, taken over
+every order that can propagate. Orders requiring |sin θ| ≥ 1 are skipped. Orders below a minimum
+intensity are not traced, and their share of the power is counted as truncation rather than added
+to the orders that remain.
 
 **Ray tracing termination.** Tracing stops when depth exceeds `maxRayDepth`, combined s+p brightness
 falls below a minimum, or the ray is **absorbed** (detector, line blocker, opaque aperture). No

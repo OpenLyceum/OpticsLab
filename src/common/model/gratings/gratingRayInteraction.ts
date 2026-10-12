@@ -39,7 +39,6 @@ export function gratingRayInteraction(
   const sinThetaI = dot(ray.direction, tangent);
   const normalSign = mode === "reflection" ? 1 : -1;
 
-  const newRays: SimulationRay[] = [];
   const orders: { m: number; intensity: number; dir: Point }[] = [];
 
   for (let m = -GRATING_MAX_DIFFRACTION_ORDER; m <= GRATING_MAX_DIFFRACTION_ORDER; m++) {
@@ -54,21 +53,15 @@ export function gratingRayInteraction(
 
     const arg = m * dutyCycle;
     const intensity = m === 0 ? 1.0 : sincSquared(arg);
-    if (intensity < GRATING_MIN_DIFFRACTION_INTENSITY) {
-      continue;
-    }
-
     orders.push({ m, intensity, dir: outDir });
   }
 
-  // Normalise relative intensities so total output energy equals input energy.
-  // Each polarisation component is split independently to preserve the incoming
-  // S/P ratio rather than averaging them (which would scramble polarisation state).
+  // Weights are relative sinc² strengths of every propagating order. Faint
+  // orders are not traced, but their share stays in the truncation budget
+  // instead of being folded into the orders that are emitted.
   const totalIntensity = orders.reduce((sum, o) => sum + o.intensity, 0);
 
   if (totalIntensity === 0) {
-    // All orders were evanescent or below the intensity threshold — absorb and
-    // account for the lost brightness in the truncation budget.
     return {
       isAbsorbed: true,
       truncation: ray.brightnessS + ray.brightnessP,
@@ -76,15 +69,24 @@ export function gratingRayInteraction(
   }
 
   const scale = 1 / totalIntensity;
-
+  const newRays: SimulationRay[] = [];
   let outgoingRay: SimulationRay | undefined;
+  let truncation = 0;
+
   for (const order of orders) {
+    const brightS = ray.brightnessS * order.intensity * scale;
+    const brightP = ray.brightnessP * order.intensity * scale;
+    if (order.intensity < GRATING_MIN_DIFFRACTION_INTENSITY) {
+      truncation += brightS + brightP;
+      continue;
+    }
+
     const diffRay: SimulationRay = {
       origin: intersection.point,
       direction: order.dir,
       // Preserve each polarisation independently rather than averaging.
-      brightnessS: ray.brightnessS * order.intensity * scale,
-      brightnessP: ray.brightnessP * order.intensity * scale,
+      brightnessS: brightS,
+      brightnessP: brightP,
       gap: false,
       isNew: false,
       wavelength: ray.wavelength,
@@ -97,14 +99,22 @@ export function gratingRayInteraction(
     }
   }
 
-  const result: RayInteractionResult = {
-    isAbsorbed: !outgoingRay && newRays.length === 0,
-  };
+  if (!outgoingRay && newRays.length === 0) {
+    return {
+      isAbsorbed: true,
+      truncation: ray.brightnessS + ray.brightnessP,
+    };
+  }
+
+  const result: RayInteractionResult = { isAbsorbed: false };
   if (outgoingRay) {
     result.outgoingRay = outgoingRay;
   }
   if (newRays.length > 0) {
     result.newRays = newRays;
+  }
+  if (truncation > 0) {
+    result.truncation = truncation;
   }
   return result;
 }

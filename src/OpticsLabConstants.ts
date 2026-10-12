@@ -399,9 +399,9 @@ export const SINGLE_RAY_ARROW_ARM_FACTOR = 0.4;
 // ── 12. Grating rendering ────────────────────────────────────────────────────
 
 /**
- * Minimum normalised sinc² intensity for a diffraction order to be emitted.
- * Orders below this threshold are discarded to avoid flooding the scene with
- * near-zero-brightness rays.
+ * Minimum normalised sinc² intensity for a diffraction order to be traced.
+ * Weaker propagating orders are omitted; their share of the incident power is
+ * counted as truncation rather than added to the orders that remain.
  */
 export const GRATING_MIN_DIFFRACTION_INTENSITY = 0.001;
 

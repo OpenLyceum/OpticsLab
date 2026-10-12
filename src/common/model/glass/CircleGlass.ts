@@ -62,11 +62,13 @@ export class CircleGlass extends BaseGlass {
   }
 
   /**
-   * Returns 1 when the ray origin is inside the circle (glass→air),
-   * -1 when outside (air→glass).
+   * Returns 1 when the ray is traveling inside the circle (glass→air),
+   * -1 when outside (air→glass). The sample is the midpoint of the segment
+   * up to the hit: a point on the circumference is not inside (`pointInCircle`
+   * is strict), so testing the ray origin mis-labels the exit.
    */
-  public getIncidentType(ray: SimulationRay): number {
-    return pointInCircle(ray.origin, circle(this.p1, this.radius)) ? 1 : -1;
+  public getIncidentType(ray: SimulationRay, surfacePoint: Point): number {
+    return pointInCircle(this.incidentSample(ray, surfacePoint), circle(this.p1, this.radius)) ? 1 : -1;
   }
 
   public override onRayIncident(
@@ -74,7 +76,7 @@ export class CircleGlass extends BaseGlass {
     intersection: IntersectionResult,
     config?: RayCallConfig,
   ): RayInteractionResult {
-    const incidentType = this.getIncidentType(ray);
+    const incidentType = this.getIncidentType(ray, intersection.point);
     const n1 =
       incidentType === 1
         ? this.getRefIndexAt(intersection.point, ray)

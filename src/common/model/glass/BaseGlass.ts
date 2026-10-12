@@ -10,7 +10,7 @@
 import { CAUCHY_WAVELENGTH_FACTOR, DEFAULT_CAUCHY_B, DEFAULT_REFRACTIVE_INDEX } from "../../../OpticsLabConstants.js";
 import { ELEMENT_CATEGORY_GLASS } from "../../../OpticsLabStrings.js";
 import { BaseElement } from "../optics/BaseElement.js";
-import { type Point, point } from "../optics/Geometry.js";
+import { incidentMediumPoint, type Point, point } from "../optics/Geometry.js";
 import { FRESNEL_REFLECTION_THRESHOLD } from "../optics/OpticsConstants.js";
 import type { ElementCategory, RayInteractionResult, SimulationRay } from "../optics/OpticsTypes.js";
 
@@ -206,8 +206,18 @@ export abstract class BaseGlass extends BaseElement {
   }
 
   /**
-   * Determine whether the ray is incident from inside to outside or vice versa.
+   * Point in the medium the ray is crossing on its way to `surfacePoint`.
+   * The ray origin sits on the previous surface after a refraction, so an
+   * inside/outside test there treats the exit as another entrance.
+   */
+  protected incidentSample(ray: SimulationRay, surfacePoint: Point): Point {
+    return incidentMediumPoint(ray.origin, surfacePoint);
+  }
+
+  /**
+   * Whether the ray arrives at `surfacePoint` from inside the glass.
+   * Implementations must classify {@link incidentSample}, not `ray.origin`.
    * @returns 1 (inside→outside), -1 (outside→inside), 0 (overlap), NaN (edge/ambiguous)
    */
-  public abstract getIncidentType(ray: SimulationRay): number;
+  public abstract getIncidentType(ray: SimulationRay, surfacePoint: Point): number;
 }
