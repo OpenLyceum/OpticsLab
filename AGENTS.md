@@ -57,23 +57,7 @@ it can be made live by deriving an element-count Property.
 - **PWA icons:** `npm run icons` prefixes `generate-svg-icon` so `public/icons/icon.svg` is regenerated from `scripts/opticsToSVG.ts` before the fleet-standard rasterizer.
 - **Template drift (Baton `check-template-drift.sh`):** `icons` (the SVG step above).
 
-
-### `package.json` overrides
-
-JSON cannot carry comments, so the rationale for forced transitive pins lives here. Prefer
-**tilde (`~`) or exact** versions — caret (`^`) lets minors drift under what is meant to be a
-hard pin. Dependabot ignores these three names (see `.github/dependabot.yml`) so it does not
-open PRs that fight the overrides. Revisit when SceneryStack drops or re-pins them upstream.
-
-| Override | Pin | Why |
-|---|---|---|
-| `lodash` | `~4.18.1` | SceneryStack declares `~4.17.12`. Bump clears Dependabot/npm advisories patched in 4.18.x (e.g. GHSA-r5fr-rjxr-66jc, GHSA-f23m-r3pf-42rh). |
-| `three` | `~0.125.2` | SceneryStack declares `^0.104.0`. Floor is 0.125.0 for GHSA-fq6p-x6j3-cmmq (ReDoS). Staying on the 0.125 line avoids a larger API jump; **0.125.x still has open CVEs** (e.g. XSS GHSA-7vvq-7r29-5vg3, fixed only in ≥0.137.0). Remove this override if/when SceneryStack stops depending on `three` or pins a patched line itself. LightPropagation keeps a higher `three` pin — do not force 0.125 there. |
-| `brace-expansion` | `~5.0.12` | Transitive via `vite-plugin-pwa` / Workbox. Clears npm audit (originally GHSA-mh99-v99m-4gvg; keep ≥5.0.9 for GHSA-rgw5-rvv9-x895; ≥5.0.12 for the CPU-DoS advisory). |
-
 ## Testing
-
-Fleet-standard Vitest layout:
 
 | Path | Purpose |
 |---|---|
@@ -96,26 +80,11 @@ Run `npm test`. CI runs the suite when a `test` script is present.
 
 ## Commands
 
-```bash
-npm run lint && npm run check && npm run build
-npm test
-npm run generate-svg-icon   # regenerate icon SVG before icons
-```
-
-`npm run release` runs `npm test` before the version bump, and `src/init.ts` reads `version` from `package.json`, so the About dialog always matches the release.
+`npm run generate-svg-icon` regenerates the icon SVG before `npm run icons`. The other scripts are the fleet set in `.github/AGENTS.md`.
 
 ## Development notes
 
 - Model classes must not import from view. Boolean properties use verb prefixes (`is`, `has`, `show`).
 - **ES2024 target** — `tsconfig.json` and Vite `build.target` use ES2024 (Vite 8+). If build fails on unknown target, run `npm ci`.
 
-### Agent / Cursor Cloud notes
-
-Client-only sim (no backend). Prefer `AGENTS.md` over any `AGENTS.md` — org convention.
-
-- Dependencies: `npm ci` (startup script). Do not re-install unless deps changed. Node ≥ 24 (`engines`); npm only.
-- Dev server: `npm start` (Vite `http://localhost:5173`). Do not use production `build` output for interactive UI testing.
-- Commands: `npm run lint` / `check` / `test` / `build` — see `README.md`.
-- `npm test` runs about 430 tests and takes around a minute. That duration is the ray-tracing coverage, not a hang.
-- Git hooks via `prepare` (`core.hooksPath .githooks`): pre-commit formats with Biome; pre-push runs lint + check.
-- `npm run icons` is optional unless changing PWA icons.
+`npm test` runs about 430 tests and takes around a minute. That duration is the ray-tracing coverage, not a hang.
