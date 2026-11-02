@@ -22,6 +22,7 @@ import {
   point,
   pointsBounds,
   raySegmentIntersection,
+  sampleParabolaPoints,
   segment,
   segmentNormal,
 } from "../optics/Geometry.js";
@@ -54,34 +55,10 @@ export class AperturedParabolicMirror extends BaseElement {
 
   /**
    * Compute the polyline approximation of the parabola in scene coordinates.
-   * Matches ParabolicMirror.computePoints() exactly.
+   * Uses the same geometry sampler as ParabolicMirror.
    */
   public computePoints(): Point[] {
-    const chordMidX = (this.p1.x + this.p2.x) / 2;
-    const chordMidY = (this.p1.y + this.p2.y) / 2;
-    const chordLen = distance(this.p1, this.p2);
-    if (chordLen < 1e-10) {
-      return [this.p1, this.p2];
-    }
-
-    const tangentX = (this.p2.x - this.p1.x) / chordLen;
-    const tangentY = (this.p2.y - this.p1.y) / chordLen;
-
-    const sagitta = (this.p3.x - chordMidX) * -tangentY + (this.p3.y - chordMidY) * tangentX;
-
-    const halfAperture = chordLen / 2;
-    const a = halfAperture * halfAperture === 0 ? 0 : sagitta / (halfAperture * halfAperture);
-
-    const points: Point[] = [];
-    for (let i = 0; i <= PARABOLIC_MIRROR_SEGMENT_COUNT; i++) {
-      const t = -1 + (2 * i) / PARABOLIC_MIRROR_SEGMENT_COUNT; // t in [-1, 1]
-      const u = t * halfAperture;
-      const v = sagitta - a * u * u;
-      const px = chordMidX + tangentX * u + -tangentY * v;
-      const py = chordMidY + tangentY * u + tangentX * v;
-      points.push(point(px, py));
-    }
-    return points;
+    return sampleParabolaPoints(this.p1, this.p2, this.p3, PARABOLIC_MIRROR_SEGMENT_COUNT);
   }
 
   public getBounds(): Bounds {

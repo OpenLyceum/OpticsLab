@@ -1,7 +1,7 @@
 /**
  * ParabolicMirrorView.ts
  *
- * Scenery node for a parabolic mirror. Replicates the model's polyline
+ * Scenery node for a parabolic mirror. Shares the model's polyline
  * approximation (80 segments) and renders it with mirror styling.
  * Handles at p1, p2, and p3 allow reshaping; body drag repositions the mirror.
  */
@@ -19,7 +19,7 @@ import {
 } from "../../../OpticsLabConstants.js";
 import OpticsLabNamespace from "../../../OpticsLabNamespace.js";
 import type { ParabolicMirror } from "../../model/mirrors/ParabolicMirror.js";
-import type { Point } from "../../model/optics/Geometry.js";
+import { sampleParabolaPoints } from "../../model/optics/Geometry.js";
 import { BaseOpticalElementView } from "../BaseOpticalElementView.js";
 import {
   attachCurvatureHandleDrag,
@@ -32,41 +32,6 @@ import {
   projectPointOntoPerpendicularBisector,
 } from "../ViewHelpers.js";
 import type { ViewOptionsModel } from "../ViewOptionsModel.js";
-
-/**
- * Compute the parabola's polyline approximation in model coordinates.
- * Matches the logic in ParabolicMirror.computePoints().
- */
-function computeParabolaPoints(p1: Point, p2: Point, p3: Point): Point[] {
-  const chordMidX = (p1.x + p2.x) / 2;
-  const chordMidY = (p1.y + p2.y) / 2;
-  const chordLen = Math.sqrt((p2.x - p1.x) ** 2 + (p2.y - p1.y) ** 2);
-
-  if (chordLen < 1e-10) {
-    return [p1, p2];
-  }
-
-  const tangentX = (p2.x - p1.x) / chordLen;
-  const tangentY = (p2.y - p1.y) / chordLen;
-
-  // Sagitta: signed distance of p3 from the chord midpoint in the normal direction
-  const sagitta = (p3.x - chordMidX) * -tangentY + (p3.y - chordMidY) * tangentX;
-
-  const halfAperture = chordLen / 2;
-  const a = halfAperture ** 2 === 0 ? 0 : sagitta / halfAperture ** 2;
-
-  const points: Point[] = [];
-  for (let i = 0; i <= PARABOLIC_MIRROR_SEGMENT_COUNT; i++) {
-    const t = -1 + (2 * i) / PARABOLIC_MIRROR_SEGMENT_COUNT;
-    const u = t * halfAperture;
-    const v = sagitta - a * u * u;
-    points.push({
-      x: chordMidX + tangentX * u - tangentY * v,
-      y: chordMidY + tangentY * u + tangentX * v,
-    });
-  }
-  return points;
-}
 
 export class ParabolicMirrorView extends BaseOpticalElementView {
   public readonly bodyDragListener: RichDragListener;
@@ -195,7 +160,7 @@ export class ParabolicMirrorView extends BaseOpticalElementView {
     this.mirror.p3 = projectPointOntoPerpendicularBisector(this.mirror.p3, p1, p2);
     const p3 = this.mirror.p3;
     // Compute parabola in model space, then convert to view space for the Shape
-    const parabolaModelPoints = computeParabolaPoints(p1, p2, p3);
+    const parabolaModelPoints = sampleParabolaPoints(p1, p2, p3, PARABOLIC_MIRROR_SEGMENT_COUNT);
     const parabolaShape = buildPolylineViewShape(parabolaModelPoints, this.modelViewTransform);
     this.bodyHitPath.shape = parabolaShape;
     this.backPath.shape = parabolaShape;

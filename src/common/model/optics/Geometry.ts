@@ -6,6 +6,8 @@
  * used throughout the ray tracing engine.
  */
 
+import { LENGTH_DEGENERATE_M } from "../../../OpticsLabConstants.js";
+
 // ── Primitive Types ──────────────────────────────────────────────────────────
 
 export interface Point {
@@ -385,6 +387,77 @@ export function circumcenter(p1: Point, p2: Point, p3: Point): { center: Point; 
   const center = point(ux, uy);
   const radius = Math.sqrt((ax - ux) ** 2 + (ay - uy) ** 2);
   return { center, radius };
+}
+
+/**
+ * Samples n+1 points on the parabola with chord p1–p2 and vertex p3.
+ * The vertex is projected onto the chord's perpendicular bisector.
+ * Collapsed chords return their endpoints.
+ */
+export function sampleParabolaPoints(p1: Point, p2: Point, p3: Point, n: number): Point[] {
+  if (n <= 0) {
+    return [p1];
+  }
+  const chordMidX = (p1.x + p2.x) / 2;
+  const chordMidY = (p1.y + p2.y) / 2;
+  const chordLen = distance(p1, p2);
+  if (chordLen < LENGTH_DEGENERATE_M) {
+    return [p1, p2];
+  }
+
+  const tangentX = (p2.x - p1.x) / chordLen;
+  const tangentY = (p2.y - p1.y) / chordLen;
+
+  const sagitta = (p3.x - chordMidX) * -tangentY + (p3.y - chordMidY) * tangentX;
+
+  const halfAperture = chordLen / 2;
+  const a = halfAperture * halfAperture === 0 ? 0 : sagitta / (halfAperture * halfAperture);
+
+  const points: Point[] = [];
+  for (let i = 0; i <= n; i++) {
+    const t = -1 + (2 * i) / n; // t in [-1, 1]
+    const u = t * halfAperture;
+    const v = sagitta - a * u * u;
+    const px = chordMidX + tangentX * u + -tangentY * v;
+    const py = chordMidY + tangentY * u + tangentX * v;
+    points.push(point(px, py));
+  }
+  return points;
+}
+
+/** Tests whether a circle point lies on the arc from p1 to p2 through p3. */
+export function isPointOnArc(p: Point, p1: Point, p2: Point, p3: Point, center: Point): boolean {
+  const a1 = Math.atan2(p1.y - center.y, p1.x - center.x);
+  const a2 = Math.atan2(p2.y - center.y, p2.x - center.x);
+  const a3 = Math.atan2(p3.y - center.y, p3.x - center.x);
+  const ap = Math.atan2(p.y - center.y, p.x - center.x);
+  const ccw = (a2 < a3 && a3 < a1) || (a1 < a2 && a2 < a3) || (a3 < a1 && a1 < a2);
+  const onArc = (a2 < ap && ap < a1) || (a1 < a2 && a2 < ap) || (ap < a1 && a1 < a2);
+  return ccw === onArc;
+}
+
+/**
+ * Returns a new arc control point for a finite radius, preserving its side of the chord.
+ * Invalid radii or collapsed chords leave the existing point unchanged.
+ */
+export function arcControlPointForRadius(p1: Point, p2: Point, p3: Point, radius: number): Point {
+  const chordLength = distance(p1, p2);
+  const halfChord = chordLength / 2;
+  if (!Number.isFinite(radius) || radius < halfChord || chordLength < LENGTH_DEGENERATE_M) {
+    return p3;
+  }
+  const mid = midpoint(p1, p2);
+  const dx = p3.x - mid.x;
+  const dy = p3.y - mid.y;
+  const magnitude = Math.hypot(dx, dy);
+  const perpX = magnitude < LENGTH_DEGENERATE_M ? -(p2.y - p1.y) / chordLength : dx / magnitude;
+  const perpY = magnitude < LENGTH_DEGENERATE_M ? (p2.x - p1.x) / chordLength : dy / magnitude;
+
+  // Rationalize R - sqrt(R² - h²) to retain shallow curvature without subtracting nearly equal numbers.
+  // Use h/R to avoid overflowing when squaring large finite radii.
+  const ratio = halfChord / radius;
+  const sagitta = halfChord * (ratio / (1 + Math.sqrt(1 - ratio * ratio)));
+  return point(mid.x + sagitta * perpX, mid.y + sagitta * perpY);
 }
 
 /**

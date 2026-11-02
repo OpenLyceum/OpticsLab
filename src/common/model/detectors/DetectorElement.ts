@@ -15,12 +15,13 @@ import { ELEMENT_CATEGORY_BLOCKER, ELEMENT_TYPE_DETECTOR } from "../../../Optics
 import { BaseSegmentElement } from "../optics/BaseSegmentElement.js";
 import {
   arcBounds,
+  arcControlPointForRadius,
   type Bounds,
   circle,
   circumcenter,
-  distance,
   distanceSquared,
   dot,
+  isPointOnArc,
   normalize,
   type Point,
   point,
@@ -54,32 +55,10 @@ export class DetectorElement extends BaseSegmentElement implements IAcquirable {
   /**
    * Adjusts p3 so the radius of curvature becomes R, keeping p1 and p2 fixed
    * and preserving the current side (which side of the chord p3 is on).
-   * Does nothing if R is too small to span the current chord.
+   * Does nothing for non-finite radii, radii smaller than half the chord, or a collapsed chord.
    */
   public setRadius(R: number): void {
-    const mx = (this.p1.x + this.p2.x) / 2;
-    const my = (this.p1.y + this.p2.y) / 2;
-    const h = distance(this.p1, this.p2) / 2;
-    if (R < h) {
-      return;
-    }
-    const dx = this.p3.x - mx;
-    const dy = this.p3.y - my;
-    const mag = Math.sqrt(dx * dx + dy * dy);
-    let perpX: number;
-    let perpY: number;
-    if (mag < 1e-10) {
-      const cx = this.p2.x - this.p1.x;
-      const cy = this.p2.y - this.p1.y;
-      const clen = Math.sqrt(cx * cx + cy * cy);
-      perpX = -cy / clen;
-      perpY = cx / clen;
-    } else {
-      perpX = dx / mag;
-      perpY = dy / mag;
-    }
-    const sagitta = R - Math.sqrt(R * R - h * h);
-    this.p3 = point(mx + sagitta * perpX, my + sagitta * perpY);
+    this.p3 = arcControlPointForRadius(this.p1, this.p2, this.p3, R);
   }
 
   /** Raw hit records — normalized position t ∈ [0, 1] along the segment. */
@@ -167,13 +146,7 @@ export class DetectorElement extends BaseSegmentElement implements IAcquirable {
 
   /** Returns true when a circle point lies within the arc span from p1 to p2 through p3. */
   private isOnArc(p: Point, center: Point): boolean {
-    const a1 = Math.atan2(this.p1.y - center.y, this.p1.x - center.x);
-    const a2 = Math.atan2(this.p2.y - center.y, this.p2.x - center.x);
-    const a3 = Math.atan2(this.p3.y - center.y, this.p3.x - center.x);
-    const ap = Math.atan2(p.y - center.y, p.x - center.x);
-    const ccw = (a2 < a3 && a3 < a1) || (a1 < a2 && a2 < a3) || (a3 < a1 && a1 < a2);
-    const onArc = (a2 < ap && ap < a1) || (a1 < a2 && a2 < ap) || (ap < a1 && a1 < a2);
-    return ccw === onArc;
+    return isPointOnArc(p, this.p1, this.p2, this.p3, center);
   }
 
   public override onRayIncident(
