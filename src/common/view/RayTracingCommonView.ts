@@ -1,4 +1,4 @@
-import { type BooleanProperty, Property } from "scenerystack/axon";
+import { type BooleanProperty, Property, stepTimer } from "scenerystack/axon";
 import { Vector2 } from "scenerystack/dot";
 import { Shape } from "scenerystack/kite";
 import { type EmptySelfOptions, optionize } from "scenerystack/phet-core";
@@ -706,7 +706,10 @@ export class RayTracingCommonView extends ScreenView {
       const selected = this.selectedElementProperty.value;
       if (selected) {
         event.preventDefault();
-        this._deleteElement?.(selected);
+        // Defer like carousel-drop delete: Delete during an active body drag
+        // otherwise races pressedListener's removeChild under fuzzBoard.
+        const toDelete = selected;
+        stepTimer.setTimeout(() => this._deleteElement?.(toDelete), 0);
       }
     };
     window.addEventListener("keydown", this._handleKeyDown);
@@ -791,11 +794,21 @@ export class RayTracingCommonView extends ScreenView {
     let inDragLayer = false;
 
     const pressedListener = (isPressed: boolean): void => {
+      // Under fuzzBoard, isPressed can fire after delete/dispose or while the view
+      // is already in the other layer — guard before removeChild asserts.
+      if (view.isDisposed) {
+        inDragLayer = false;
+        return;
+      }
       if (isPressed) {
         // Reparent to the drag layer so the element renders above the carousel.
-        this.elementsLayer.removeChild(view);
-        this.dragLayer.addChild(view);
-        inDragLayer = true;
+        if (view.parent === this.elementsLayer) {
+          this.elementsLayer.removeChild(view);
+          this.dragLayer.addChild(view);
+          inDragLayer = true;
+        } else if (view.parent === this.dragLayer) {
+          inDragLayer = true;
+        }
       } else if (inDragLayer) {
         // Drag just ended.  Check whether the pointer drop position lands inside
         // the carousel.  We use the pointer's final global position rather than
@@ -807,14 +820,19 @@ export class RayTracingCommonView extends ScreenView {
         const dropPoint = view.bodyDragListener.dragListener.pointer?.point ?? null;
         if (dropPoint && this._carousel?.globalBounds.containsPoint(dropPoint)) {
           inDragLayer = false;
-          // _deleteElement removes the view from whichever layer holds it.
-          this._deleteElement?.(element);
+          // Defer deletion so Hotkey/PDOM blur from the drag release can finish
+          // before we tear down the view (otherwise ea asserts reentry on
+          // BooleanProperty / Hotkey.isPressedProperty during fuzzBoard).
+          const toDelete = element;
+          stepTimer.setTimeout(() => this._deleteElement?.(toDelete), 0);
           return;
         }
 
         // Normal case: move back to the elements layer.
-        this.dragLayer.removeChild(view);
-        this.elementsLayer.addChild(view);
+        if (view.parent === this.dragLayer) {
+          this.dragLayer.removeChild(view);
+          this.elementsLayer.addChild(view);
+        }
         inDragLayer = false;
       }
     };
