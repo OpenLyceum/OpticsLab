@@ -1,9 +1,6 @@
-import { Screen, type ScreenOptions } from "scenerystack/sim";
-import OpticsLabNamespace from "../OpticsLabNamespace.js";
+import type { ScreenOptions } from "scenerystack/sim";
 import type { OpticsLabPreferencesModel } from "../preferences/OpticsLabPreferencesModel.js";
-import { RayTracingCommonModel } from "./model/RayTracingCommonModel.js";
 import type { ComponentKey } from "./view/ComponentCarousel.js";
-import { RayTracingCommonView } from "./view/RayTracingCommonView.js";
 
 /** Extends the base ScreenOptions with the preferences model required by RayTracingCommonView. */
 export type OpticsLabScreenOptions = ScreenOptions & {
@@ -15,21 +12,3 @@ export type OpticsLabScreenOptions = ScreenOptions & {
    */
   carouselComponents?: ComponentKey[];
 };
-
-export class RayTracingCommonScreen extends Screen<RayTracingCommonModel, RayTracingCommonView> {
-  public constructor(options: OpticsLabScreenOptions) {
-    super(
-      () => new RayTracingCommonModel(options.tandem.createTandem("model")),
-      (model) =>
-        new RayTracingCommonView(
-          model,
-          options.opticsLabPreferences,
-          { tandem: options.tandem.createTandem("view") },
-          options.carouselComponents,
-        ),
-      options,
-    );
-  }
-}
-
-OpticsLabNamespace.register("RayTracingCommonScreen", RayTracingCommonScreen);

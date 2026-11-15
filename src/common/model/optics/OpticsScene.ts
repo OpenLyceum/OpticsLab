@@ -8,11 +8,6 @@
 
 import { BooleanProperty, Emitter, Multilink, NumberProperty, Property, StringUnionProperty } from "scenerystack/axon";
 import { Range } from "scenerystack/dot";
-import { BatchPropertyCommand, CommandHistory, EditPropertyCommand, type SceneCommand } from "./CommandHistory.js";
-
-export type { SceneCommand } from "./CommandHistory.js";
-export { BatchPropertyCommand, EditPropertyCommand } from "./CommandHistory.js";
-
 import { IOType, NullableIO, ObjectLiteralIO, PhetioGroup, PhetioObject, Tandem } from "scenerystack/tandem";
 import {
   DEFAULT_MAX_RAY_DEPTH,
@@ -26,6 +21,7 @@ import {
   RAY_DENSITY_MIN,
 } from "../../../OpticsLabConstants.js";
 import { VIEW_MODE_OBSERVER, VIEW_MODE_RAYS } from "../../../OpticsLabStrings.js";
+import { BatchPropertyCommand, CommandHistory, EditPropertyCommand, type SceneCommand } from "./CommandHistory.js";
 import { ARCHETYPE_ELEMENT_STATE, deserializeElement, LIVE_ELEMENT_STATE_KEY } from "./elementSerialization.js";
 import type { Point } from "./Geometry.js";
 import { point } from "./Geometry.js";
@@ -35,7 +31,7 @@ import { RayTracer, type RayTracerConfig, type TraceResult } from "./RayTracer.j
 
 // ── Scene Settings ───────────────────────────────────────────────────────────
 
-export const VIEW_MODE_VALUES = ["rays", "extended", "images", "observer"] as const;
+const VIEW_MODE_VALUES = ["rays", "extended", "images", "observer"] as const;
 
 export interface SceneSettings {
   mode: ViewMode;

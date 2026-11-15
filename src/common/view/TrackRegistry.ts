@@ -7,7 +7,7 @@
 
 import type { Point } from "../model/optics/Geometry.js";
 
-export interface TrackDescriptor {
+interface TrackDescriptor {
   scopeId: string;
   getP1: () => Point;
   getP2: () => Point;

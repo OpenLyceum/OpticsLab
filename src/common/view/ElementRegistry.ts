@@ -164,7 +164,7 @@ interface ElementDescriptor {
  * and any other UI that names elements by type has a single source of truth here,
  * rather than maintaining a parallel type→label map elsewhere.
  */
-export const ELEMENT_REGISTRY: ElementDescriptor[] = (() => {
+const ELEMENT_REGISTRY: ElementDescriptor[] = (() => {
   // Labels are resolved once at module-init time via the StringManager singleton.
   const c = StringManager.getInstance().getComponentStrings();
 

@@ -60,10 +60,6 @@ export function distanceSquared(p1: Point, p2: Point): number {
   return dx * dx + dy * dy;
 }
 
-export function segmentLength(seg: Segment): number {
-  return distance(seg.p1, seg.p2);
-}
-
 export function segmentMidpoint(seg: Segment): Point {
   return point((seg.p1.x + seg.p2.x) / 2, (seg.p1.y + seg.p2.y) / 2);
 }
@@ -100,10 +96,6 @@ export function dot(a: Point, b: Point): number {
   return a.x * b.x + a.y * b.y;
 }
 
-export function cross(a: Point, b: Point): number {
-  return a.x * b.y - a.y * b.x;
-}
-
 /**
  * Returns the unit vector in the direction of p.
  * Returns a zero vector when p is the zero vector — callers that produce ray
@@ -128,14 +120,6 @@ export function add(a: Point, b: Point): Point {
 
 export function subtract(a: Point, b: Point): Point {
   return point(a.x - b.x, a.y - b.y);
-}
-
-export function rotate(p: Point, angle: number, center: Point = point(0, 0)): Point {
-  const dx = p.x - center.x;
-  const dy = p.y - center.y;
-  const cos = Math.cos(angle);
-  const sin = Math.sin(angle);
-  return point(center.x + dx * cos - dy * sin, center.y + dx * sin + dy * cos);
 }
 
 // ── Normal Computation ───────────────────────────────────────────────────────
@@ -235,43 +219,6 @@ export function rayCircleIntersections(rayOrigin: Point, rayDir: Point, c: Circl
   return results;
 }
 
-/** Intersection of ray with an arc (defined by center, radius, start/end angles). */
-export function rayArcIntersection(
-  rayOrigin: Point,
-  rayDir: Point,
-  arcCenter: Point,
-  arcRadius: number,
-  startAngle: number,
-  endAngle: number,
-  counterclockwise: boolean,
-): { t: number; point: Point } | null {
-  const hits = rayCircleIntersections(rayOrigin, rayDir, circle(arcCenter, arcRadius));
-  for (const hit of hits) {
-    const angle = Math.atan2(hit.point.y - arcCenter.y, hit.point.x - arcCenter.x);
-    if (isAngleInArc(angle, startAngle, endAngle, counterclockwise)) {
-      return hit;
-    }
-  }
-  return null;
-}
-
-function isAngleInArc(angle: number, start: number, end: number, counterclockwise: boolean): boolean {
-  const normalizeAngle = (v: number): number => ((v % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-  const a = normalizeAngle(angle);
-  const s = normalizeAngle(start);
-  const e = normalizeAngle(end);
-  if (counterclockwise) {
-    if (s <= e) {
-      return a >= s && a <= e;
-    }
-    return a >= s || a <= e;
-  }
-  if (s >= e) {
-    return a <= s && a >= e;
-  }
-  return a <= s || a >= e;
-}
-
 // ── Perpendicular Bisector ───────────────────────────────────────────────────
 
 export function perpendicularBisector(seg: Segment): Line {
@@ -298,64 +245,9 @@ export function polygonCentroid(path: { x: number; y: number }[]): Point {
   return { x: sx / n, y: sy / n };
 }
 
-// ── Point-in-Polygon ─────────────────────────────────────────────────────────
-
-export function pointInPolygon(p: Point, vertices: Point[]): boolean {
-  let inside = false;
-  const n = vertices.length;
-  for (let i = 0, j = n - 1; i < n; j = i++) {
-    const vi = vertices[i];
-    const vj = vertices[j];
-    if (!(vi && vj)) {
-      continue;
-    }
-    const xi = vi.x;
-    const yi = vi.y;
-    const xj = vj.x;
-    const yj = vj.y;
-    if (yi > p.y !== yj > p.y && p.x < ((xj - xi) * (p.y - yi)) / (yj - yi) + xi) {
-      inside = !inside;
-    }
-  }
-  return inside;
-}
-
 /** Whether a point is inside a circle. */
 export function pointInCircle(p: Point, c: Circle): boolean {
   return distanceSquared(p, c.center) < c.radius * c.radius;
-}
-
-// ── Reflection ───────────────────────────────────────────────────────────────
-
-/** Reflect a direction vector about a normal. */
-export function reflect(direction: Point, normal: Point): Point {
-  const d = dot(direction, normal);
-  return point(direction.x - 2 * d * normal.x, direction.y - 2 * d * normal.y);
-}
-
-// ── Refraction (Snell's law) ─────────────────────────────────────────────────
-
-/**
- * Compute the refracted direction using Snell's law.
- * Returns null for total internal reflection.
- * @param direction - Incident direction (unit vector)
- * @param normal - Surface normal at incidence point (pointing outward from surface)
- * @param n1 - Refractive index of the medium the ray is coming from
- * @param n2 - Refractive index of the medium the ray is entering
- */
-export function refract(direction: Point, normal: Point, n1: number, n2: number): Point | null {
-  const cosI = -dot(direction, normal);
-  const sinI2 = 1 - cosI * cosI;
-  const ratio = n1 / n2;
-  const sinT2 = ratio * ratio * sinI2;
-  if (sinT2 > 1) {
-    return null; // total internal reflection
-  }
-  const cosT = Math.sqrt(1 - sinT2);
-  return point(
-    ratio * direction.x + (ratio * cosI - cosT) * normal.x,
-    ratio * direction.y + (ratio * cosI - cosT) * normal.y,
-  );
 }
 
 // ── Circumcenter / Arc Sampling ──────────────────────────────────────────────
@@ -578,24 +470,4 @@ export function arcBounds(p1: Point, p2: Point, p3: Point): Bounds {
     }
   }
   return { minX, minY, maxX, maxY };
-}
-
-// ── Fresnel Equations ────────────────────────────────────────────────────────
-
-/**
- * Fresnel reflectance for s and p polarizations.
- * @returns [Rs, Rp] reflectance values in [0, 1]
- */
-export function fresnelReflectance(cosI: number, n1: number, n2: number): [number, number] {
-  const sinI2 = 1 - cosI * cosI;
-  const ratio = n1 / n2;
-  const sinT2 = ratio * ratio * sinI2;
-  if (sinT2 > 1) {
-    return [1, 1]; // total internal reflection
-  }
-  const cosT = Math.sqrt(1 - sinT2);
-  const absCosI = Math.abs(cosI);
-  const Rs = ((n1 * absCosI - n2 * cosT) / (n1 * absCosI + n2 * cosT)) ** 2;
-  const Rp = ((n1 * cosT - n2 * absCosI) / (n1 * cosT + n2 * absCosI)) ** 2;
-  return [Rs, Rp];
 }

@@ -68,7 +68,7 @@ export interface RayInteractionResult {
 
 // ── Image Detection ──────────────────────────────────────────────────────────
 
-export type ImageType = "real" | "virtual" | "virtualObject";
+type ImageType = "real" | "virtual" | "virtualObject";
 
 export interface DetectedImage {
   position: Point;
@@ -91,7 +91,7 @@ export type ElementCategory = "lightSource" | "mirror" | "glass" | "blocker" | "
 // Code that only needs a subset of element behaviour can type-narrow to these.
 
 /** An element that emits simulation rays (light sources). */
-export interface IEmitter {
+interface IEmitter {
   emitRays(rayDensity: number, mode: ViewMode, jitter?: boolean): SimulationRay[];
 }
 
@@ -106,13 +106,13 @@ export interface RayCallConfig {
 }
 
 /** An element that can be intersected by a ray (mirrors, glass, blockers, …). */
-export interface IIntersectable {
+interface IIntersectable {
   checkRayIntersection(ray: SimulationRay): IntersectionResult | null;
   onRayIncident(ray: SimulationRay, intersection: IntersectionResult, config?: RayCallConfig): RayInteractionResult;
 }
 
 /** An element that can be serialized for persistence. */
-export interface ISerializable {
+interface ISerializable {
   serialize(): Record<string, unknown>;
 }
 

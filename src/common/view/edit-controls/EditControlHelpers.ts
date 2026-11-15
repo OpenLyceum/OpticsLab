@@ -28,13 +28,11 @@ import {
 import { sceneHistoryRegistry } from "../SceneHistoryRegistry.js";
 import { SymmetricWavelengthThumb } from "../SymmetricWavelengthThumb.js";
 
-export type { EditControlsResult } from "./EditControlsResult.js";
-
 // ── Module-level constants ────────────────────────────────────────────────────
 
-export const SLIDER_TRACK_SIZE = new Dimension2(SLIDER_TRACK_WIDTH, SLIDER_TRACK_HEIGHT);
-export const SLIDER_THUMB_SIZE = new Dimension2(SLIDER_THUMB_WIDTH, SLIDER_THUMB_HEIGHT);
-export const LABEL_FONT = FONT_11PX;
+const SLIDER_TRACK_SIZE = new Dimension2(SLIDER_TRACK_WIDTH, SLIDER_TRACK_HEIGHT);
+const SLIDER_THUMB_SIZE = new Dimension2(SLIDER_THUMB_WIDTH, SLIDER_THUMB_HEIGHT);
+const LABEL_FONT = FONT_11PX;
 
 // ── Private widget helpers ────────────────────────────────────────────────────
 
@@ -44,7 +42,7 @@ export function safeClamp(value: number, min: number, max: number, fallback: num
 }
 
 /** Number of decimal places to show for a given step size. */
-export function decimalPlacesForDelta(delta: number): number {
+function decimalPlacesForDelta(delta: number): number {
   const absoluteDelta = Math.abs(delta);
   if (absoluteDelta >= 1) {
     return 0;
@@ -259,7 +257,7 @@ export function rotateSegment(
  * Rotate the direction segment about p1 (origin): p1 fixed, p2 moves on a circle
  * of radius |p2−p1|. Matches arc-source-style rotation around the source centre.
  */
-export function rotateSegmentAboutP1(
+function rotateSegmentAboutP1(
   p1: { x: number; y: number },
   p2: { x: number; y: number },
   newAngleDeg: number,
@@ -399,7 +397,7 @@ export function buildDirectionAngleAboutP1Control(
  * Angle in degrees [0, 360) for a direction stored in radians (same convention as
  * Math.atan2 / ArcLightSource.direction).
  */
-export function radiansToDisplayDeg(rad: number): number {
+function radiansToDisplayDeg(rad: number): number {
   const deg = rad * (180 / Math.PI);
   return ((deg % 360) + 360) % 360;
 }

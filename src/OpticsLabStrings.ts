@@ -132,25 +132,25 @@ export const ELEMENT_CATEGORY_GUIDE = "guide";
 // ── 3. View mode strings ─────────────────────────────────────────────────────
 //
 // These values must match the `ViewMode` union in OpticsTypes.ts and the
-// VIEW_MODE_VALUES array in OpticsScene.ts.
+// view-mode values array in OpticsScene.ts.
 
 /** Default view mode: show ray paths as discrete line segments. */
 export const VIEW_MODE_RAYS = "rays";
 /** View mode that also draws backward extensions to locate virtual images. */
-export const VIEW_MODE_EXTENDED = "extended";
+const VIEW_MODE_EXTENDED = "extended";
 /** View mode that detects and displays real/virtual image positions. */
-export const VIEW_MODE_IMAGES = "images";
+const VIEW_MODE_IMAGES = "images";
 /** View mode that shows only rays visible from a specific observer position. */
 export const VIEW_MODE_OBSERVER = "observer";
 
 // ── 4. Application configuration strings ─────────────────────────────────────
 
 /** Internal camelCase name of the simulation (used by SceneryStack init). */
-export const SIMULATION_NAME = "opticsLab";
+const SIMULATION_NAME = "opticsLab";
 /** Semver version string shown in the About dialog. */
-export const SIMULATION_VERSION = "1.0.0";
+const SIMULATION_VERSION = "1.0.0";
 /** Brand identifier shared between init.ts and brand.ts. */
-export const BRAND_ID = "made-with-scenerystack";
+const BRAND_ID = "made-with-scenerystack";
 
 // ── 5. Tandem ID strings ──────────────────────────────────────────────────────
 //

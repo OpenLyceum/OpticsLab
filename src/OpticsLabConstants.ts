@@ -29,16 +29,16 @@ import OpticsLabNamespace from "./OpticsLabNamespace.js";
 export const PANEL_CORNER_RADIUS = 8;
 export const RESET_BUTTON_MARGIN = 10;
 
-export const BUTTON_X_MARGIN = 8;
-export const BUTTON_Y_MARGIN = 6;
-export const BUTTON_MIN_CONTENT_SIZE = 18;
-export const TOUCH_AREA_DILATION = 5;
-export const MOUSE_AREA_DILATION = 2;
+const BUTTON_X_MARGIN = 8;
+const BUTTON_Y_MARGIN = 6;
+const BUTTON_MIN_CONTENT_SIZE = 18;
+const TOUCH_AREA_DILATION = 5;
+const MOUSE_AREA_DILATION = 2;
 
 export const CONTROL_ICON_SIZE = 20;
-export const CONTROL_PANEL_ROWS_SPACING = 12;
-export const CONTROL_PANEL_X_MARGIN = 12;
-export const CONTROL_PANEL_Y_MARGIN = 12;
+const CONTROL_PANEL_ROWS_SPACING = 12;
+const CONTROL_PANEL_X_MARGIN = 12;
+const CONTROL_PANEL_Y_MARGIN = 12;
 
 // ── 2. Coordinate / scale ─────────────────────────────────────────────────────
 
@@ -239,10 +239,10 @@ export const LINE_HIT_HALF_WIDTH_PX = 10;
 /** Padding (px) around content bounds for the selection rectangle. */
 export const SELECTION_PAD_PX = 8;
 
-/** Radius (px) of real/virtual image markers in images mode. */
-export const IMAGE_MARKER_RADIUS_PX = HANDLE_RADIUS;
+/** Radius (px) of real/virtual image markers in images mode. Same visual size as HANDLE_RADIUS. */
+export const IMAGE_MARKER_RADIUS_PX = 6;
 /** Gap (px) between image marker edge and its label. */
-export const IMAGE_LABEL_GAP_PX = 3;
+const IMAGE_LABEL_GAP_PX = 3;
 /** Horizontal offset (px) from image marker centre to label. */
 export const IMAGE_LABEL_OFFSET_X_PX = IMAGE_MARKER_RADIUS_PX + IMAGE_LABEL_GAP_PX;
 
@@ -315,7 +315,8 @@ export const SPHERICAL_CURVATURE_D_MIN = 0.005;
 export const SPHERICAL_LENS_APERTURE_SEARCH_HALF_EXTENT = 10;
 
 // Rotation handle (spherical lens) ────────────────────────────────────────────
-export const ROTATION_HANDLE_RADIUS = HANDLE_RADIUS;
+/** Same visual size as HANDLE_RADIUS. */
+export const ROTATION_HANDLE_RADIUS = 6;
 export const ROTATION_INDICATOR_RADIUS = 14; // px – curved-arrow orbit radius
 export const ROTATION_INDICATOR_LINE_WIDTH = 1.5;
 export const ROTATION_INDICATOR_ARROW_SIZE = 4; // px – arrowhead arm length
@@ -331,8 +332,8 @@ export const ROTATION_INDICATOR_ARROW_SPREAD = 0.5;
 export const PRISM_MIN_VERTEX_DIST_M = 0.05;
 /** Minimum top-face width of a Dove prism (width − height, model metres). */
 export const DOVE_MIN_TOP_FACE_M = 0.05;
-/** Distance threshold below which a vertex position is considered degenerate (model metres). */
-export const PRISM_DEGENERATE_DIST = LENGTH_DEGENERATE_M;
+/** Distance threshold below which a vertex position is considered degenerate (model metres). Same as LENGTH_DEGENERATE_M. */
+export const PRISM_DEGENERATE_DIST = 1e-10;
 /** Drag-delta magnitude below which a rotation drag move is ignored (model metres). */
 export const ROTATION_DRAG_DELTA_MIN = 1e-12;
 
@@ -491,7 +492,8 @@ export const PARALLELOGRAM_PRISM_DEFAULT_HEIGHT_M = 0.42;
 
 // ── 15. ContinuousSpectrumSource defaults ────────────────────────────────────
 
-export const CONT_SPECTRUM_DEFAULT_WL_MIN_NM = WAVELENGTH_MIN_NM;
+/** Same lower bound as WAVELENGTH_MIN_NM. */
+export const CONT_SPECTRUM_DEFAULT_WL_MIN_NM = 380;
 export const CONT_SPECTRUM_DEFAULT_WL_STEP_NM = 10;
 export const CONT_SPECTRUM_DEFAULT_WL_MAX_NM = 700;
 export const CONT_SPECTRUM_DEFAULT_BRIGHTNESS = 0.5;
@@ -579,8 +581,8 @@ export const LINES_DENSITY_CONTROL_DELTA = 10;
 // These values define the physics parameters and initial geometry used when
 // ComponentFactory creates a fresh instance of each optical element type.
 
-/** Default glass/lens refractive index for newly created elements. Equal to DEFAULT_REFRACTIVE_INDEX. */
-export const DEFAULT_COMPONENT_GLASS_INDEX = DEFAULT_REFRACTIVE_INDEX; // 1.5
+/** Default glass/lens refractive index for newly created elements. Same as DEFAULT_REFRACTIVE_INDEX. */
+export const DEFAULT_COMPONENT_GLASS_INDEX = 1.5;
 /** Default radius of curvature (m) for the convex surface of new biconvex / plano-convex lenses. */
 export const DEFAULT_CONVEX_RADIUS_M = 1.2;
 /** Default radius of curvature (m) for the concave surface of new biconcave / plano-concave lenses. */
@@ -661,9 +663,9 @@ export const FACTORY_FIBER_OPTIC_LENGTH_SCALE = 1.5;
 export const FALLBACK_RAY_WAVELENGTH_NM = 550;
 /**
  * Wavelength (nm) used in the PhET-iO group archetype element state.
- * Alias of {@link FALLBACK_RAY_WAVELENGTH_NM}.
+ * Same as FALLBACK_RAY_WAVELENGTH_NM.
  */
-export const ARCHETYPE_DEFAULT_WAVELENGTH_NM = FALLBACK_RAY_WAVELENGTH_NM;
+export const ARCHETYPE_DEFAULT_WAVELENGTH_NM = 550;
 
 // ── 22b. Observer defaults ───────────────────────────────────────────────────
 

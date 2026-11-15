@@ -401,7 +401,7 @@ function projectPointOntoPlane(p: Point, planeOrigin: Point, axisDir: Point): Po
  * vertex level. Constrains drag to the vertex plane (perpendicular to axis from p3 to chord).
  * Maps the drag back to update p1 or p2. whichEdge is 1 or 2 for the left/right handle.
  */
-export function attachVertexPlaneEdgeDrag(
+function attachVertexPlaneEdgeDrag(
   handle: Circle,
   whichEdge: 1 | 2,
   getP1: () => Point,
