@@ -213,7 +213,7 @@ export class RayPropagationView extends CanvasNode {
     context.lineWidth = EXT_LINE_WIDTH;
     context.setLineDash(EXT_LINE_DASH);
 
-    const extBuckets: Array<Array<[number, number, number, number]>> = new Array(RAY_ALPHA_BUCKETS + 1);
+    const extBuckets: [number, number, number, number][][] = new Array(RAY_ALPHA_BUCKETS + 1);
 
     for (const seg of segments) {
       if (!seg.isExtension) {

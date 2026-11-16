@@ -200,13 +200,13 @@ export class RayTracingCommonView extends ScreenView {
   protected readonly elementTandemMap = new Map<string, Tandem>();
 
   /** Carousel toolbox – set during construction; used in _setupView for return-to-delete. */
-  private _carousel: Carousel | null = null;
+  private readonly _carousel: Carousel | null = null;
 
   /** Central delete handler shared between EditContainerNode and return-to-carousel. */
-  private _deleteElement: ((element: OpticalElement) => void) | null = null;
+  private readonly _deleteElement: ((element: OpticalElement) => void) | null = null;
 
   /** Stored so it can be removed from window on dispose. */
-  private _handleKeyDown!: (event: KeyboardEvent) => void;
+  private readonly _handleKeyDown!: (event: KeyboardEvent) => void;
 
   /**
    * Remove an element's tandem from the global tandem tree so it and its children

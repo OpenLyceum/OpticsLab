@@ -312,7 +312,7 @@ export class OpticsScene extends PhetioObject {
     return this._elementById.get(elementId);
   }
 
-  public getAllElements(): ReadonlyArray<OpticalElement> {
+  public getAllElements(): readonly OpticalElement[] {
     return this.getElementsArray();
   }
 
@@ -390,7 +390,7 @@ export class OpticsScene extends PhetioObject {
     }
 
     if (Array.isArray(state["path"])) {
-      state["path"] = (state["path"] as Array<Record<string, unknown>>).map((pt) => ({
+      state["path"] = (state["path"] as Record<string, unknown>[]).map((pt) => ({
         ...pt,
         ...(typeof pt["x"] === "number" ? { x: pt["x"] + dx } : {}),
         ...(typeof pt["y"] === "number" ? { y: pt["y"] + dy } : {}),
