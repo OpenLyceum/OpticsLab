@@ -86,6 +86,5 @@ Run `npm test`. CI runs the suite when a `test` script is present.
 ## Development notes
 
 - Model classes must not import from view. Boolean properties use verb prefixes (`is`, `has`, `show`).
-- **ES2024 target** — `tsconfig.json` and Vite `build.target` use ES2024 (Vite 8+). If build fails on unknown target, run `npm ci`.
 
 `npm test` runs about 430 tests and takes around a minute. That duration is the ray-tracing coverage, not a hang.
