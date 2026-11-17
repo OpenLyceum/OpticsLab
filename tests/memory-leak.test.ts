@@ -273,16 +273,10 @@ describe("Memory leak regression", () => {
         const elementLeaked = elementRef.deref() !== undefined;
         const viewLeaked = viewRef?.deref() !== undefined;
 
-        if (elementLeaked || viewLeaked) {
-          const parts: string[] = [];
-          if (elementLeaked) {
-            parts.push("element");
-          }
-          if (viewLeaked) {
-            parts.push("view");
-          }
-          expect.fail(`${key}: ${parts.join(" + ")} not collected`);
-        }
+        expect({ elementLeaked, viewLeaked }, `${key}: not collected`).toEqual({
+          elementLeaked: false,
+          viewLeaked: false,
+        });
       });
     }
   });
@@ -297,16 +291,10 @@ describe("Memory leak regression", () => {
         const sceneLeaked = sceneRef.deref() !== undefined;
         const elementLeaked = elementRef.deref() !== undefined;
 
-        if (sceneLeaked || elementLeaked) {
-          const parts: string[] = [];
-          if (sceneLeaked) {
-            parts.push("scene");
-          }
-          if (elementLeaked) {
-            parts.push("element");
-          }
-          expect.fail(`${key}: ${parts.join(" + ")} not collected after scene lifecycle`);
-        }
+        expect({ sceneLeaked, elementLeaked }, `${key}: not collected after scene lifecycle`).toEqual({
+          sceneLeaked: false,
+          elementLeaked: false,
+        });
       });
     }
   });
@@ -412,16 +400,10 @@ describe("Memory leak regression", () => {
         const sceneLeaked = sceneRef.deref() !== undefined;
         const elementLeaked = elementRef.deref() !== undefined;
 
-        if (sceneLeaked || elementLeaked) {
-          const parts: string[] = [];
-          if (sceneLeaked) {
-            parts.push("scene");
-          }
-          if (elementLeaked) {
-            parts.push("element (in undo closure)");
-          }
-          expect.fail(`${key}: ${parts.join(" + ")} not collected`);
-        }
+        expect({ sceneLeaked, elementLeaked }, `${key}: not collected (element may be in an undo closure)`).toEqual({
+          sceneLeaked: false,
+          elementLeaked: false,
+        });
       });
     }
   });
@@ -461,10 +443,7 @@ describe("Memory leak regression", () => {
     await forceGC(refs.flatMap((r) => (r.viewRef ? [r.elementRef, r.viewRef] : [r.elementRef])));
 
     const leaks = refs.filter((r) => r.elementRef.deref() !== undefined || r.viewRef?.deref() !== undefined);
-    if (leaks.length > 0) {
-      const names = [...new Set(leaks.map((l) => l.key))].join(", ");
-      expect.fail(`Leaked ${leaks.length} object(s) across: ${names}`);
-    }
+    expect([...new Set(leaks.map((l) => l.key))], `Leaked ${leaks.length} object(s)`).toEqual([]);
   });
 
   // ── OpticsScene.clearElements + dispose ────────────────────────────────────
@@ -489,10 +468,10 @@ describe("Memory leak regression", () => {
     await forceGC([...elementRefs.map((e) => e.ref), sceneRef]);
 
     const leakedElements = elementRefs.filter((e) => e.ref.deref() !== undefined);
-    if (leakedElements.length > 0) {
-      const names = leakedElements.map((e) => e.key).join(", ");
-      expect.fail(`Elements still retained after scene.clearElements() + dispose(): ${names}`);
-    }
+    expect(
+      leakedElements.map((e) => e.key),
+      "Elements still retained after scene.clearElements() + dispose()",
+    ).toEqual([]);
     expect(sceneRef.deref()).toBeUndefined();
   });
 
@@ -525,11 +504,10 @@ describe("Memory leak regression", () => {
     await forceGC(elementRefs.map((e) => e.ref));
 
     const leaked = elementRefs.filter((e) => e.ref.deref() !== undefined);
-    if (leaked.length > 0) {
-      expect.fail(
-        `Elements retained in simulate() cache after clearElements(): ${leaked.map((e) => e.key).join(", ")}`,
-      );
-    }
+    expect(
+      leaked.map((e) => e.key),
+      "Elements retained in simulate() cache after clearElements()",
+    ).toEqual([]);
   });
 
   // ── scene.resetAll() clears history closures and collects elements ────────
@@ -559,9 +537,10 @@ describe("Memory leak regression", () => {
     await forceGC([...elementRefs.map((e) => e.ref), sceneRef]);
 
     const leakedElements = elementRefs.filter((e) => e.ref.deref() !== undefined);
-    if (leakedElements.length > 0) {
-      expect.fail(`Elements retained after resetAll() + dispose(): ${leakedElements.map((e) => e.key).join(", ")}`);
-    }
+    expect(
+      leakedElements.map((e) => e.key),
+      "Elements retained after resetAll() + dispose()",
+    ).toEqual([]);
     expect(sceneRef.deref()).toBeUndefined();
   });
 
@@ -619,12 +598,10 @@ describe("Memory leak regression", () => {
 
     const leakedScenes = sceneRefs.filter((r) => r.deref() !== undefined).length;
     const leakedElements = allRefs.filter((e) => e.ref.deref() !== undefined);
-    if (leakedScenes > 0 || leakedElements.length > 0) {
-      const names = leakedElements.map((e) => e.key).join(", ");
-      expect.fail(
-        `${leakedScenes} scene(s) and ${leakedElements.length} element(s) leaked across sequential scenes: ${names}`,
-      );
-    }
+    expect(
+      { leakedScenes, leakedElements: leakedElements.map((e) => e.key) },
+      "Leaked across sequential scenes",
+    ).toEqual({ leakedScenes: 0, leakedElements: [] });
   });
 
   // ── Preset switching does not retain superseded elements ──────────────────
@@ -668,9 +645,10 @@ describe("Memory leak regression", () => {
 
     const leaked = round1Refs.filter((e) => e.ref.deref() !== undefined);
     scene.dispose();
-    if (leaked.length > 0) {
-      expect.fail(`Preset-1 elements retained after switching presets: ${leaked.map((e) => e.key).join(", ")}`);
-    }
+    expect(
+      leaked.map((e) => e.key),
+      "Preset-1 elements retained after switching presets",
+    ).toEqual([]);
   });
 });
 
