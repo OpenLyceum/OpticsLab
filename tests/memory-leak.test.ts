@@ -50,6 +50,11 @@ import { trackRegistry } from "../src/common/view/TrackRegistry.js";
 import { ViewOptionsModel } from "../src/common/view/ViewOptionsModel.js";
 import { describeDisposalLeaks, forceGC } from "./helpers/memoryLeak.js";
 
+// Inventory names covered by createOpticalElementView(ALL_KEYS) / OpticsScene without a
+// dedicated describeDisposalLeaks case: AperturedParabolicMirrorView, DetectorView,
+// DetectorChartPanel (owned by DetectorView), GlassView, OpticalElementPhetioObject
+// (OpticsScene PhetioGroup), RayPropagationView (RayTracingCommonView canvas).
+
 // Shared default ViewOptionsModel used across all tests that construct views.
 // Not disposed between tests — it acts as a long-lived sentinel with default values.
 const viewOptions: ViewOptionsModel = new ViewOptionsModel();
