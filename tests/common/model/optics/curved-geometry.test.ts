@@ -3,7 +3,7 @@ import { DetectorElement } from "../../../../src/common/model/detectors/Detector
 import { AperturedParabolicMirror } from "../../../../src/common/model/mirrors/AperturedParabolicMirror.js";
 import { ArcMirror } from "../../../../src/common/model/mirrors/ArcMirror.js";
 import { ParabolicMirror } from "../../../../src/common/model/mirrors/ParabolicMirror.js";
-import { point } from "../../../../src/common/model/optics/Geometry.js";
+import { arcFocalPoint, parabolaFocalPoint, point } from "../../../../src/common/model/optics/Geometry.js";
 import type { SimulationRay } from "../../../../src/common/model/optics/OpticsTypes.js";
 
 function ray(x: number, y: number, dx: number, dy: number): SimulationRay {
@@ -141,5 +141,44 @@ describe("parabolic mirror geometry", () => {
     expect(mirror.checkRayIntersection(ray(0, 1, 0, -1))).toBeNull();
     detector.dispose();
     mirror.dispose();
+  });
+});
+
+describe("mirror focal points", () => {
+  it("places the arc focus at R/2 from the vertex toward the center", () => {
+    // Circle of radius 2 centred at (0, 2): chord endpoints at y = 2 - √3, vertex at the origin.
+    const y = 2 - Math.sqrt(3);
+    const focus = arcFocalPoint(point(-1, y), point(1, y), point(0, 0));
+    expect(focus?.x).toBeCloseTo(0, 12);
+    expect(focus?.y).toBeCloseTo(1, 12);
+  });
+
+  it("rotates the arc focus with the mirror", () => {
+    const y = 2 - Math.sqrt(3);
+    // Rotate the configuration above by 90° (x, y) → (-y, x).
+    const focus = arcFocalPoint(point(-y, -1), point(-y, 1), point(0, 0));
+    expect(focus?.x).toBeCloseTo(-1, 12);
+    expect(focus?.y).toBeCloseTo(0, 12);
+  });
+
+  it("has no arc focus for a flat arc", () => {
+    expect(arcFocalPoint(point(-1, 0), point(1, 0), point(0, 0))).toBeNull();
+  });
+
+  it("places the parabola focus 1/(4a) from the vertex on the concave side", () => {
+    // v = a·u² with a = 0.5: vertex (0, 0), endpoints (±1, 0.5), focus (0, 0.5).
+    for (const [p1, p2] of [
+      [point(-1, 0.5), point(1, 0.5)],
+      [point(1, 0.5), point(-1, 0.5)],
+    ] as const) {
+      const focus = parabolaFocalPoint(p1, p2, point(0, 0));
+      expect(focus?.x).toBeCloseTo(0, 12);
+      expect(focus?.y).toBeCloseTo(0.5, 12);
+    }
+  });
+
+  it("has no parabola focus for a flat or collapsed parabola", () => {
+    expect(parabolaFocalPoint(point(-1, 0), point(1, 0), point(0, 0))).toBeNull();
+    expect(parabolaFocalPoint(point(2, 3), point(2, 3), point(2, 3))).toBeNull();
   });
 });

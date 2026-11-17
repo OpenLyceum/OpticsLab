@@ -479,6 +479,23 @@ function attachVertexPlaneEdgeDrag(
 }
 
 /**
+ * Builds the getter/setter pairs that attachTranslationDrag() expects for the
+ * named Point fields of `target`, so views need not spell out one closure pair
+ * per control point.
+ */
+export function pointAccessors<K extends string>(
+  target: Record<K, Point>,
+  ...keys: K[]
+): Array<{ get: () => Point; set: (p: Point) => void }> {
+  return keys.map((key) => ({
+    get: () => target[key],
+    set: (p: Point) => {
+      target[key] = p;
+    },
+  }));
+}
+
+/**
  * Attaches a RichDragListener to `bodyNode` for whole-element translation.
  * `points` is an array of getter/setter pairs covering every model Point that
  * should move together. Snap-to-grid uses the centroid of those points (and

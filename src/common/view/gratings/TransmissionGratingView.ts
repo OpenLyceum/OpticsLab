@@ -5,10 +5,9 @@
  * with short perpendicular tick marks to represent the periodic groove structure.
  */
 
-import { BooleanProperty } from "scenerystack/axon";
-import { Shape } from "scenerystack/kite";
+import type { Shape } from "scenerystack/kite";
 import type { ModelViewTransform2 } from "scenerystack/phetcommon";
-import { Path, type RichDragListener } from "scenerystack/scenery";
+import { Path } from "scenerystack/scenery";
 import type { Tandem } from "scenerystack/tandem";
 import OpticsLabColors from "../../../OpticsLabColors.js";
 import {
@@ -18,140 +17,39 @@ import {
 } from "../../../OpticsLabConstants.js";
 import OpticsLabNamespace from "../../../OpticsLabNamespace.js";
 import type { TransmissionGrating } from "../../model/gratings/TransmissionGrating.js";
-import { BaseOpticalElementView } from "../BaseOpticalElementView.js";
-import {
-  attachTranslationDrag,
-  buildLineHitShape,
-  createLineBodyHitPath,
-  type DragHandle,
-  makeEndpointHandle,
-} from "../ViewHelpers.js";
 import type { ViewOptionsModel } from "../ViewOptionsModel.js";
+import { GratingView, type GrooveFrame } from "./GratingView.js";
 
-export class TransmissionGratingView extends BaseOpticalElementView {
-  public readonly bodyDragListener: RichDragListener;
-
-  private readonly bodyPath: Path;
-  private readonly tickPath: Path;
-  private readonly bodyHitPath: Path;
-  private readonly handle1: DragHandle;
-  private readonly handle2: DragHandle;
-
-  private readonly grating: TransmissionGrating;
-  private readonly modelViewTransform: ModelViewTransform2;
+export class TransmissionGratingView extends GratingView {
   public constructor(
     grating: TransmissionGrating,
     modelViewTransform: ModelViewTransform2,
     tandem: Tandem,
     viewOptions?: ViewOptionsModel,
   ) {
-    super();
-    this.grating = grating;
-    this.modelViewTransform = modelViewTransform;
-    const handlesVisibleProperty = viewOptions?.handlesVisibleProperty ?? new BooleanProperty(true);
-
-    this.bodyPath = new Path(null, {
-      stroke: OpticsLabColors.glassStrokeProperty,
-      lineWidth: GLASS_STROKE_WIDTH + 1,
-      lineCap: "round",
-      pickable: false,
-    });
-    this.tickPath = new Path(null, {
-      stroke: OpticsLabColors.glassStrokeProperty,
-      lineWidth: 1,
-      pickable: false,
-    });
-    this.bodyHitPath = createLineBodyHitPath();
-    this.handle1 = makeEndpointHandle(
-      () => grating.p1,
-      (p) => {
-        grating.p1 = p;
-      },
-      () => {
-        this.rebuild();
-      },
+    super(
+      grating,
       modelViewTransform,
-      tandem.createTandem("handle1DragListener"),
-      handlesVisibleProperty,
-    );
-    this.handle2 = makeEndpointHandle(
-      () => grating.p2,
-      (p) => {
-        grating.p2 = p;
-      },
-      () => {
-        this.rebuild();
-      },
-      modelViewTransform,
-      tandem.createTandem("handle2DragListener"),
-      handlesVisibleProperty,
-    );
-
-    this.addChild(this.bodyPath);
-    this.addChild(this.tickPath);
-    this.addChild(this.bodyHitPath);
-    this.addChild(this.handle1);
-    this.addChild(this.handle2);
-
-    this.rebuild();
-
-    this.bodyDragListener = attachTranslationDrag(
-      this.bodyHitPath,
+      tandem,
+      viewOptions,
       [
-        {
-          get: () => grating.p1,
-          set: (p) => {
-            grating.p1 = p;
-          },
-        },
-        {
-          get: () => grating.p2,
-          set: (p) => {
-            grating.p2 = p;
-          },
-        },
+        new Path(null, {
+          stroke: OpticsLabColors.glassStrokeProperty,
+          lineWidth: GLASS_STROKE_WIDTH + 1,
+          lineCap: "round",
+          pickable: false,
+        }),
       ],
-      () => {
-        this.rebuild();
-      },
-      modelViewTransform,
-      tandem.createTandem("bodyDragListener"),
+      new Path(null, { stroke: OpticsLabColors.glassStrokeProperty, lineWidth: 1, pickable: false }),
+      TRANSMISSION_GRATING_TICK_COUNT,
     );
   }
 
-  protected override _doRebuild(): void {
-    const { p1, p2 } = this.grating;
-    const vx1 = this.modelViewTransform.modelToViewX(p1.x);
-    const vy1 = this.modelViewTransform.modelToViewY(p1.y);
-    const vx2 = this.modelViewTransform.modelToViewX(p2.x);
-    const vy2 = this.modelViewTransform.modelToViewY(p2.y);
-
-    // Main body line
-    const bodyShape = new Shape().moveTo(vx1, vy1).lineTo(vx2, vy2);
-    this.bodyPath.shape = bodyShape;
-    this.bodyHitPath.shape = buildLineHitShape(vx1, vy1, vx2, vy2);
-
-    // Tick marks perpendicular to the grating line
-    const dx = vx2 - vx1;
-    const dy = vy2 - vy1;
-    const len = Math.hypot(dx, dy);
-    if (len > 0) {
-      const nx = -dy / len;
-      const ny = dx / len;
-      const tickShape = new Shape();
-      for (let i = 1; i <= TRANSMISSION_GRATING_TICK_COUNT; i++) {
-        const t = i / (TRANSMISSION_GRATING_TICK_COUNT + 1);
-        const cx = vx1 + dx * t;
-        const cy = vy1 + dy * t;
-        tickShape.moveTo(cx - nx * TRANSMISSION_GRATING_TICK_HALF_PX, cy - ny * TRANSMISSION_GRATING_TICK_HALF_PX);
-        tickShape.lineTo(cx + nx * TRANSMISSION_GRATING_TICK_HALF_PX, cy + ny * TRANSMISSION_GRATING_TICK_HALF_PX);
-      }
-      this.tickPath.shape = tickShape;
-    }
-
-    this.handle1.syncToModel();
-    this.handle2.syncToModel();
-    this.rebuildEmitter.emit();
+  /** Short tick perpendicular to the grating line, centered on it. */
+  protected override addGrooveMark(shape: Shape, { cx, cy, nx, ny }: GrooveFrame): void {
+    const h = TRANSMISSION_GRATING_TICK_HALF_PX;
+    shape.moveTo(cx - nx * h, cy - ny * h);
+    shape.lineTo(cx + nx * h, cy + ny * h);
   }
 }
 

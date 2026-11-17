@@ -282,6 +282,48 @@ export function circumcenter(p1: Point, p2: Point, p3: Point): { center: Point; 
 }
 
 /**
+ * Paraxial focal point of a circular-arc mirror with endpoints p1, p2 and
+ * vertex p3: R/2 from the vertex toward the center of curvature.
+ * Returns null for a flat (collinear) arc or a vertex at the center.
+ */
+export function arcFocalPoint(p1: Point, p2: Point, p3: Point): Point | null {
+  const circumcircle = circumcenter(p1, p2, p3);
+  if (!circumcircle) {
+    return null;
+  }
+  const { center, radius } = circumcircle;
+  const d = distance(p3, center);
+  if (d <= 1e-10) {
+    return null;
+  }
+  const k = radius / 2 / d;
+  return point(p3.x + (center.x - p3.x) * k, p3.y + (center.y - p3.y) * k);
+}
+
+/**
+ * Focal point of the parabola with chord p1–p2 and vertex p3. In chord-aligned
+ * coordinates the curve is v = a·u², so the focus lies 1/(4a) from the vertex
+ * along the axis. Returns null for a collapsed chord or a flat parabola.
+ */
+export function parabolaFocalPoint(p1: Point, p2: Point, p3: Point): Point | null {
+  const chordLen = distance(p1, p2);
+  const halfAperture = chordLen / 2;
+  if (halfAperture <= 1e-10) {
+    return null;
+  }
+  const normalX = -(p2.y - p1.y) / chordLen;
+  const normalY = (p2.x - p1.x) / chordLen;
+  const sagitta = (p3.x - (p1.x + p2.x) / 2) * normalX + (p3.y - (p1.y + p2.y) / 2) * normalY;
+  const a = sagitta / (halfAperture * halfAperture);
+  if (Math.abs(a) <= 1e-10) {
+    return null;
+  }
+  // Signed: the focus lies on the opposite side of the vertex from the sagitta.
+  const focalDist = 1 / (4 * a);
+  return point(p3.x - normalX * focalDist, p3.y - normalY * focalDist);
+}
+
+/**
  * Samples n+1 points on the parabola with chord p1–p2 and vertex p3.
  * The vertex is projected onto the chord's perpendicular bisector.
  * Collapsed chords return their endpoints.

@@ -161,3 +161,40 @@ The post-rebase clone report is /tmp/opticslab-improve-jscpd-rebased/jscpd-repor
 post-rebase validation logs are /tmp/opticslab-improve-rebased-test.log and
 /tmp/opticslab-improve-rebased-fuzz.log.
 
+
+## Remaining candidates — 2026-11-17
+
+Duplication candidates 3–5 are now consolidated:
+
+- **Mirror views:** `CurvedMirrorView` is the shared base for the arc, parabolic, and apertured
+  parabolic mirror views. It owns the handles, translation and curvature drags, and the focal marker.
+  It also owns one or two mirror arms. Focal-point math moved to `arcFocalPoint` and
+  `parabolaFocalPoint` in Geometry.ts, with analytic regression tests.
+- **Grating views:** `GratingView` is the shared base. Each subclass supplies only its line styling
+  and one groove mark. A zero-length grating now clears its groove marks instead of keeping stale ones.
+- **Glass edit controls:** one angle-slider builder, one refractive-index control, and one lens skeleton
+  (length, angle, index, sync guard) replace the repeated blocks. The symmetric and plano lens
+  builders share a single fixed-sign surface builder. The prism builders share size and
+  width/height builders. Exported names are unchanged.
+- `pointAccessors()` in ViewHelpers builds the translation-drag getter/setter pairs.
+
+New `tests/common/view/glass-edit-controls.test.ts` covers the builders. It checks control counts.
+It also checks that refreshing with an out-of-range radius never writes a clamped value back, and
+that fixed-sign lenses keep their sign. The suite passes against both the old and new code.
+
+With the same jscpd settings, matches fell from 133 to 101. Reported duplicated TypeScript lines fell
+from 2,510/27,844 (9.01%) to 1,715/27,051 (6.34%). None of the remaining matches are between the
+refactored mirror or grating views. The largest are IdealCurvedMirrorView with SegmentMirrorView
+and IdealLensView, and a 39-line GlassEditControls/MirrorEditControls match.
+
+Knip's five unused-file candidates had already been removed; `npm run check:unused` passes.
+
+Validation on Node v26.13.0: lint, all type checks, `check:architecture`, Knip, production build,
+the architecture node tests, and 480 unit tests across eight files all passed. The intermittent
+keyboard-fuzz assertion did not reproduce: seed 829885 passed both quick modes three times, and
+one random seed also passed.
+Its cause remains unknown.
+
+Still open: the six Lizard complexity hotspots and the six Oxlint array/spread warnings were not
+re-measured. Neither tool is installed locally, and Oxlint type-aware mode needs `oxlint-tsgolint`.
+They remain review priorities, not known defects.
