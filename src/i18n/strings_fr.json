@@ -217,12 +217,15 @@
       "controlArea": "Les commandes ajoutent des éléments optiques depuis un carrousel de composants, modifient les paramètres de l'élément sélectionné, utilisent des outils de mesure, et téléchargent ou réinitialisent la scène. Un bouton Tout réinitialiser ramène la simulation à son état initial.",
       "interactionHint": "Ajoutez des éléments optiques depuis le carrousel et disposez-les sur le banc pour tracer les rayons lumineux à travers votre montage."
     },
-    "currentDetails": "Disposez des éléments optiques sur le banc et observez comment les rayons lumineux les traversent.",
     "acquireDetector": "Acquérir la mesure du détecteur",
     "resetAll": "Tout réinitialiser",
     "dragHandle": "Poignée de glissement",
     "dragHandleHelp": "Utilisez les flèches du clavier pour ajuster.",
     "dragBodyHelp": "Utilisez les flèches du clavier pour déplacer.",
-    "observerHelp": "Utilisez les flèches du clavier pour déplacer l’observateur."
+    "observerHelp": "Utilisez les flèches du clavier pour déplacer l’observateur.",
+    "currentDetailsPattern": "Éléments optiques sur le banc : {{count}}. {{selection}}",
+    "selectedPattern": "Sélection : {{name}}.",
+    "noSelection": "Aucun élément sélectionné.",
+    "selectedElement": "Élément optique"
   }
 }

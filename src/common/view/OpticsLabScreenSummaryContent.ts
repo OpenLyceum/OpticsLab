@@ -1,27 +1,43 @@
-/**
- * OpticsLabScreenSummaryContent.ts
- *
- * Accessible screen summary (SceneryStack Interactive Description) shared by all
- * OpticsLab screens (they all extend RayTracingCommonView). Describes the optical
- * bench play area and the controls, and gives an interaction hint.
- *
- * Follows the OpenLyceum accessibility convention; see the canonical
- * SceneryStackTemplate/SimScreenSummaryContent.ts. The current-details paragraph is
- * static here because the scene's optical elements are held in a PhetioGroup
- * rather than a count Property; it can be made live by deriving a count.
- */
+/** Live bench summary shared by all four OpticsLab screens. */
+import { DerivedProperty, DynamicProperty, type TReadOnlyProperty } from "scenerystack/axon";
 import { ScreenSummaryContent } from "scenerystack/sim";
 import { StringManager } from "../../i18n/StringManager.js";
+import type { OpticsScene } from "../model/optics/OpticsScene.js";
+import type { OpticalElement } from "../model/optics/OpticsTypes.js";
 
 export class OpticsLabScreenSummaryContent extends ScreenSummaryContent {
-  public constructor() {
-    const a11y = StringManager.getInstance().getA11yStrings();
-
+  public constructor(scene: OpticsScene, selectedElementProperty: TReadOnlyProperty<OpticalElement | null>) {
+    const strings = StringManager.getInstance();
+    const a11y = strings.getA11yStrings();
+    const nameProperty = new DerivedProperty([selectedElementProperty], (element) =>
+      element
+        ? (strings.getElementTypeNameProperty(element.type) ?? a11y.selectedElementStringProperty)
+        : a11y.noSelectionStringProperty,
+    );
+    const name = new DynamicProperty<string, string, TReadOnlyProperty<string>>(nameProperty);
+    const currentDetails = new DerivedProperty(
+      [
+        scene.opticalElementsGroup.countProperty,
+        selectedElementProperty,
+        name,
+        a11y.currentDetailsPatternStringProperty,
+        a11y.selectedPatternStringProperty,
+      ],
+      (count, selected, label, pattern, selectedPattern) =>
+        pattern
+          .replace("{{count}}", String(count))
+          .replace("{{selection}}", selected ? selectedPattern.replace("{{name}}", label) : label),
+    );
     super({
       playAreaContent: a11y.screenSummary.playAreaStringProperty,
       controlAreaContent: a11y.screenSummary.controlAreaStringProperty,
-      currentDetailsContent: a11y.currentDetailsStringProperty,
+      currentDetailsContent: currentDetails,
       interactionHintContent: a11y.screenSummary.interactionHintStringProperty,
+    });
+    this.disposeEmitter.addListener(() => {
+      currentDetails.dispose();
+      name.dispose();
+      nameProperty.dispose();
     });
   }
 }

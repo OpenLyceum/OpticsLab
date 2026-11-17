@@ -237,11 +237,18 @@ export class RayTracingCommonView extends ScreenView {
     providedOptions?: RayTracingCommonViewOptions,
     carouselComponents?: ComponentKey[],
   ) {
+    const selectedElementProperty = new Property<OpticalElement | null>(null, {
+      // The fuzz tester can fire overlapping input events (e.g. carousel drag-create
+      // sets null while a simultaneous down event selects an element) during a single
+      // dispatch cycle, causing reentrant sets. Allow reentry with queued notifications.
+      reentrant: true,
+    });
+
     // Register the accessible screen summary (Interactive Description), shared by
     // all OpticsLab screens via this common view.
     const options = optionize<RayTracingCommonViewOptions, EmptySelfOptions, ScreenViewOptions>()(
       {
-        screenSummaryContent: new OpticsLabScreenSummaryContent(),
+        screenSummaryContent: new OpticsLabScreenSummaryContent(model.scene, selectedElementProperty),
       },
       providedOptions,
     );
@@ -272,12 +279,7 @@ export class RayTracingCommonView extends ScreenView {
     );
     const modelViewTransform = this.modelViewTransform;
 
-    this.selectedElementProperty = new Property<OpticalElement | null>(null, {
-      // The fuzz tester can fire overlapping input events (e.g. carousel drag-create
-      // sets null while a simultaneous down event selects an element) during a single
-      // dispatch cycle, causing reentrant sets. Allow reentry with queued notifications.
-      reentrant: true,
-    });
+    this.selectedElementProperty = selectedElementProperty;
 
     // ── Grid (model + preferences stay in sync for PhET-iO and global prefs) ─
     // showGrid is initialised from a query parameter (one-time override only).

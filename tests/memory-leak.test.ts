@@ -52,6 +52,7 @@ import { describeDisposalLeaks, forceGC } from "./helpers/memoryLeak.js";
 
 // Inventory names covered by createOpticalElementView(ALL_KEYS) / OpticsScene without a
 // dedicated describeDisposalLeaks case: AperturedParabolicMirrorView, DetectorView,
+// CurvedMirrorView (abstract base exercised by arcMirror/parabolicMirror/aperturedMirror),
 // DetectorChartPanel (owned by DetectorView), GlassView, OpticalElementPhetioObject
 // (OpticsScene PhetioGroup), RayPropagationView (RayTracingCommonView canvas).
 

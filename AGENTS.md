@@ -48,8 +48,8 @@ Follows the shared [OpenLyceum accessibility convention](https://github.com/Open
 All four screens share `RayTracingCommonView`, which registers `OpticsLabScreenSummaryContent`
 via the `screenSummaryContent` super-option and orders the PDOM through a wrapper `Node`'s
 `pdomOrder`. A11y strings live under the top-level `a11y` key in each locale JSON, via
-`StringManager.getA11yStrings()`. Current-details is static (scene elements are a PhetioGroup);
-it can be made live by deriving an element-count Property.
+`StringManager.getA11yStrings()`. Current-details follows the scene group count Property
+and the selected element, including its localized component name.
 
 ## Compliance carve-outs
 
