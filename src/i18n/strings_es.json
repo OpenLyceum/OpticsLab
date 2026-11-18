@@ -136,17 +136,12 @@
   "instructions": {
     "sections": {
       "parameterAdjustment": "Ajuste de parámetros",
-      "simHelp": "Ayuda",
       "tools": "Panel de herramientas"
     },
     "adjust": {
       "removeSelectedElement": "Eliminar el elemento seleccionado",
-      "stepFocusedControl": "Avanzar el control deslizante o valor enfocado",
       "undoAction": "Deshacer",
       "redoAction": "Rehacer"
-    },
-    "controls": {
-      "toggleHelp": "Mostrar/ocultar esta ayuda"
     },
     "tools": {
       "toggleMeasuringTape": "Mostrar/ocultar la cinta métrica",
@@ -162,12 +157,8 @@
     "a11y": {
       "adjust": {
         "removeSelectedElement": "Presiona Suprimir o Retroceso para eliminar el elemento óptico seleccionado (cuando no hay un campo de texto enfocado)",
-        "stepFocusedControl": "Presiona + o - para aumentar o disminuir el control enfocado",
         "undoAction": "Presiona Ctrl+Z para deshacer la última acción de añadir o eliminar",
         "redoAction": "Presiona Ctrl+Y o Ctrl+Shift+Z para rehacer la última acción deshecha"
-      },
-      "controls": {
-        "toggleHelp": "Presiona H para mostrar u ocultar este cuadro de ayuda del teclado"
       },
       "tools": {
         "toggleMeasuringTape": "Presiona M para mostrar u ocultar la cinta métrica",
@@ -221,6 +212,7 @@
     "resetAll": "Restablecer todo",
     "dragHandle": "Controlador de arrastre",
     "dragHandleHelp": "Usa las flechas del teclado para ajustar.",
+    "dragBody": "Mover elemento",
     "dragBodyHelp": "Usa las flechas del teclado para mover.",
     "observerHelp": "Usa las flechas del teclado para mover al observador.",
     "currentDetailsPattern": "Elementos ópticos en el banco: {{count}}. {{selection}}",

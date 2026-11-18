@@ -136,17 +136,12 @@
   "instructions": {
     "sections": {
       "parameterAdjustment": "Parameter adjustment",
-      "simHelp": "Help",
       "tools": "Tools panel"
     },
     "adjust": {
       "removeSelectedElement": "Remove selected element",
-      "stepFocusedControl": "Step focused slider or value",
       "undoAction": "Undo",
       "redoAction": "Redo"
-    },
-    "controls": {
-      "toggleHelp": "Toggle this help"
     },
     "tools": {
       "toggleMeasuringTape": "Toggle measuring tape",
@@ -162,12 +157,8 @@
     "a11y": {
       "adjust": {
         "removeSelectedElement": "Press Delete or Backspace to remove the selected optical element (when a text field is not focused)",
-        "stepFocusedControl": "Press + or - to increase or decrease the focused control",
         "undoAction": "Press Ctrl+Z to undo the last add or remove action",
         "redoAction": "Press Ctrl+Y or Ctrl+Shift+Z to redo the last undone action"
-      },
-      "controls": {
-        "toggleHelp": "Press H to show or hide this keyboard help dialog"
       },
       "tools": {
         "toggleMeasuringTape": "Press M to show or hide the measuring tape",
@@ -221,6 +212,7 @@
     "resetAll": "Reset All",
     "dragHandle": "Drag handle",
     "dragHandleHelp": "Press arrow keys to adjust.",
+    "dragBody": "Move element",
     "dragBodyHelp": "Press arrow keys to move.",
     "observerHelp": "Press arrow keys to move the observer.",
     "currentDetailsPattern": "Optical elements on the bench: {{count}}. {{selection}}",

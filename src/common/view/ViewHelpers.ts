@@ -526,7 +526,9 @@ export function attachTranslationDrag(
   // arrow keys (RichDragListener's built-in keyboard drag) to move the element.
   bodyNode.tagName = "div";
   bodyNode.focusable = true;
-  bodyNode.accessibleHelpText = StringManager.getInstance().getA11yStrings().dragBodyHelpStringProperty;
+  const a11y = StringManager.getInstance().getA11yStrings();
+  bodyNode.accessibleName = a11y.dragBodyStringProperty;
+  bodyNode.accessibleHelpText = a11y.dragBodyHelpStringProperty;
 
   const richDragListener = new RichDragListener({
     tandem: tandem,

@@ -495,17 +495,12 @@ export class StringManager {
   public getInstructionsStrings(): {
     sections: {
       parameterAdjustmentStringProperty: ReadOnlyProperty<string>;
-      simHelpStringProperty: ReadOnlyProperty<string>;
       toolsStringProperty: ReadOnlyProperty<string>;
     };
     adjust: {
       removeSelectedElementStringProperty: ReadOnlyProperty<string>;
-      stepFocusedControlStringProperty: ReadOnlyProperty<string>;
       undoActionStringProperty: ReadOnlyProperty<string>;
       redoActionStringProperty: ReadOnlyProperty<string>;
-    };
-    controls: {
-      toggleHelpStringProperty: ReadOnlyProperty<string>;
     };
     tools: {
       toggleMeasuringTapeStringProperty: ReadOnlyProperty<string>;
@@ -521,12 +516,8 @@ export class StringManager {
     a11y: {
       adjust: {
         removeSelectedElementStringProperty: ReadOnlyProperty<string>;
-        stepFocusedControlStringProperty: ReadOnlyProperty<string>;
         undoActionStringProperty: ReadOnlyProperty<string>;
         redoActionStringProperty: ReadOnlyProperty<string>;
-      };
-      controls: {
-        toggleHelpStringProperty: ReadOnlyProperty<string>;
       };
       tools: {
         toggleMeasuringTapeStringProperty: ReadOnlyProperty<string>;
@@ -545,17 +536,12 @@ export class StringManager {
     return {
       sections: {
         parameterAdjustmentStringProperty: instructionStrings.sections.parameterAdjustmentStringProperty,
-        simHelpStringProperty: instructionStrings.sections.simHelpStringProperty,
         toolsStringProperty: instructionStrings.sections.toolsStringProperty,
       },
       adjust: {
         removeSelectedElementStringProperty: instructionStrings.adjust.removeSelectedElementStringProperty,
-        stepFocusedControlStringProperty: instructionStrings.adjust.stepFocusedControlStringProperty,
         undoActionStringProperty: instructionStrings.adjust.undoActionStringProperty,
         redoActionStringProperty: instructionStrings.adjust.redoActionStringProperty,
-      },
-      controls: {
-        toggleHelpStringProperty: instructionStrings.controls.toggleHelpStringProperty,
       },
       tools: {
         toggleMeasuringTapeStringProperty: instructionStrings.tools.toggleMeasuringTapeStringProperty,
@@ -571,12 +557,8 @@ export class StringManager {
       a11y: {
         adjust: {
           removeSelectedElementStringProperty: instructionStrings.a11y.adjust.removeSelectedElementStringProperty,
-          stepFocusedControlStringProperty: instructionStrings.a11y.adjust.stepFocusedControlStringProperty,
           undoActionStringProperty: instructionStrings.a11y.adjust.undoActionStringProperty,
           redoActionStringProperty: instructionStrings.a11y.adjust.redoActionStringProperty,
-        },
-        controls: {
-          toggleHelpStringProperty: instructionStrings.a11y.controls.toggleHelpStringProperty,
         },
         tools: {
           toggleMeasuringTapeStringProperty: instructionStrings.a11y.tools.toggleMeasuringTapeStringProperty,

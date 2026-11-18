@@ -2,7 +2,7 @@
  * OpticsLabKeyboardHelpContent.ts
  *
  * Keyboard-help dialog content: moving components (PhET-standard draggable help),
- * parameter adjustment, tools, help toggle, and basic sim actions. Wired into each Screen
+ * parameter adjustment, tools, and basic sim actions. Wired into each Screen
  * via the createKeyboardHelpNode screen option (never in main.ts).
  */
 
@@ -40,16 +40,6 @@ export class OpticsLabKeyboardHelpContent extends TwoColumnKeyboardHelpContent {
           KeyboardHelpIconFactory.iconOrIcon(TextKeyNode.backspace(), TextKeyNode.delete()),
           {
             labelInnerContent: strings.a11y.adjust.removeSelectedElementStringProperty,
-            labelOptions: {
-              fill: OpticsLabColors.controlPanelTextColorProperty,
-            },
-          },
-        ),
-        KeyboardHelpSectionRow.labelWithIcon(
-          strings.adjust.stepFocusedControlStringProperty,
-          KeyboardHelpIconFactory.iconToIcon(new LetterKeyNode("+"), new LetterKeyNode("-")),
-          {
-            labelInnerContent: strings.a11y.adjust.stepFocusedControlStringProperty,
             labelOptions: {
               fill: OpticsLabColors.controlPanelTextColorProperty,
             },
@@ -122,17 +112,6 @@ export class OpticsLabKeyboardHelpContent extends TwoColumnKeyboardHelpContent {
       sectionOptions,
     );
 
-    const simHelpSection = new KeyboardHelpSection(
-      strings.sections.simHelpStringProperty,
-      [
-        KeyboardHelpSectionRow.labelWithIcon(strings.controls.toggleHelpStringProperty, new LetterKeyNode("H"), {
-          labelInnerContent: strings.a11y.controls.toggleHelpStringProperty,
-          labelOptions: { fill: OpticsLabColors.controlPanelTextColorProperty },
-        }),
-      ],
-      sectionOptions,
-    );
-
     const basicActionsSection = new BasicActionsKeyboardHelpSection({
       withCheckboxContent: true,
       textMaxWidth: KEYBOARD_HELP_TEXT_MAX_WIDTH,
@@ -141,9 +120,8 @@ export class OpticsLabKeyboardHelpContent extends TwoColumnKeyboardHelpContent {
       },
     });
 
-    super([moveDraggableSection, adjustmentSection, toolsSection], [simHelpSection, basicActionsSection]);
+    super([moveDraggableSection, adjustmentSection, toolsSection], [basicActionsSection]);
 
     KeyboardHelpSection.alignHelpSectionIcons([moveDraggableSection, adjustmentSection, toolsSection]);
-    KeyboardHelpSection.alignHelpSectionIcons([simHelpSection]);
   }
 }

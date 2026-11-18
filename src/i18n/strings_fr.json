@@ -136,17 +136,12 @@
   "instructions": {
     "sections": {
       "parameterAdjustment": "Réglage des paramètres",
-      "simHelp": "Aide",
       "tools": "Outils"
     },
     "adjust": {
       "removeSelectedElement": "Supprimer l'élément sélectionné",
-      "stepFocusedControl": "Ajuster le curseur ou la valeur active",
       "undoAction": "Annuler",
       "redoAction": "Rétablir"
-    },
-    "controls": {
-      "toggleHelp": "Afficher ou masquer cette aide"
     },
     "tools": {
       "toggleMeasuringTape": "Afficher ou masquer le ruban à mesurer",
@@ -162,12 +157,8 @@
     "a11y": {
       "adjust": {
         "removeSelectedElement": "Appuyez sur Supprimer ou Retour arrière pour retirer l'élément optique sélectionné (si aucun champ texte n'est actif)",
-        "stepFocusedControl": "Appuyez sur + ou - pour augmenter ou diminuer le contrôle actif",
         "undoAction": "Appuyez sur Ctrl+Z pour annuler la dernière action d'ajout ou de suppression",
         "redoAction": "Appuyez sur Ctrl+Y ou Ctrl+Maj+Z pour rétablir la dernière action annulée"
-      },
-      "controls": {
-        "toggleHelp": "Appuyez sur H pour afficher ou masquer cette boîte d'aide clavier"
       },
       "tools": {
         "toggleMeasuringTape": "Appuyez sur M pour afficher ou masquer le ruban à mesurer",
@@ -221,6 +212,7 @@
     "resetAll": "Tout réinitialiser",
     "dragHandle": "Poignée de glissement",
     "dragHandleHelp": "Utilisez les flèches du clavier pour ajuster.",
+    "dragBody": "Déplacer l’élément",
     "dragBodyHelp": "Utilisez les flèches du clavier pour déplacer.",
     "observerHelp": "Utilisez les flèches du clavier pour déplacer l’observateur.",
     "currentDetailsPattern": "Éléments optiques sur le banc : {{count}}. {{selection}}",
