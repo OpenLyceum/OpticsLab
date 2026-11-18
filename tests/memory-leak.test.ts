@@ -38,27 +38,31 @@
  *   – multiple sequential scenes not cross-retaining each other's elements
  */
 
-import { Vector2 } from "scenerystack/dot";
+import { Bounds2, Vector2 } from "scenerystack/dot";
 import { ModelViewTransform2 } from "scenerystack/phetcommon";
 import { Tandem } from "scenerystack/tandem";
 import { describe, expect, it } from "vitest";
 import { type ComponentKey, createDefaultElement } from "../src/common/model/ComponentFactory.js";
+import type { DetectorElement } from "../src/common/model/detectors/DetectorElement.js";
 import { OpticsScene } from "../src/common/model/optics/OpticsScene.js";
 import type { BaseOpticalElementView } from "../src/common/view/BaseOpticalElementView.js";
+import { DetectorChartPanel } from "../src/common/view/detectors/DetectorChartPanel.js";
+import type { DetectorView } from "../src/common/view/detectors/DetectorView.js";
 import { createOpticalElementView } from "../src/common/view/OpticalElementViewFactory.js";
+import { RayPropagationView } from "../src/common/view/RayPropagationView.js";
 import { trackRegistry } from "../src/common/view/TrackRegistry.js";
 import { ViewOptionsModel } from "../src/common/view/ViewOptionsModel.js";
-import { describeDisposalLeaks, forceGC } from "./helpers/memoryLeak.js";
-
-// Inventory names covered by createOpticalElementView(ALL_KEYS) / OpticsScene without a
-// dedicated describeDisposalLeaks case: AperturedParabolicMirrorView, DetectorView,
-// CurvedMirrorView (abstract base exercised by arcMirror/parabolicMirror/aperturedMirror),
-// DetectorChartPanel (owned by DetectorView), GlassView, OpticalElementPhetioObject
-// (OpticsScene PhetioGroup), RayPropagationView (RayTracingCommonView canvas).
+import { StringManager } from "../src/i18n/StringManager.js";
+import { describeDisposalLeaks, forceGC, listenerCount } from "./helpers/memoryLeak.js";
 
 // Shared default ViewOptionsModel used across all tests that construct views.
 // Not disposed between tests — it acts as a long-lived sentinel with default values.
 const viewOptions: ViewOptionsModel = new ViewOptionsModel();
+const rayCanvasMvt = ModelViewTransform2.createSinglePointScaleInvertedYMapping(
+  Vector2.ZERO,
+  new Vector2(400, 300),
+  100,
+);
 
 // All component keys available in the factory — every element type must be covered.
 const ALL_KEYS: ComponentKey[] = [
@@ -241,6 +245,13 @@ function createSceneDefaultHistory(key: ComponentKey): { sceneRef: WeakRef<objec
 }
 
 // ── Tests ───────────────────────────────────────────────────────────────────
+
+// The factory probes below build every ALL_KEYS element (createDefaultElement) and its view
+// (createOpticalElementView), so they never name the concrete classes. Checked at runtime:
+// every BaseElement / BaseOpticalElementView descendant the inventory lists is constructed.
+// memory-leak-covers-subclasses: BaseElement (createDefaultElement(ALL_KEYS)), BaseOpticalElementView (createOpticalElementView(ALL_KEYS))
+// memory-leak-covers: OpticalElementPhetioObject (OpticsScene.addElement → PhetioGroup.createNextElement in the scene-lifecycle probes)
+// DetectorChartPanel and RayPropagationView have dedicated tests at the end of this file.
 
 describe("Memory leak regression", () => {
   const mvt = ModelViewTransform2.createSinglePointScaleInvertedYMapping(Vector2.ZERO, new Vector2(500, 400), 100);
@@ -659,3 +670,82 @@ describe("Memory leak regression", () => {
 });
 
 describeDisposalLeaks([{ name: "ViewOptionsModel", create: () => new ViewOptionsModel() }]);
+
+// ── Detector chart: delete a detector while its chart shows data ────────────
+// Mirrors RayTracingCommonView._deleteElement: dispose the view, then remove the element
+// from the long-lived scene. The chart's labels, readouts and Acquire button link to the
+// global localized string and accessible-name Properties; those counts must return to
+// their baseline, and both the DetectorView and its DetectorChartPanel must be collected.
+describe("DetectorChartPanel released when its detector is deleted", () => {
+  const mvt = ModelViewTransform2.createSinglePointScaleInvertedYMapping(Vector2.ZERO, new Vector2(500, 400), 100);
+  const ui = StringManager.getInstance().getUIStrings();
+  const a11y = StringManager.getInstance().getA11yStrings();
+  const chartStrings = [
+    ui.detectorIntensityAxisStringProperty,
+    ui.detectorHitsStringProperty,
+    ui.detectorIntegratedIntensityStringProperty,
+    a11y.acquireDetectorStringProperty,
+  ];
+
+  /** Add a lit detector, populate its chart, start an acquisition, then delete it. */
+  function deleteDetectorWithOpenChart(scene: OpticsScene): { viewRef: WeakRef<object>; chartRef: WeakRef<object> } {
+    const detector = createDefaultElement("detector", 1, 0) as DetectorElement;
+    scene.addElement(detector);
+    const view = createOpticalElementView(detector, mvt, Tandem.OPT_OUT, viewOptions) as DetectorView;
+    const chart = view.children.find((child) => child instanceof DetectorChartPanel);
+    expect(chart, "DetectorView owns a DetectorChartPanel").toBeInstanceOf(DetectorChartPanel);
+    scene.simulate();
+    view.updateChart();
+    detector.startAcquisition();
+    detector.stepAcquisition(0.1);
+    view.updateChart();
+    const refs = { viewRef: new WeakRef<object>(view), chartRef: new WeakRef<object>(chart as object) };
+    view.dispose();
+    scene.removeElement(detector.id);
+    return refs;
+  }
+
+  it("chart and view are collected; string and accessible-name listeners return to baseline", async () => {
+    const scene = new OpticsScene(Tandem.OPT_OUT);
+    scene.addElement(createDefaultElement("pointSource", 0, 0));
+    const before = chartStrings.map(listenerCount);
+    const refs = [deleteDetectorWithOpenChart(scene), deleteDetectorWithOpenChart(scene)];
+    expect(chartStrings.map(listenerCount), "deleted charts still listen to localized strings").toEqual(before);
+    const weak = refs.flatMap(({ viewRef, chartRef }) => [viewRef, chartRef]);
+    await forceGC(weak);
+    expect(
+      refs.map(({ viewRef, chartRef }) => ({
+        view: viewRef.deref() === undefined,
+        chart: chartRef.deref() === undefined,
+      })),
+      "deleted detector view/chart retained",
+    ).toEqual(refs.map(() => ({ view: true, chart: true })));
+    // The scene outlives the deleted detectors, as in the running sim.
+    expect(scene.getAllElements().length).toBe(1);
+    scene.dispose();
+  });
+});
+
+// ── Ray canvas: unlinks from the long-lived view options ─────────────────────
+// RayTracingCommonView builds one RayPropagationView per screen; the canvas lazy-links three
+// ViewOptionsModel Properties and must unlink them on dispose.
+describeDisposalLeaks([
+  {
+    name: "RayPropagationView",
+    create: () => new RayPropagationView(new Bounds2(0, 0, 800, 600), rayCanvasMvt, viewOptions),
+    keepAlive: () => [viewOptions],
+  },
+]);
+
+it("RayPropagationView: view-option listener counts return to baseline", () => {
+  const props = [
+    viewOptions.rayArrowsVisibleProperty,
+    viewOptions.rayStubsEnabledProperty,
+    viewOptions.rayStubLengthPxProperty,
+  ];
+  const before = props.map(listenerCount);
+  const canvas = new RayPropagationView(new Bounds2(0, 0, 800, 600), rayCanvasMvt, viewOptions);
+  expect(props.map(listenerCount)).toEqual(before.map((n) => n + 1));
+  canvas.dispose();
+  expect(props.map(listenerCount)).toEqual(before);
+});
