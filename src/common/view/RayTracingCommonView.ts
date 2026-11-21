@@ -4,7 +4,7 @@ import { Shape } from "scenerystack/kite";
 import { type EmptySelfOptions, optionize } from "scenerystack/phet-core";
 import { ModelViewTransform2 } from "scenerystack/phetcommon";
 import { Node, Path } from "scenerystack/scenery";
-import { GridNode, InfoButton, ResetAllButton } from "scenerystack/scenery-phet";
+import { InfoButton, ResetAllButton } from "scenerystack/scenery-phet";
 import { ScreenView, type ScreenViewOptions } from "scenerystack/sim";
 import { type Carousel, FlatAppearanceStrategy, RoundPushButton } from "scenerystack/sun";
 import { Tandem } from "scenerystack/tandem";
@@ -313,7 +313,10 @@ export class RayTracingCommonView extends ScreenView {
     // drawn at integer multiples of spacing from Vector2.ZERO (= layout centre),
     // so lines inside layoutBounds never shift when the window is resized —
     // resizing only adds or removes lines at the outer edges.
-    const gridMvtProperty = new Property(modelViewTransform);
+    // One Path whose shape is rebuilt. scenery-phet's GridNode links to its transform Property
+    // and never unlinks, so replacing GridNodes kept every old grid (and its Shape) alive.
+    const gridPath = new Path(null, { stroke: OpticsLabColors.gridLineStrokeProperty, lineWidth: 1 });
+    gridContainer.addChild(gridPath);
     const buildGrid = (spacing: number) => {
       const vb = this.visibleBoundsProperty.value;
       const cx = this.layoutBounds.centerX;
@@ -322,19 +325,15 @@ export class RayTracingCommonView extends ScreenView {
       const halfHeightPx = Math.max(cy - vb.top, vb.bottom - cy);
       const halfM = Math.max(halfWidthPx, halfHeightPx) / PIXELS_PER_METER;
       const linesPerSide = Math.ceil(halfM / spacing) + 1;
-      // Dispose the old GridNode (and its internal Line children) before replacing.
-      for (const child of [...gridContainer.children]) {
-        child.dispose();
+      // Grid centred on the model origin (Vector2.ZERO = layout centre).
+      const extent = linesPerSide * spacing;
+      const shape = new Shape();
+      for (let i = -linesPerSide; i <= linesPerSide; i++) {
+        const offset = i * spacing;
+        shape.moveTo(-extent, offset).lineTo(extent, offset);
+        shape.moveTo(offset, -extent).lineTo(offset, extent);
       }
-      gridContainer.addChild(
-        new GridNode(
-          gridMvtProperty,
-          spacing,
-          Vector2.ZERO, // model-space centre
-          linesPerSide,
-          { stroke: OpticsLabColors.gridLineStrokeProperty, lineWidth: 1 },
-        ),
-      );
+      gridPath.shape = modelViewTransform.modelToViewShape(shape);
       viewSnapState.setGridSpacingM(spacing);
     };
     buildGrid(model.scene.gridSizeProperty.value);
