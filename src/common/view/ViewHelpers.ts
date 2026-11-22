@@ -46,6 +46,20 @@ import { trackRegistry } from "./TrackRegistry.js";
 import { viewSnapState } from "./ViewSnapState.js";
 
 /**
+ * A view that can refresh its geometry after a model change. Undo/redo history
+ * must not strongly retain these — pointer-fuzz deletes elements while drag
+ * commands still sit on the undo stack, and a strong `() => view.rebuild()`
+ * closure kept every disposed view (and its node tree) alive up to MAX_HISTORY_SIZE.
+ */
+export type RebuildableView = { rebuild(): void };
+
+/** History-safe rebuild: only calls rebuild while the view is still reachable. */
+function historySafeRebuild(view: RebuildableView): () => void {
+  const viewRef = new WeakRef(view);
+  return () => viewRef.deref()?.rebuild();
+}
+
+/**
  * Projects a point onto a line segment (clamped to segment bounds) and
  * returns the projected point and the perpendicular distance.
  */
@@ -150,13 +164,13 @@ export function createHandle(
 export function makeEndpointHandle(
   getPoint: () => Point,
   setPoint: (p: Point) => void,
-  rebuild: () => void,
+  view: RebuildableView,
   modelViewTransform: ModelViewTransform2,
   tandem: Tandem,
   handlesVisibleProperty: TReadOnlyProperty<boolean>,
 ): DragHandle {
   const handle = createHandle(getPoint(), modelViewTransform, handlesVisibleProperty);
-  attachEndpointDrag(handle, getPoint, setPoint, rebuild, modelViewTransform, tandem);
+  attachEndpointDrag(handle, getPoint, setPoint, view, modelViewTransform, tandem);
   return Object.assign(handle, {
     syncToModel(): void {
       const p = getPoint();
@@ -178,10 +192,11 @@ export function attachEndpointDrag(
   handle: Circle,
   getPoint: () => Point,
   setPoint: (p: Point) => void,
-  rebuild: () => void,
+  view: RebuildableView,
   modelViewTransform: ModelViewTransform2,
   tandem: Tandem,
 ): void {
+  const rebuildFromHistory = historySafeRebuild(view);
   let beforePoint: Point = { x: 0, y: 0 };
   const drag = new RichDragListener({
     tandem: tandem,
@@ -195,7 +210,7 @@ export function attachEndpointDrag(
       setPoint({ x: p.x + dx, y: p.y + dy });
       handle.x = modelViewTransform.modelToViewX(getPoint().x);
       handle.y = modelViewTransform.modelToViewY(getPoint().y);
-      rebuild();
+      view.rebuild();
     },
     end: () => {
       const history = sceneHistoryRegistry.history;
@@ -211,11 +226,11 @@ export function attachEndpointDrag(
         description: "Move endpoint",
         execute: () => {
           setPoint(after);
-          rebuild();
+          rebuildFromHistory();
         },
         undo: () => {
           setPoint(before);
-          rebuild();
+          rebuildFromHistory();
         },
       });
     },
@@ -236,33 +251,49 @@ export function attachEndpointDrag(
  * state when `end` fires.
  *
  * Usage:
- *   const hooks = createDragHistoryHooks("Resize prism", capture, restore);
+ *   const hooks = createDragHistoryHooks("Resize prism", view, () => view.capture(), (v, values) => v.restore(values));
  *   new RichDragListener({ start: hooks.start, drag: ..., end: hooks.end });
  */
-export function createDragHistoryHooks(
+export function createDragHistoryHooks<T extends object>(
   description: string,
-  capture: () => number[],
-  restore: (values: number[]) => void,
+  owner: T,
+  capture: (owner: T) => number[],
+  restore: (owner: T, values: number[]) => void,
 ): { start: () => void; end: () => void } {
+  const ownerRef = new WeakRef(owner);
   let before: number[] = [];
   return {
     start: () => {
-      before = capture();
+      const live = ownerRef.deref();
+      if (live) {
+        before = capture(live);
+      }
     },
     end: () => {
       const history = sceneHistoryRegistry.history;
-      if (!history) {
+      const live = ownerRef.deref();
+      if (!(history && live)) {
         return;
       }
-      const after = capture();
+      const after = capture(live);
       if (before.length === after.length && before.every((v, i) => v === after[i])) {
         return;
       }
       const b = before;
       history.push({
         description,
-        execute: () => restore(after),
-        undo: () => restore(b),
+        execute: () => {
+          const stillLive = ownerRef.deref();
+          if (stillLive) {
+            restore(stillLive, after);
+          }
+        },
+        undo: () => {
+          const stillLive = ownerRef.deref();
+          if (stillLive) {
+            restore(stillLive, b);
+          }
+        },
       });
     },
   };
@@ -333,10 +364,11 @@ export function attachCurvatureHandleDrag(
   getP2: () => Point,
   getP3: () => Point,
   setP3: (p: Point) => void,
-  rebuild: () => void,
+  view: RebuildableView,
   modelViewTransform: ModelViewTransform2,
   tandem: Tandem,
 ): void {
+  const rebuildFromHistory = historySafeRebuild(view);
   let beforeP3: Point = { x: 0, y: 0 };
   const drag = new RichDragListener({
     tandem: tandem,
@@ -354,7 +386,7 @@ export function attachCurvatureHandleDrag(
       setP3(constrained);
       handle.x = modelViewTransform.modelToViewX(constrained.x);
       handle.y = modelViewTransform.modelToViewY(constrained.y);
-      rebuild();
+      view.rebuild();
     },
     end: () => {
       const history = sceneHistoryRegistry.history;
@@ -370,11 +402,11 @@ export function attachCurvatureHandleDrag(
         description: "Adjust curvature",
         execute: () => {
           setP3(after);
-          rebuild();
+          rebuildFromHistory();
         },
         undo: () => {
           setP3(before);
-          rebuild();
+          rebuildFromHistory();
         },
       });
     },
@@ -409,10 +441,11 @@ function attachVertexPlaneEdgeDrag(
   getP3: () => Point,
   setP1: (p: Point) => void,
   setP2: (p: Point) => void,
-  rebuild: () => void,
+  view: RebuildableView,
   modelViewTransform: ModelViewTransform2,
   tandem: Tandem,
 ): void {
+  const rebuildFromHistory = historySafeRebuild(view);
   let beforeP1: Point = { x: 0, y: 0 };
   let beforeP2: Point = { x: 0, y: 0 };
   const drag = new RichDragListener({
@@ -443,7 +476,7 @@ function attachVertexPlaneEdgeDrag(
       } else {
         setP2(newP);
       }
-      rebuild();
+      view.rebuild();
     },
     end: () => {
       const history = sceneHistoryRegistry.history;
@@ -464,12 +497,12 @@ function attachVertexPlaneEdgeDrag(
         execute: () => {
           setP1(afterP1);
           setP2(afterP2);
-          rebuild();
+          rebuildFromHistory();
         },
         undo: () => {
           setP1(bp1);
           setP2(bp2);
-          rebuild();
+          rebuildFromHistory();
         },
       });
     },
@@ -507,11 +540,12 @@ export function pointAccessors<K extends string>(
 export function attachTranslationDrag(
   bodyNode: Node,
   points: ReadonlyArray<{ get: () => Point; set: (p: Point) => void }>,
-  rebuild: () => void,
+  view: RebuildableView,
   modelViewTransform: ModelViewTransform2,
   tandem: Tandem,
 ): RichDragListener {
   bodyNode.cursor = "grab";
+  const rebuildFromHistory = historySafeRebuild(view);
 
   // Positions captured at the start of each press — used for snap calculations.
   let startPositions: Point[] = [];
@@ -602,7 +636,7 @@ export function attachTranslationDrag(
           y: startP.y + accY + snapOffsetY,
         });
       }
-      rebuild();
+      view.rebuild();
     },
     end: () => {
       const history = sceneHistoryRegistry.history;
@@ -627,7 +661,7 @@ export function attachTranslationDrag(
               points[i]?.set(p);
             }
           }
-          rebuild();
+          rebuildFromHistory();
         },
         undo: () => {
           for (let i = 0; i < points.length; i++) {
@@ -636,7 +670,7 @@ export function attachTranslationDrag(
               points[i]?.set(p);
             }
           }
-          rebuild();
+          rebuildFromHistory();
         },
       });
     },

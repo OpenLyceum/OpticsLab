@@ -52,9 +52,7 @@ export class CircleGlassView extends BaseOpticalElementView {
         glass.p2 = { x: glass.p2.x + (newP1.x - oldP1.x), y: glass.p2.y + (newP1.y - oldP1.y) };
         glass.p1 = newP1;
       },
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("centerDragListener"),
       handlesVisibleProperty,
@@ -65,9 +63,7 @@ export class CircleGlassView extends BaseOpticalElementView {
       (p) => {
         glass.p2 = p;
       },
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("boundaryDragListener"),
       handlesVisibleProperty,
@@ -96,9 +92,7 @@ export class CircleGlassView extends BaseOpticalElementView {
           },
         },
       ],
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("bodyDragListener"),
     );

@@ -56,9 +56,7 @@ export class SegmentMirrorView extends BaseOpticalElementView {
       (p) => {
         mirror.p1 = p;
       },
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("handle1DragListener"),
       handlesVisibleProperty,
@@ -68,9 +66,7 @@ export class SegmentMirrorView extends BaseOpticalElementView {
       (p) => {
         mirror.p2 = p;
       },
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("handle2DragListener"),
       handlesVisibleProperty,
@@ -100,9 +96,7 @@ export class SegmentMirrorView extends BaseOpticalElementView {
           },
         },
       ],
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("bodyDragListener"),
     );

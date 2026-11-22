@@ -117,9 +117,7 @@ export class DetectorView extends BaseOpticalElementView {
         detector.p1 = p;
         detector.p3 = projectPointOntoPerpendicularBisector(detector.p3, detector.p1, detector.p2);
       },
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("handle1DragListener"),
       viewOptions.handlesVisibleProperty,
@@ -130,9 +128,7 @@ export class DetectorView extends BaseOpticalElementView {
         detector.p2 = p;
         detector.p3 = projectPointOntoPerpendicularBisector(detector.p3, detector.p1, detector.p2);
       },
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("handle2DragListener"),
       viewOptions.handlesVisibleProperty,
@@ -188,9 +184,7 @@ export class DetectorView extends BaseOpticalElementView {
           },
         },
       ],
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("bodyDragListener"),
     );
@@ -204,9 +198,7 @@ export class DetectorView extends BaseOpticalElementView {
       (p) => {
         detector.p3 = p;
       },
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("curvatureDragListener"),
     );

@@ -388,7 +388,7 @@ export class RayTracingCommonView extends ScreenView {
       const view = this.elementViewMap.get(element.id);
       if (view) {
         this.elementViewMap.delete(element.id);
-        view.dispose();
+        view.disposeSubtree();
       }
 
       // Remove the element tandem from the global tandem tree. RichDragListener
@@ -511,7 +511,7 @@ export class RayTracingCommonView extends ScreenView {
       // to remove from whichever layer holds it, and the Display can properly
       // clean up Instances/PDOMInstances for the entire subtree.
       this.elementViewMap.delete(element.id);
-      view.dispose();
+      view.disposeSubtree();
       const et = this.elementTandemMap.get(element.id);
       if (et) {
         RayTracingCommonView._cleanupElementTandem(et);
@@ -529,7 +529,7 @@ export class RayTracingCommonView extends ScreenView {
       const previousView = this.elementViewMap.get(previousElement.id);
       if (previousView) {
         this.elementViewMap.delete(previousElement.id);
-        previousView.dispose();
+        previousView.disposeSubtree();
       }
       const previousTandem = this.elementTandemMap.get(previousElement.id);
       if (previousTandem) {
@@ -730,7 +730,7 @@ export class RayTracingCommonView extends ScreenView {
     // can properly clean up Instances/PDOMInstances.  Node.dispose() → detach()
     // removes each view from its parent layer automatically.
     for (const view of this.elementViewMap.values()) {
-      view.dispose();
+      view.disposeSubtree();
     }
     this.elementViewMap.clear();
 

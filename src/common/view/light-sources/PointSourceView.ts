@@ -58,9 +58,7 @@ export class PointSourceView extends BaseOpticalElementView {
           },
         },
       ],
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("bodyDragListener"),
     );

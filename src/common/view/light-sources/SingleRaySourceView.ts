@@ -55,9 +55,7 @@ export class SingleRaySourceView extends BaseOpticalElementView {
       (p) => {
         source.p2 = p;
       },
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("directionDragListener"),
       handlesVisibleProperty,
@@ -86,9 +84,7 @@ export class SingleRaySourceView extends BaseOpticalElementView {
           },
         },
       ],
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("bodyDragListener"),
     );

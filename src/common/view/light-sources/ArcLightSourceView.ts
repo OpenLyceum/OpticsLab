@@ -59,11 +59,12 @@ function attachCircleDrag(
   source: ArcLightSource,
   getHandleAngle: () => number,
   onAngleChange: (newAngle: number) => void,
-  rebuild: () => void,
+  view: { rebuild(): void },
   modelViewTransform: ModelViewTransform2,
   tandem: Tandem,
 ): void {
   handle.cursor = "pointer";
+  const viewRef = new WeakRef(view);
   let beforeAngle = 0;
   const drag = new RichDragListener({
     tandem: tandem,
@@ -78,7 +79,7 @@ function attachCircleDrag(
       const hy = source.position.y + Math.sin(a) * ARC_SOURCE_RIM_RADIUS_M + dy;
       const newAngle = Math.atan2(hy - source.position.y, hx - source.position.x);
       onAngleChange(newAngle);
-      rebuild();
+      view.rebuild();
     },
     end: () => {
       const history = sceneHistoryRegistry.history;
@@ -94,11 +95,11 @@ function attachCircleDrag(
         description: "Rotate arc source handle",
         execute: () => {
           onAngleChange(after);
-          rebuild();
+          viewRef.deref()?.rebuild();
         },
         undo: () => {
           onAngleChange(before);
-          rebuild();
+          viewRef.deref()?.rebuild();
         },
       });
     },
@@ -180,9 +181,7 @@ export class ArcLightSourceView extends BaseOpticalElementView {
           },
         },
       ],
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("bodyDragListener"),
     );
@@ -194,9 +193,7 @@ export class ArcLightSourceView extends BaseOpticalElementView {
       (newAlpha) => {
         source.direction = newAlpha;
       },
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("directionDragListener"),
     );
@@ -211,9 +208,7 @@ export class ArcLightSourceView extends BaseOpticalElementView {
         const halfBeta = Math.min(diff, 2 * Math.PI - diff);
         source.emissionAngle = Math.max(ARC_SOURCE_MIN_EMISSION_ANGLE, halfBeta * 2);
       },
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("spreadDragListener"),
     );

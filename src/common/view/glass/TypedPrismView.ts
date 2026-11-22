@@ -198,8 +198,9 @@ export class TypedPrismView extends GlassView {
   private attachScaleDrag(handle: Circle, vertexIndex: number): void {
     const historyHooks = createDragHistoryHooks(
       "Resize prism",
-      () => this.capturePrismState(),
-      (values) => this.restorePrismState(values),
+      this,
+      (view) => view.capturePrismState(),
+      (view, values) => view.restorePrismState(values),
     );
     const drag = new RichDragListener({
       tandem: this.glassTandem.createTandem(`scaleDragListener${vertexIndex}`),
@@ -260,8 +261,9 @@ export class TypedPrismView extends GlassView {
   private attachWidthHeightDrag(handle: Circle, vertexIndex: number, wh: WidthHeightGlass, isDove: boolean): void {
     const historyHooks = createDragHistoryHooks(
       "Resize prism",
-      () => this.capturePrismState(),
-      (values) => this.restorePrismState(values),
+      this,
+      (view) => view.capturePrismState(),
+      (view, values) => view.restorePrismState(values),
     );
     const drag = new RichDragListener({
       tandem: this.glassTandem.createTandem(`widthHeightDragListener${vertexIndex}`),
@@ -337,8 +339,9 @@ export class TypedPrismView extends GlassView {
   private attachRotationDrag(): void {
     const historyHooks = createDragHistoryHooks(
       "Rotate prism",
-      () => this.capturePrismState(),
-      (values) => this.restorePrismState(values),
+      this,
+      (view) => view.capturePrismState(),
+      (view, values) => view.restorePrismState(values),
     );
     const drag = new RichDragListener({
       tandem: this.glassTandem.createTandem("rotationDragListener"),

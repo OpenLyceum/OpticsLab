@@ -153,14 +153,12 @@ export class FiberOpticView extends BaseOpticalElementView {
     });
 
     // ── Endpoint + control-point handles ──────────────────────────────────
-    const rebuild = () => this.rebuild();
-
     this.handle1 = this._makeEndpointHandle(
       () => fiber.p1,
       (p) => {
         fiber.p1 = p;
       },
-      rebuild,
+      this,
       tandem.createTandem("handle1DragListener"),
     );
 
@@ -169,7 +167,7 @@ export class FiberOpticView extends BaseOpticalElementView {
       (p) => {
         fiber.p2 = p;
       },
-      rebuild,
+      this,
       tandem.createTandem("handle2DragListener"),
     );
 
@@ -178,7 +176,7 @@ export class FiberOpticView extends BaseOpticalElementView {
       (p) => {
         fiber.cp1 = p;
       },
-      rebuild,
+      this,
       tandem.createTandem("handle3DragListener"),
     );
 
@@ -187,7 +185,7 @@ export class FiberOpticView extends BaseOpticalElementView {
       (p) => {
         fiber.cp2 = p;
       },
-      rebuild,
+      this,
       tandem.createTandem("handle4DragListener"),
     );
 
@@ -196,7 +194,7 @@ export class FiberOpticView extends BaseOpticalElementView {
       (p) => {
         fiber.cp3 = p;
       },
-      rebuild,
+      this,
       tandem.createTandem("handle5DragListener"),
     );
 
@@ -247,7 +245,7 @@ export class FiberOpticView extends BaseOpticalElementView {
           },
         },
       ],
-      rebuild,
+      this,
       modelViewTransform,
       tandem.createTandem("bodyDragListener"),
     );
@@ -260,11 +258,11 @@ export class FiberOpticView extends BaseOpticalElementView {
   private _makeEndpointHandle(
     getPoint: () => Point,
     setPoint: (p: Point) => void,
-    rebuild: () => void,
+    view: { rebuild(): void },
     tandem: Tandem,
   ): DragHandle {
     const handle = createHandle(getPoint(), this.modelViewTransform, this.handlesVisibleProperty) as DragHandle;
-    attachEndpointDrag(handle, getPoint, setPoint, rebuild, this.modelViewTransform, tandem);
+    attachEndpointDrag(handle, getPoint, setPoint, view, this.modelViewTransform, tandem);
     Object.assign(handle, {
       syncToModel: () => {
         const p = getPoint();

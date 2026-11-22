@@ -256,8 +256,9 @@ export class SphericalLensView extends GlassView {
   private attachHeightDrag(handle: Circle, side: "p1" | "p2", optSide: "left" | "right"): void {
     const historyHooks = createDragHistoryHooks(
       "Resize lens",
-      () => this.captureLensState(),
-      (values) => this.restoreLensState(values),
+      this,
+      (view) => view.captureLensState(),
+      (view, values) => view.restoreLensState(values),
     );
     const drag = new RichDragListener({
       tandem: this.glassTandem.createTandem(`heightDragListener${side}${optSide}`),
@@ -324,8 +325,9 @@ export class SphericalLensView extends GlassView {
   private attachRotationDrag(): void {
     const historyHooks = createDragHistoryHooks(
       "Rotate lens",
-      () => this.captureLensState(),
-      (values) => this.restoreLensState(values),
+      this,
+      (view) => view.captureLensState(),
+      (view, values) => view.restoreLensState(values),
     );
     const drag = new RichDragListener({
       tandem: this.glassTandem.createTandem("rotationDragListener"),
@@ -388,8 +390,9 @@ export class SphericalLensView extends GlassView {
   private attachCurvatureDrag(handle: Circle, surface: "r1" | "r2"): void {
     const historyHooks = createDragHistoryHooks(
       "Adjust lens curvature",
-      () => this.captureLensState(),
-      (values) => this.restoreLensState(values),
+      this,
+      (view) => view.captureLensState(),
+      (view, values) => view.restoreLensState(values),
     );
     const drag = new RichDragListener({
       tandem: this.glassTandem.createTandem(`curvatureDragListener${surface}`),

@@ -232,8 +232,10 @@ export class DetectorChartPanel extends Panel {
   }
 
   public override dispose(): void {
+    // disposeSubtree: Panel/Node.dispose() leaves nested HBox/VBox/Text children
+    // that still listen to global string and color Properties.
     for (const node of this.disposeNodes) {
-      node.dispose();
+      node.disposeSubtree();
     }
     this.hitCountStringProperty.dispose();
     this.totalPowerStringProperty.dispose();

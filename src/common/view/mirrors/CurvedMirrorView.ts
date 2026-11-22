@@ -92,10 +92,6 @@ export abstract class CurvedMirrorView<M extends ThreePointMirror> extends BaseO
       }),
     }));
     this.focalMarker = new Path(null, { fill: OpticsLabColors.focalMarkerFillProperty, pickable: false });
-
-    const rebuild = () => {
-      this.rebuild();
-    };
     // Moving an endpoint keeps the vertex on the new chord's perpendicular bisector.
     const makeEndpoint = (key: "p1" | "p2", tandemName: string) =>
       makeEndpointHandle(
@@ -104,7 +100,7 @@ export abstract class CurvedMirrorView<M extends ThreePointMirror> extends BaseO
           mirror[key] = p;
           mirror.p3 = projectPointOntoPerpendicularBisector(mirror.p3, mirror.p1, mirror.p2);
         },
-        rebuild,
+        this,
         modelViewTransform,
         tandem.createTandem(tandemName),
         viewOptions.handlesVisibleProperty,
@@ -133,7 +129,7 @@ export abstract class CurvedMirrorView<M extends ThreePointMirror> extends BaseO
       attachTranslationDrag(
         arm.bodyHitPath,
         pointAccessors(mirror, "p1", "p2", "p3"),
-        rebuild,
+        this,
         modelViewTransform,
         tandem.createTandem(ARM_DRAG_TANDEM_NAMES[i] ?? `bodyDragListener${i}`),
       ),
@@ -159,7 +155,7 @@ export abstract class CurvedMirrorView<M extends ThreePointMirror> extends BaseO
       (p) => {
         mirror.p3 = p;
       },
-      rebuild,
+      this,
       modelViewTransform,
       tandem.createTandem("curvatureDragListener"),
     );

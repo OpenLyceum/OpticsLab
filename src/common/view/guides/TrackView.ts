@@ -59,9 +59,7 @@ export class TrackView extends BaseOpticalElementView {
       (p) => {
         track.p1 = p;
       },
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("handle1DragListener"),
       handlesVisibleProperty,
@@ -71,9 +69,7 @@ export class TrackView extends BaseOpticalElementView {
       (p) => {
         track.p2 = p;
       },
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("handle2DragListener"),
       handlesVisibleProperty,
@@ -102,9 +98,7 @@ export class TrackView extends BaseOpticalElementView {
           },
         },
       ],
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("bodyDragListener"),
     );

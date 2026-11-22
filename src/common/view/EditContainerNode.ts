@@ -127,12 +127,11 @@ export class EditContainerNode extends Node {
     onDelete: (e: OpticalElement) => void,
     onDismiss: () => void,
   ): void {
-    // Dispose all items created by the previous render. Each component's
-    // dispose() handles its own internal cleanup (arrow buttons, slider tracks,
-    // gradient fills, etc.), so we dispose top-level items only — no recursive
-    // subtree walk needed.
+    // Dispose the previous panel subtree. Node.dispose() leaves children
+    // (NumberControl layout wrappers, button chrome, Texts linked to string
+    // Properties) alive — disposeSubtree releases them.
     for (const d of this._disposables) {
-      d.dispose();
+      d.disposeSubtree();
     }
     this._disposables = [];
     this.removeAllChildren();

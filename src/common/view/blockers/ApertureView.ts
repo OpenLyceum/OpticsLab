@@ -50,15 +50,12 @@ export class ApertureView extends BaseOpticalElementView {
       lineWidth: MIRROR_FRONT_WIDTH,
       lineCap: "round",
     });
-    const rebuild = () => {
-      this.rebuild();
-    };
     this.handle1 = makeEndpointHandle(
       () => aperture.p1,
       (p) => {
         aperture.p1 = p;
       },
-      rebuild,
+      this,
       modelViewTransform,
       tandem.createTandem("handle1DragListener"),
       handlesVisibleProperty,
@@ -68,7 +65,7 @@ export class ApertureView extends BaseOpticalElementView {
       (p) => {
         aperture.p2 = p;
       },
-      rebuild,
+      this,
       modelViewTransform,
       tandem.createTandem("handle2DragListener"),
       handlesVisibleProperty,
@@ -78,7 +75,7 @@ export class ApertureView extends BaseOpticalElementView {
       (p) => {
         aperture.p3 = p;
       },
-      rebuild,
+      this,
       modelViewTransform,
       tandem.createTandem("handle3DragListener"),
       handlesVisibleProperty,
@@ -88,7 +85,7 @@ export class ApertureView extends BaseOpticalElementView {
       (p) => {
         aperture.p4 = p;
       },
-      rebuild,
+      this,
       modelViewTransform,
       tandem.createTandem("handle4DragListener"),
       handlesVisibleProperty,
@@ -131,7 +128,7 @@ export class ApertureView extends BaseOpticalElementView {
           },
         },
       ],
-      rebuild,
+      this,
       modelViewTransform,
       tandem.createTandem("bodyDragListener"),
     );

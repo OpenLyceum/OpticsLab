@@ -56,16 +56,12 @@ export class BeamSourceView extends BaseOpticalElementView {
     // Invisible filled rectangle used as the drag hit-area.
     // Must sit above all visual paths but below endpoint handles.
     this.bodyHitPath = createLineBodyHitPath();
-
-    const rebuild = () => {
-      this.rebuild();
-    };
     this.handle1 = makeEndpointHandle(
       () => source.p1,
       (p) => {
         source.p1 = p;
       },
-      rebuild,
+      this,
       modelViewTransform,
       tandem.createTandem("handle1DragListener"),
       handlesVisibleProperty,
@@ -75,7 +71,7 @@ export class BeamSourceView extends BaseOpticalElementView {
       (p) => {
         source.p2 = p;
       },
-      rebuild,
+      this,
       modelViewTransform,
       tandem.createTandem("handle2DragListener"),
       handlesVisibleProperty,
@@ -105,7 +101,7 @@ export class BeamSourceView extends BaseOpticalElementView {
           },
         },
       ],
-      rebuild,
+      this,
       modelViewTransform,
       tandem.createTandem("bodyDragListener"),
     );

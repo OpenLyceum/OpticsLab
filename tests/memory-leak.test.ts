@@ -50,7 +50,9 @@ import { DetectorChartPanel } from "../src/common/view/detectors/DetectorChartPa
 import type { DetectorView } from "../src/common/view/detectors/DetectorView.js";
 import { createOpticalElementView } from "../src/common/view/OpticalElementViewFactory.js";
 import { RayPropagationView } from "../src/common/view/RayPropagationView.js";
+import { sceneHistoryRegistry } from "../src/common/view/SceneHistoryRegistry.js";
 import { trackRegistry } from "../src/common/view/TrackRegistry.js";
+import { createDragHistoryHooks } from "../src/common/view/ViewHelpers.js";
 import { ViewOptionsModel } from "../src/common/view/ViewOptionsModel.js";
 import { StringManager } from "../src/i18n/StringManager.js";
 import { describeDisposalLeaks, forceGC, listenerCount } from "./helpers/memoryLeak.js";
@@ -670,6 +672,53 @@ describe("Memory leak regression", () => {
 });
 
 describeDisposalLeaks([{ name: "ViewOptionsModel", create: () => new ViewOptionsModel() }]);
+
+// ── Undo history must not retain disposed views via rebuild closures ─────────
+// Pointer-fuzz fills CommandHistory with drag commands. Those used to capture
+// `() => view.rebuild()` strongly, so deleted element views (and their node
+// trees) stayed reachable until the stack rotated past MAX_HISTORY_SIZE.
+// createDragHistoryHooks (and the attach*Drag helpers) now WeakRef the view.
+describe("drag history does not retain disposed views", () => {
+  const mvt = ModelViewTransform2.createSinglePointScaleInvertedYMapping(Vector2.ZERO, new Vector2(500, 400), 100);
+
+  function disposeViewAfterDragHistoryHooks(key: ComponentKey): {
+    viewRef: WeakRef<object>;
+    scene: OpticsScene;
+  } {
+    const scene = new OpticsScene(Tandem.OPT_OUT);
+    sceneHistoryRegistry.setHistory(scene.history);
+    const el = createDefaultElement(key, 0, 0);
+    scene.addElement(el);
+    const view = createOpticalElementView(el, mvt, Tandem.OPT_OUT, viewOptions) as BaseOpticalElementView;
+    let phase: "before" | "after" = "before";
+    const hooks = createDragHistoryHooks(
+      "Resize",
+      view,
+      () => (phase === "before" ? [0, 1] : [2, 3]),
+      (owner) => {
+        owner.rebuild();
+      },
+    );
+    hooks.start();
+    phase = "after";
+    hooks.end();
+    const viewRef = new WeakRef<object>(view);
+    view.disposeSubtree();
+    scene.removeElement(el.id, false);
+    el.dispose();
+    return { viewRef, scene };
+  }
+
+  it("prism view is collectible while createDragHistoryHooks command remains on the stack", async () => {
+    const { viewRef, scene } = disposeViewAfterDragHistoryHooks("prism");
+    await forceGC(viewRef);
+    const retained = viewRef.deref() !== undefined;
+    scene.history.clear();
+    sceneHistoryRegistry.clearHistory(scene.history);
+    scene.dispose();
+    expect(retained, "disposed view retained by history").toBe(false);
+  });
+});
 
 // ── Detector chart: delete a detector while its chart shows data ────────────
 // Mirrors RayTracingCommonView._deleteElement: dispose the view, then remove the element

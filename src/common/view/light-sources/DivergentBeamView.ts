@@ -68,16 +68,12 @@ export class DivergentBeamView extends BaseOpticalElementView {
       pickable: false,
     });
     this.bodyHitPath = createLineBodyHitPath();
-
-    const rebuild = () => {
-      this.rebuild();
-    };
     this.handle1 = makeEndpointHandle(
       () => source.p1,
       (p) => {
         source.p1 = p;
       },
-      rebuild,
+      this,
       modelViewTransform,
       tandem.createTandem("handle1DragListener"),
       handlesVisibleProperty,
@@ -87,7 +83,7 @@ export class DivergentBeamView extends BaseOpticalElementView {
       (p) => {
         source.p2 = p;
       },
-      rebuild,
+      this,
       modelViewTransform,
       tandem.createTandem("handle2DragListener"),
       handlesVisibleProperty,
@@ -118,7 +114,7 @@ export class DivergentBeamView extends BaseOpticalElementView {
           },
         },
       ],
-      rebuild,
+      this,
       modelViewTransform,
       tandem.createTandem("bodyDragListener"),
     );

@@ -54,10 +54,11 @@ describe("createDragHistoryHooks", () => {
       const state = { x: 1, y: 2 };
       const hooks = createDragHistoryHooks(
         "Test drag",
-        () => [state.x, state.y],
-        (v) => {
-          state.x = v[0] ?? state.x;
-          state.y = v[1] ?? state.y;
+        state,
+        (owner) => [owner.x, owner.y],
+        (owner, v) => {
+          owner.x = v[0] ?? owner.x;
+          owner.y = v[1] ?? owner.y;
         },
       );
 
@@ -79,9 +80,10 @@ describe("createDragHistoryHooks", () => {
       const state = { x: 1 };
       const hooks = createDragHistoryHooks(
         "Test drag",
-        () => [state.x],
-        (v) => {
-          state.x = v[0] ?? state.x;
+        state,
+        (owner) => [owner.x],
+        (owner, v) => {
+          owner.x = v[0] ?? owner.x;
         },
       );
       hooks.start();

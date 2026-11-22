@@ -70,9 +70,7 @@ export class HalfPlaneGlassView extends BaseOpticalElementView {
       (p) => {
         glass.p1 = p;
       },
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("handle1DragListener"),
       handlesVisibleProperty,
@@ -82,9 +80,7 @@ export class HalfPlaneGlassView extends BaseOpticalElementView {
       (p) => {
         glass.p2 = p;
       },
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("handle2DragListener"),
       handlesVisibleProperty,
@@ -115,9 +111,7 @@ export class HalfPlaneGlassView extends BaseOpticalElementView {
           },
         },
       ],
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("bodyDragListener"),
     );

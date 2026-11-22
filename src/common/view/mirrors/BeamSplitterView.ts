@@ -64,9 +64,7 @@ export class BeamSplitterView extends BaseOpticalElementView {
       (p) => {
         splitter.p1 = p;
       },
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("handle1DragListener"),
       handlesVisibleProperty,
@@ -76,9 +74,7 @@ export class BeamSplitterView extends BaseOpticalElementView {
       (p) => {
         splitter.p2 = p;
       },
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("handle2DragListener"),
       handlesVisibleProperty,
@@ -108,9 +104,7 @@ export class BeamSplitterView extends BaseOpticalElementView {
           },
         },
       ],
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("bodyDragListener"),
     );

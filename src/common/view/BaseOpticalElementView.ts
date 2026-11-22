@@ -168,12 +168,12 @@ export abstract class BaseOpticalElementView extends Node {
     }
     this._linkedAttributes.length = 0;
 
-    // Dispose all children so their disposeEmitters fire and any attached
-    // RichDragListeners (from attachEndpointDrag, attachCurvatureHandleDrag,
-    // etc.) are cleaned up.  Snapshot the array since dispose mutates it.
+    // Dispose the full subtree so nested handles/labels (and their Property
+    // links) are released. Node.dispose() alone leaves grandchildren alive.
+    // Snapshot the array since disposeSubtree mutates children.
     for (const child of [...this.children]) {
       unlinkHandleVisibility(child);
-      child.dispose();
+      child.disposeSubtree();
     }
 
     this.rebuildEmitter.dispose();

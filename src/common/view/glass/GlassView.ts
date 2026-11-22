@@ -109,10 +109,11 @@ export class GlassView extends BaseOpticalElementView {
     // listeners would otherwise be retained by the closures that capture `this`.
     for (const handle of this.handles) {
       unlinkHandleVisibility(handle);
-      handle.dispose();
+      // Handles may own remove-vertex button children; disposeSubtree frees them.
+      handle.disposeSubtree();
     }
     for (const btn of this.addButtons) {
-      btn.dispose();
+      btn.disposeSubtree();
     }
     this.handles = [];
     this.addButtons = [];
@@ -126,9 +127,7 @@ export class GlassView extends BaseOpticalElementView {
           vert.x = p.x;
           vert.y = p.y;
         },
-        () => {
-          this.rebuild();
-        },
+        this,
         this.modelViewTransform,
         this.glassTandem.createTandem(`vertexDragListener${index}`),
         this.handlesVisibleProperty,
@@ -177,9 +176,7 @@ export class GlassView extends BaseOpticalElementView {
       this._bodyDragListener = attachTranslationDrag(
         this.glassPath,
         this.bodyDragPoints,
-        () => {
-          this.rebuild();
-        },
+        this,
         this.modelViewTransform,
         this.glassTandem.createTandem("bodyDragListener"),
       );
@@ -232,20 +229,22 @@ export class GlassView extends BaseOpticalElementView {
           const inserted = glassPath[insertAt];
           const history = sceneHistoryRegistry.history;
           if (history && inserted) {
+            const glass = this.glass;
+            const viewRef = new WeakRef(this);
             history.push({
               description: "Add vertex",
               execute: () => {
                 if (!glassPath.includes(inserted)) {
                   glassPath.splice(Math.min(insertAt, glassPath.length), 0, inserted);
                 }
-                this.refreshAfterVertexChange();
+                viewRef.deref()?.refreshAfterVertexChange();
               },
               undo: () => {
                 const insertedIndex = glassPath.indexOf(inserted);
                 if (insertedIndex >= 0) {
-                  this.glass.removeVertex(insertedIndex);
+                  glass.removeVertex(insertedIndex);
                 }
-                this.refreshAfterVertexChange();
+                viewRef.deref()?.refreshAfterVertexChange();
               },
             });
           }
@@ -287,18 +286,20 @@ export class GlassView extends BaseOpticalElementView {
           // Record as an undoable command (already applied, so push not execute).
           const history = sceneHistoryRegistry.history;
           if (history) {
+            const glass = this.glass;
+            const viewRef = new WeakRef(this);
             history.push({
               description: "Remove vertex",
               execute: () => {
-                const i = this.glass.path.indexOf(vert);
+                const i = glass.path.indexOf(vert);
                 if (i >= 0) {
-                  this.glass.removeVertex(i);
+                  glass.removeVertex(i);
                 }
-                this.refreshAfterVertexChange();
+                viewRef.deref()?.refreshAfterVertexChange();
               },
               undo: () => {
-                this.glass.path.splice(Math.min(idx, this.glass.path.length), 0, vert);
-                this.refreshAfterVertexChange();
+                glass.path.splice(Math.min(idx, glass.path.length), 0, vert);
+                viewRef.deref()?.refreshAfterVertexChange();
               },
             });
           }
@@ -340,7 +341,7 @@ export class GlassView extends BaseOpticalElementView {
           child.removeInputListener(listener);
         }
       }
-      handle.dispose();
+      handle.disposeSubtree();
     }
     for (const btn of this.addButtons) {
       // Explicitly remove input listeners before disposal so that closures
@@ -348,7 +349,7 @@ export class GlassView extends BaseOpticalElementView {
       for (const listener of btn.inputListeners) {
         btn.removeInputListener(listener);
       }
-      btn.dispose();
+      btn.disposeSubtree();
     }
     this.handles = [];
     this.addButtons = [];

@@ -71,7 +71,7 @@ export class ImageOverlayNode extends Node {
     // caches, and Tandem entries are released — removeAllChildren() alone
     // only detaches them from the scene graph.
     for (const child of [...this.children]) {
-      child.dispose();
+      child.disposeSubtree();
     }
     const mvt = this.modelViewTransform;
 

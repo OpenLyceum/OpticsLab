@@ -65,9 +65,6 @@ export abstract class GratingView extends BaseOpticalElementView {
     this.groovePath = groovePath;
     this.grooveCount = grooveCount;
     const handlesVisibleProperty = viewOptions?.handlesVisibleProperty ?? new BooleanProperty(true);
-    const rebuild = () => {
-      this.rebuild();
-    };
 
     this.bodyHitPath = createLineBodyHitPath();
     const makeEndpoint = (key: "p1" | "p2", tandemName: string) =>
@@ -76,7 +73,7 @@ export abstract class GratingView extends BaseOpticalElementView {
         (p) => {
           grating[key] = p;
         },
-        rebuild,
+        this,
         modelViewTransform,
         tandem.createTandem(tandemName),
         handlesVisibleProperty,
@@ -97,7 +94,7 @@ export abstract class GratingView extends BaseOpticalElementView {
     this.bodyDragListener = attachTranslationDrag(
       this.bodyHitPath,
       pointAccessors(grating, "p1", "p2"),
-      rebuild,
+      this,
       modelViewTransform,
       tandem.createTandem("bodyDragListener"),
     );

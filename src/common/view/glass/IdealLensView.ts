@@ -85,9 +85,7 @@ export class IdealLensView extends BaseOpticalElementView {
       (p) => {
         lens.p1 = p;
       },
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("handle1DragListener"),
       viewOptions.handlesVisibleProperty,
@@ -97,9 +95,7 @@ export class IdealLensView extends BaseOpticalElementView {
       (p) => {
         lens.p2 = p;
       },
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("handle2DragListener"),
       viewOptions.handlesVisibleProperty,
@@ -137,9 +133,7 @@ export class IdealLensView extends BaseOpticalElementView {
           },
         },
       ],
-      () => {
-        this.rebuild();
-      },
+      this,
       modelViewTransform,
       tandem.createTandem("bodyDragListener"),
     );
