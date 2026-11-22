@@ -794,6 +794,10 @@ export class RayTracingCommonView extends ScreenView {
     // reparenting and for the return-to-carousel detection.
     let inDragLayer = false;
 
+    // Only pointer drags need the carousel overlay and drop target. Reparenting
+    // during keyboard drag would blur the focused PDOM element and release the
+    // hotkey while its pressed Property is still notifying listeners.
+    const pointerPressedProperty = view.bodyDragListener.dragListener.isPressedProperty;
     const pressedListener = (isPressed: boolean): void => {
       // Under fuzzBoard, isPressed can fire after delete/dispose or while the view
       // is already in the other layer — guard before removeChild asserts.
@@ -837,12 +841,12 @@ export class RayTracingCommonView extends ScreenView {
         inDragLayer = false;
       }
     };
-    view.bodyDragListener.isPressedProperty.lazyLink(pressedListener);
+    pointerPressedProperty.lazyLink(pressedListener);
 
     // Unlink when the view is disposed so the closure (which captures view,
     // element, and this RayTracingCommonView) doesn't prevent garbage collection.
     view.disposeEmitter.addListener(() => {
-      view.bodyDragListener.isPressedProperty.unlink(pressedListener);
+      pointerPressedProperty.unlink(pressedListener);
     });
 
     // Give each element an accessible name so screen readers can identify it.
