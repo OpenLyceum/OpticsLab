@@ -53,6 +53,7 @@ import { FiberOpticElement } from "../fiber/FiberOpticElement.js";
 import { BiconcaveLens } from "../glass/BiconcaveLens.js";
 import { BiconvexLens } from "../glass/BiconvexLens.js";
 import { CircleGlass } from "../glass/CircleGlass.js";
+import { DimensionalGlass } from "../glass/DimensionalGlass.js";
 import { DovePrism } from "../glass/DovePrism.js";
 import { EquilateralPrism } from "../glass/EquilateralPrism.js";
 import type { GlassPathPoint } from "../glass/Glass.js";
@@ -194,8 +195,8 @@ const nOpt = (k: string, min?: number, max?: number): FieldSpec => ({
 /** Shared afterBuild for elements that serialise an optional rotation angle. */
 const applyRotation = (el: OpticalElement, v: ParsedFields): void => {
   const rot = v["rotation"];
-  if (rot !== undefined && rot !== 0) {
-    (el as unknown as { setRotation: (r: number) => void }).setRotation(rot as number);
+  if (el instanceof DimensionalGlass && typeof rot === "number" && rot !== 0) {
+    el.setRotation(rot);
   }
 };
 

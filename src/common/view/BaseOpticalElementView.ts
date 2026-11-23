@@ -34,11 +34,8 @@ export abstract class BaseOpticalElementView extends Node {
   private readonly _selectionFrame: Rectangle;
   private _isSelected = false;
   private readonly _decorationNodes = new Set<Node>();
-  /** Tracks linkAttribute handles so they can be unlinked on dispose. */
-  private readonly _linkedAttributes: Array<{
-    property: TReadOnlyProperty<unknown>;
-    handle: (value: unknown) => void;
-  }> = [];
+  /** Unlinks tracked attribute listeners on dispose. */
+  private readonly _unlinkAttributes: Array<() => void> = [];
 
   protected constructor() {
     super();
@@ -123,10 +120,7 @@ export abstract class BaseOpticalElementView extends Node {
       object[attributeName] = value;
     };
     property.link(listener);
-    this._linkedAttributes.push({
-      property: property as TReadOnlyProperty<unknown>,
-      handle: listener as unknown as (value: unknown) => void,
-    });
+    this._unlinkAttributes.push(() => property.unlink(listener));
   }
 
   /**
@@ -163,10 +157,10 @@ export abstract class BaseOpticalElementView extends Node {
     // Unlink all tracked linkAttribute handles so global properties
     // (handlesVisibleProperty, focalMarkersVisibleProperty, etc.) no longer
     // retain references to this view's child nodes.
-    for (const { property, handle } of this._linkedAttributes) {
-      property.unlink(handle);
+    for (const unlink of this._unlinkAttributes) {
+      unlink();
     }
-    this._linkedAttributes.length = 0;
+    this._unlinkAttributes.length = 0;
 
     // Dispose the full subtree so nested handles/labels (and their Property
     // links) are released. Node.dispose() alone leaves grandchildren alive.
