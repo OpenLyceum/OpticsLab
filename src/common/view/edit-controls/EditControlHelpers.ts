@@ -284,12 +284,12 @@ export function buildSegmentAngleControl(
   tandem: Tandem,
 ): { control: Node; refresh: () => void } {
   const A_RANGE = new Range(ELEMENT_ANGLE_MIN_DEG, ELEMENT_ANGLE_MAX_DEG);
-  const angleProp = new NumberProperty(segmentAngleDeg(element.p1, element.p2), {
+  const angleProperty = new NumberProperty(segmentAngleDeg(element.p1, element.p2), {
     range: A_RANGE,
     tandem: tandem.createTandem("numberProperty"),
   });
   let angleDriving = false;
-  angleProp.lazyLink((deg) => {
+  angleProperty.lazyLink((deg) => {
     angleDriving = true;
     const rotated = rotateSegment(element.p1, element.p2, deg);
     element.p1 = rotated.p1;
@@ -297,18 +297,18 @@ export function buildSegmentAngleControl(
     triggerRebuild();
     angleDriving = false;
   });
-  let beforeAngle = angleProp.value;
-  const control = new NumberControl(label, angleProp, A_RANGE, {
+  let beforeAngle = angleProperty.value;
+  const control = new NumberControl(label, angleProperty, A_RANGE, {
     ...numberControlOptions(1, 0, tandem),
     startCallback: () => {
-      beforeAngle = angleProp.value;
+      beforeAngle = angleProperty.value;
     },
     endCallback: () => {
       const history = sceneHistoryRegistry.history;
       if (!history) {
         return;
       }
-      const after = angleProp.value;
+      const after = angleProperty.value;
       if (beforeAngle === after) {
         return;
       }
@@ -316,10 +316,10 @@ export function buildSegmentAngleControl(
       history.execute({
         description: "Rotate element",
         execute: () => {
-          angleProp.value = after;
+          angleProperty.value = after;
         },
         undo: () => {
-          angleProp.value = before;
+          angleProperty.value = before;
         },
       });
     },
@@ -328,7 +328,7 @@ export function buildSegmentAngleControl(
     if (angleDriving) {
       return;
     }
-    angleProp.value = segmentAngleDeg(element.p1, element.p2);
+    angleProperty.value = segmentAngleDeg(element.p1, element.p2);
   };
   return { control, refresh };
 }
@@ -344,12 +344,12 @@ export function buildDirectionAngleAboutP1Control(
   tandem: Tandem,
 ): { control: Node; refresh: () => void } {
   const A_RANGE = new Range(ELEMENT_ANGLE_MIN_DEG, ELEMENT_ANGLE_MAX_DEG);
-  const angleProp = new NumberProperty(segmentAngleDeg(element.p1, element.p2), {
+  const angleProperty = new NumberProperty(segmentAngleDeg(element.p1, element.p2), {
     range: A_RANGE,
     tandem: tandem.createTandem("numberProperty"),
   });
   let angleDriving = false;
-  angleProp.lazyLink((deg) => {
+  angleProperty.lazyLink((deg) => {
     angleDriving = true;
     const rotated = rotateSegmentAboutP1(element.p1, element.p2, deg);
     element.p1 = rotated.p1;
@@ -357,18 +357,18 @@ export function buildDirectionAngleAboutP1Control(
     triggerRebuild();
     angleDriving = false;
   });
-  let beforeAngle = angleProp.value;
-  const control = new NumberControl(label, angleProp, A_RANGE, {
+  let beforeAngle = angleProperty.value;
+  const control = new NumberControl(label, angleProperty, A_RANGE, {
     ...numberControlOptions(1, 0, tandem),
     startCallback: () => {
-      beforeAngle = angleProp.value;
+      beforeAngle = angleProperty.value;
     },
     endCallback: () => {
       const history = sceneHistoryRegistry.history;
       if (!history) {
         return;
       }
-      const after = angleProp.value;
+      const after = angleProperty.value;
       if (beforeAngle === after) {
         return;
       }
@@ -376,10 +376,10 @@ export function buildDirectionAngleAboutP1Control(
       history.execute({
         description: "Rotate direction",
         execute: () => {
-          angleProp.value = after;
+          angleProperty.value = after;
         },
         undo: () => {
-          angleProp.value = before;
+          angleProperty.value = before;
         },
       });
     },
@@ -388,7 +388,7 @@ export function buildDirectionAngleAboutP1Control(
     if (angleDriving) {
       return;
     }
-    angleProp.value = segmentAngleDeg(element.p1, element.p2);
+    angleProperty.value = segmentAngleDeg(element.p1, element.p2);
   };
   return { control, refresh };
 }
@@ -413,29 +413,29 @@ export function buildDirectionAngleControl(
   tandem: Tandem,
 ): { control: Node; refresh: () => void } {
   const A_RANGE = new Range(ELEMENT_ANGLE_MIN_DEG, ELEMENT_ANGLE_MAX_DEG);
-  const angleProp = new NumberProperty(radiansToDisplayDeg(getDirectionRadians()), {
+  const angleProperty = new NumberProperty(radiansToDisplayDeg(getDirectionRadians()), {
     range: A_RANGE,
     tandem: tandem.createTandem("numberProperty"),
   });
   let angleDriving = false;
-  angleProp.lazyLink((deg) => {
+  angleProperty.lazyLink((deg) => {
     angleDriving = true;
     setDirectionRadians(deg * (Math.PI / 180));
     triggerRebuild();
     angleDriving = false;
   });
-  let beforeAngle = angleProp.value;
-  const control = new NumberControl(label, angleProp, A_RANGE, {
+  let beforeAngle = angleProperty.value;
+  const control = new NumberControl(label, angleProperty, A_RANGE, {
     ...numberControlOptions(1, 0, tandem),
     startCallback: () => {
-      beforeAngle = angleProp.value;
+      beforeAngle = angleProperty.value;
     },
     endCallback: () => {
       const history = sceneHistoryRegistry.history;
       if (!history) {
         return;
       }
-      const after = angleProp.value;
+      const after = angleProperty.value;
       if (beforeAngle === after) {
         return;
       }
@@ -443,10 +443,10 @@ export function buildDirectionAngleControl(
       history.execute({
         description: "Rotate direction",
         execute: () => {
-          angleProp.value = after;
+          angleProperty.value = after;
         },
         undo: () => {
-          angleProp.value = before;
+          angleProperty.value = before;
         },
       });
     },
@@ -455,7 +455,7 @@ export function buildDirectionAngleControl(
     if (angleDriving) {
       return;
     }
-    angleProp.value = radiansToDisplayDeg(getDirectionRadians());
+    angleProperty.value = radiansToDisplayDeg(getDirectionRadians());
   };
   return { control, refresh };
 }
@@ -492,12 +492,15 @@ export function buildSegmentLengthControl(
   tandem: Tandem,
 ): { control: Node; refresh: () => void } {
   const L_RANGE = new Range(SEGMENT_LENGTH_MIN, SEGMENT_LENGTH_MAX);
-  const lenProp = new NumberProperty(safeClamp(segmentLength(element.p1, element.p2), L_RANGE.min, L_RANGE.max, 1.0), {
-    range: L_RANGE,
-    tandem: tandem.createTandem("numberProperty"),
-  });
+  const lenProperty = new NumberProperty(
+    safeClamp(segmentLength(element.p1, element.p2), L_RANGE.min, L_RANGE.max, 1.0),
+    {
+      range: L_RANGE,
+      tandem: tandem.createTandem("numberProperty"),
+    },
+  );
   let lenDriving = false;
-  lenProp.lazyLink((v) => {
+  lenProperty.lazyLink((v) => {
     lenDriving = true;
     const resized = resizeSegment(element.p1, element.p2, v);
     element.p1 = resized.p1;
@@ -505,18 +508,18 @@ export function buildSegmentLengthControl(
     triggerRebuild();
     lenDriving = false;
   });
-  let beforeLen = lenProp.value;
-  const control = new NumberControl(label, lenProp, L_RANGE, {
+  let beforeLen = lenProperty.value;
+  const control = new NumberControl(label, lenProperty, L_RANGE, {
     ...numberControlOptions(0.05, 2, tandem),
     startCallback: () => {
-      beforeLen = lenProp.value;
+      beforeLen = lenProperty.value;
     },
     endCallback: () => {
       const history = sceneHistoryRegistry.history;
       if (!history) {
         return;
       }
-      const after = lenProp.value;
+      const after = lenProperty.value;
       if (beforeLen === after) {
         return;
       }
@@ -524,10 +527,10 @@ export function buildSegmentLengthControl(
       history.execute({
         description: "Resize element",
         execute: () => {
-          lenProp.value = after;
+          lenProperty.value = after;
         },
         undo: () => {
-          lenProp.value = before;
+          lenProperty.value = before;
         },
       });
     },
@@ -536,7 +539,7 @@ export function buildSegmentLengthControl(
     if (lenDriving) {
       return;
     }
-    lenProp.value = safeClamp(segmentLength(element.p1, element.p2), L_RANGE.min, L_RANGE.max, 1.0);
+    lenProperty.value = safeClamp(segmentLength(element.p1, element.p2), L_RANGE.min, L_RANGE.max, 1.0);
   };
   return { control, refresh };
 }

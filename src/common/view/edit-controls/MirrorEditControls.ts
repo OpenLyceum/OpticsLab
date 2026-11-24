@@ -6,7 +6,7 @@
  */
 
 import { NumberProperty } from "scenerystack/axon";
-import { Range } from "scenerystack/dot";
+import { Range, roundSymmetric } from "scenerystack/dot";
 import { NumberControl } from "scenerystack/scenery-phet";
 import { Tandem } from "scenerystack/tandem";
 import { StringManager } from "../../../i18n/StringManager.js";
@@ -75,12 +75,15 @@ export function buildArcMirrorControls(
     // Curvature mode: κ = 1/R (m⁻¹)
     const K_RANGE = new Range(ARC_MIRROR_CURVATURE_MIN, ARC_MIRROR_CURVATURE_MAX);
     const currentR = element.getRadius() ?? ARC_MIRROR_RADIUS_MAX;
-    const kappaProp = new NumberProperty(safeClamp(1 / currentR, K_RANGE.min, K_RANGE.max, 1 / ARC_MIRROR_RADIUS_MAX), {
-      range: K_RANGE,
-      tandem: Tandem.OPTIONAL,
-    });
+    const kappaProperty = new NumberProperty(
+      safeClamp(1 / currentR, K_RANGE.min, K_RANGE.max, 1 / ARC_MIRROR_RADIUS_MAX),
+      {
+        range: K_RANGE,
+        tandem: Tandem.OPTIONAL,
+      },
+    );
     let sliderDriving = false;
-    kappaProp.lazyLink((kappa) => {
+    kappaProperty.lazyLink((kappa) => {
       sliderDriving = true;
       element.setRadius(1 / kappa);
       triggerRebuild();
@@ -91,13 +94,13 @@ export function buildArcMirrorControls(
         return;
       }
       const r = element.getRadius() ?? ARC_MIRROR_RADIUS_MAX;
-      kappaProp.value = safeClamp(1 / r, K_RANGE.min, K_RANGE.max, 1 / ARC_MIRROR_RADIUS_MAX);
+      kappaProperty.value = safeClamp(1 / r, K_RANGE.min, K_RANGE.max, 1 / ARC_MIRROR_RADIUS_MAX);
     };
     return {
       controls: [
         new NumberControl(
           controlStrings.curvatureStringProperty,
-          kappaProp,
+          kappaProperty,
           K_RANGE,
           numberControlOptions(0.01, 2, Tandem.OPTIONAL),
         ),
@@ -114,9 +117,9 @@ export function buildArcMirrorControls(
     R_RANGE.max,
     ARC_MIRROR_RADIUS_MAX,
   );
-  const radiusProp = new NumberProperty(currentRadius, { range: R_RANGE, tandem: Tandem.OPTIONAL });
+  const radiusProperty = new NumberProperty(currentRadius, { range: R_RANGE, tandem: Tandem.OPTIONAL });
   let sliderDriving = false;
-  radiusProp.lazyLink((v) => {
+  radiusProperty.lazyLink((v) => {
     sliderDriving = true;
     element.setRadius(v);
     triggerRebuild();
@@ -126,7 +129,7 @@ export function buildArcMirrorControls(
     if (sliderDriving) {
       return;
     }
-    radiusProp.value = safeClamp(
+    radiusProperty.value = safeClamp(
       element.getRadius() ?? ARC_MIRROR_RADIUS_MAX,
       R_RANGE.min,
       R_RANGE.max,
@@ -137,7 +140,7 @@ export function buildArcMirrorControls(
     controls: [
       new NumberControl(
         controlStrings.radiusOfCurvatureStringProperty,
-        radiusProp,
+        radiusProperty,
         R_RANGE,
         numberControlOptions(0.1, 1, Tandem.OPTIONAL),
       ),
@@ -227,7 +230,7 @@ export function buildDetectorControls(
     new Range(DETECTOR_BINS_MIN, DETECTOR_BINS_MAX),
     1,
     (v) => {
-      element.numBins = Math.round(v);
+      element.numBins = roundSymmetric(v);
       element.clearAcquisition();
     },
     triggerRebuild,
@@ -241,12 +244,15 @@ export function buildDetectorControls(
   if (useCurvatureDisplay) {
     const K_RANGE = new Range(ARC_MIRROR_CURVATURE_MIN, ARC_MIRROR_CURVATURE_MAX);
     const currentR = element.getRadius() ?? ARC_MIRROR_RADIUS_MAX;
-    const kappaProp = new NumberProperty(safeClamp(1 / currentR, K_RANGE.min, K_RANGE.max, 1 / ARC_MIRROR_RADIUS_MAX), {
-      range: K_RANGE,
-      tandem: Tandem.OPTIONAL,
-    });
+    const kappaProperty = new NumberProperty(
+      safeClamp(1 / currentR, K_RANGE.min, K_RANGE.max, 1 / ARC_MIRROR_RADIUS_MAX),
+      {
+        range: K_RANGE,
+        tandem: Tandem.OPTIONAL,
+      },
+    );
     let sliderDriving = false;
-    kappaProp.lazyLink((kappa) => {
+    kappaProperty.lazyLink((kappa) => {
       sliderDriving = true;
       element.setRadius(1 / kappa);
       triggerRebuild();
@@ -257,11 +263,11 @@ export function buildDetectorControls(
         return;
       }
       const r = element.getRadius() ?? ARC_MIRROR_RADIUS_MAX;
-      kappaProp.value = safeClamp(1 / r, K_RANGE.min, K_RANGE.max, 1 / ARC_MIRROR_RADIUS_MAX);
+      kappaProperty.value = safeClamp(1 / r, K_RANGE.min, K_RANGE.max, 1 / ARC_MIRROR_RADIUS_MAX);
     };
     radiusControl = new NumberControl(
       controlStrings.curvatureStringProperty,
-      kappaProp,
+      kappaProperty,
       K_RANGE,
       numberControlOptions(0.01, 2, Tandem.OPTIONAL),
     );
@@ -273,9 +279,9 @@ export function buildDetectorControls(
       R_RANGE.max,
       ARC_MIRROR_RADIUS_MAX,
     );
-    const radiusProp = new NumberProperty(currentRadius, { range: R_RANGE, tandem: Tandem.OPTIONAL });
+    const radiusProperty = new NumberProperty(currentRadius, { range: R_RANGE, tandem: Tandem.OPTIONAL });
     let sliderDriving = false;
-    radiusProp.lazyLink((v) => {
+    radiusProperty.lazyLink((v) => {
       sliderDriving = true;
       element.setRadius(v);
       triggerRebuild();
@@ -285,7 +291,7 @@ export function buildDetectorControls(
       if (sliderDriving) {
         return;
       }
-      radiusProp.value = safeClamp(
+      radiusProperty.value = safeClamp(
         element.getRadius() ?? ARC_MIRROR_RADIUS_MAX,
         R_RANGE.min,
         R_RANGE.max,
@@ -294,7 +300,7 @@ export function buildDetectorControls(
     };
     radiusControl = new NumberControl(
       controlStrings.radiusOfCurvatureStringProperty,
-      radiusProp,
+      radiusProperty,
       R_RANGE,
       numberControlOptions(0.1, 1, Tandem.OPTIONAL),
     );
@@ -340,11 +346,11 @@ export function buildApertureControls(element: ApertureElement, triggerRebuild: 
   // Build an angle control that rotates the aperture (p1/p2) while preserving
   // the fractional positions of the gap endpoints (p3/p4) along the line.
   let angleDriving = false;
-  const angleProp = new NumberProperty(segmentAngleDeg(element.p1, element.p2), {
+  const angleProperty = new NumberProperty(segmentAngleDeg(element.p1, element.p2), {
     range: A_RANGE,
     tandem: Tandem.OPTIONAL,
   });
-  angleProp.lazyLink((deg) => {
+  angleProperty.lazyLink((deg) => {
     angleDriving = true;
     const p1 = element.p1;
     const p2 = element.p2;
@@ -367,7 +373,7 @@ export function buildApertureControls(element: ApertureElement, triggerRebuild: 
   });
   const angleControl = new NumberControl(
     controlStrings.angleStringProperty,
-    angleProp,
+    angleProperty,
     A_RANGE,
     numberControlOptions(1, 0, Tandem.OPTIONAL),
   );
@@ -375,7 +381,7 @@ export function buildApertureControls(element: ApertureElement, triggerRebuild: 
     if (angleDriving) {
       return;
     }
-    angleProp.value = segmentAngleDeg(element.p1, element.p2);
+    angleProperty.value = segmentAngleDeg(element.p1, element.p2);
   };
 
   return { controls: [angleControl], refreshCallback: refreshAngle };

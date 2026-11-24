@@ -130,9 +130,9 @@ function buildAngleControl(
   const controlStrings = StringManager.getInstance().getControlStrings();
   const A_RANGE = new Range(ELEMENT_ANGLE_MIN_DEG, ELEMENT_ANGLE_MAX_DEG);
   let prevAngleDeg = readDeg();
-  const angleProp = new NumberProperty(prevAngleDeg, { range: A_RANGE, tandem: Tandem.OPTIONAL });
+  const angleProperty = new NumberProperty(prevAngleDeg, { range: A_RANGE, tandem: Tandem.OPTIONAL });
   let angleDriving = false;
-  angleProp.lazyLink((deg) => {
+  angleProperty.lazyLink((deg) => {
     angleDriving = true;
     const prev = prevAngleDeg;
     prevAngleDeg = deg;
@@ -142,7 +142,7 @@ function buildAngleControl(
   });
   const control = new NumberControl(
     controlStrings.angleStringProperty,
-    angleProp,
+    angleProperty,
     A_RANGE,
     numberControlOptions(1, 0, Tandem.OPTIONAL),
   );
@@ -151,7 +151,7 @@ function buildAngleControl(
       return;
     }
     prevAngleDeg = readDeg();
-    angleProp.value = prevAngleDeg;
+    angleProperty.value = prevAngleDeg;
   };
   return { control, refresh };
 }
@@ -262,8 +262,8 @@ function assembleLensControls(
   const sync = createLensSync(triggerRebuild);
   const L_RANGE = new Range(SEGMENT_LENGTH_MIN, SEGMENT_LENGTH_MAX);
   const readLength = () => safeClamp(segmentLength(element.p1, element.p2), L_RANGE.min, L_RANGE.max, 1.0);
-  const lenProp = new NumberProperty(readLength(), { range: L_RANGE, tandem: Tandem.OPTIONAL });
-  lenProp.lazyLink(
+  const lenProperty = new NumberProperty(readLength(), { range: L_RANGE, tandem: Tandem.OPTIONAL });
+  lenProperty.lazyLink(
     sync.fromSlider((v) => {
       const resized = resizeSegment(element.p1, element.p2, v);
       element.p1 = resized.p1;
@@ -277,7 +277,7 @@ function assembleLensControls(
   const { surfaceControls, refreshSurfaces } = buildSurfaces(sync);
   const refreshSliders = sync.refresher(() => {
     refreshSurfaces();
-    lenProp.value = readLength();
+    lenProperty.value = readLength();
   });
 
   return {
@@ -285,7 +285,7 @@ function assembleLensControls(
       ...surfaceControls,
       new NumberControl(
         controlStrings.lengthStringProperty,
-        lenProp,
+        lenProperty,
         L_RANGE,
         numberControlOptions(0.05, 2, Tandem.OPTIONAL),
       ),

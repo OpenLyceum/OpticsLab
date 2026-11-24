@@ -7,7 +7,7 @@
  */
 
 import { BooleanProperty, Emitter, Multilink, NumberProperty, Property, StringUnionProperty } from "scenerystack/axon";
-import { Range } from "scenerystack/dot";
+import { Range, roundSymmetric } from "scenerystack/dot";
 import { IOType, NullableIO, ObjectLiteralIO, PhetioGroup, PhetioObject, Tandem } from "scenerystack/tandem";
 import {
   DEFAULT_MAX_RAY_DEPTH,
@@ -337,7 +337,7 @@ export class OpticsScene extends PhetioObject {
       return null;
     }
 
-    const state = source.serialize() as Record<string, unknown>;
+    const state = source.serialize();
     // Strip the original ID so deserializeElement assigns a fresh one via the
     // auto-increment counter in BaseElement.
     state["id"] = undefined;
@@ -419,7 +419,7 @@ export class OpticsScene extends PhetioObject {
    *
    *   scene.recordPropertyEdit(mirror, 'p1', oldP1, newP1);
    */
-  public recordPropertyEdit<T extends Record<string, unknown>, K extends keyof T & string>(
+  public recordPropertyEdit<T extends object, K extends keyof T & string>(
     target: T,
     property: K,
     oldValue: T[K],
@@ -439,15 +439,12 @@ export class OpticsScene extends PhetioObject {
    * Useful for drag operations that change multiple properties at once.
    *
    *   scene.recordBatchEdit([
-   *     { target: mirror, property: 'p1', oldValue: oldP1, newValue: newP1 },
-   *     { target: mirror, property: 'p2', oldValue: oldP2, newValue: newP2 },
+   *     new EditPropertyCommand(mirror, 'p1', oldP1, newP1),
+   *     new EditPropertyCommand(mirror, 'p2', oldP2, newP2),
    *   ], 'Move mirror');
    */
-  public recordBatchEdit(
-    entries: Array<{ target: Record<string, unknown>; property: string; oldValue: unknown; newValue: unknown }>,
-    description: string,
-  ): void {
-    const command = new BatchPropertyCommand(entries, description, () => {
+  public recordBatchEdit(edits: readonly Pick<SceneCommand, "execute" | "undo">[], description: string): void {
+    const command = new BatchPropertyCommand(edits, description, () => {
       this.invalidate();
       this.sceneChangedEmitter.emit();
     });
@@ -577,7 +574,7 @@ export class OpticsScene extends PhetioObject {
     if (typeof s["maxRayDepth"] === "number" && Number.isFinite(s["maxRayDepth"])) {
       out.maxRayDepth = Math.max(
         MAX_RAY_DEPTH_PROPERTY_MIN,
-        Math.min(MAX_RAY_DEPTH_PROPERTY_MAX, Math.round(s["maxRayDepth"])),
+        Math.min(MAX_RAY_DEPTH_PROPERTY_MAX, roundSymmetric(s["maxRayDepth"])),
       );
     }
     if (typeof s["gridSize"] === "number" && Number.isFinite(s["gridSize"])) {
@@ -589,8 +586,9 @@ export class OpticsScene extends PhetioObject {
     if (typeof s["snapToGrid"] === "boolean") {
       out.snapToGrid = s["snapToGrid"];
     }
-    if (VIEW_MODE_VALUES.includes(s["mode"] as (typeof VIEW_MODE_VALUES)[number])) {
-      out.mode = s["mode"] as ViewMode;
+    const mode = VIEW_MODE_VALUES.find((value) => value === s["mode"]);
+    if (mode !== undefined) {
+      out.mode = mode;
     }
     return out;
   }
@@ -608,14 +606,17 @@ export class OpticsScene extends PhetioObject {
 
   public static fromJSON(json: string): OpticsScene | null {
     try {
-      const data = JSON.parse(json) as {
-        settings?: Partial<SceneSettings>;
-        elements?: unknown[];
-      };
-      const scene = new OpticsScene(Tandem.OPT_OUT, OpticsScene.sanitizeSettings(data.settings));
-      const elements = Array.isArray(data.elements) ? data.elements : [];
+      const data: unknown = JSON.parse(json);
+      if (typeof data !== "object" || data === null || Array.isArray(data)) {
+        return null;
+      }
+      const scene = new OpticsScene(
+        Tandem.OPT_OUT,
+        OpticsScene.sanitizeSettings("settings" in data ? data.settings : undefined),
+      );
+      const elements: readonly unknown[] = "elements" in data && Array.isArray(data.elements) ? data.elements : [];
       for (const obj of elements) {
-        if (typeof obj !== "object" || obj === null) {
+        if (typeof obj !== "object" || obj === null || Array.isArray(obj)) {
           continue;
         }
         try {

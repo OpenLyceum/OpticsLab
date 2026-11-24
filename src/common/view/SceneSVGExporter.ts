@@ -1,5 +1,5 @@
 import { Property } from "scenerystack/axon";
-import { Bounds2, Vector2 } from "scenerystack/dot";
+import { Bounds2, roundSymmetric, Vector2 } from "scenerystack/dot";
 import { Shape } from "scenerystack/kite";
 import { ModelViewTransform2 } from "scenerystack/phetcommon";
 import { Display, Node, Path, Rectangle } from "scenerystack/scenery";
@@ -79,7 +79,7 @@ function getAlphaForSegment(seg: TracedSegment): number {
 }
 
 function getAlphaBucket(alpha: number): number {
-  return Math.min(RAY_ALPHA_BUCKETS, Math.round(alpha * RAY_ALPHA_BUCKETS));
+  return Math.min(RAY_ALPHA_BUCKETS, roundSymmetric(alpha * RAY_ALPHA_BUCKETS));
 }
 
 function getOrCreateExtensionShape(extensionShapes: Map<number, Shape>, alphaBucket: number): Shape {
@@ -282,6 +282,7 @@ function triggerDownload(svgText: string): void {
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();
+  // biome-ignore lint/plugin/no-native-timer: async host/hardware delay (not sim step)
   window.setTimeout(() => window.URL.revokeObjectURL(objectURL), 0);
 }
 

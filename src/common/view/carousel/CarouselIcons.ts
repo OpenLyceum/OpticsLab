@@ -9,6 +9,7 @@
  * ComponentCarousel can import exactly what it needs.
  */
 
+import { roundSymmetric } from "scenerystack/dot";
 import { Shape } from "scenerystack/kite";
 import { Circle, Node, Path } from "scenerystack/scenery";
 import { VisibleColor } from "scenerystack/scenery-phet";
@@ -343,8 +344,8 @@ export function aperturedMirrorIcon(): Node {
     [-1, -gapFraction],
     [gapFraction, 1],
   ] as [number, number][]) {
-    const fromIdx = Math.round(((fromFrac + 1) / 2) * segmentCount);
-    const toIdx = Math.round(((toFrac + 1) / 2) * segmentCount);
+    const fromIdx = roundSymmetric(((fromFrac + 1) / 2) * segmentCount);
+    const toIdx = roundSymmetric(((toFrac + 1) / 2) * segmentCount);
     const armShape = new Shape();
     for (let i = fromIdx; i <= toIdx; i++) {
       const t = (i / segmentCount) * 2 - 1;

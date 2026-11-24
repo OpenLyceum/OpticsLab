@@ -39,7 +39,7 @@ import { sceneHistoryRegistry } from "../SceneHistoryRegistry.js";
 import { attachTranslationDrag, type DragHandle, makeEndpointHandle, unlinkHandleVisibility } from "../ViewHelpers.js";
 
 export class GlassView extends BaseOpticalElementView {
-  private _bodyDragListener!: RichDragListener;
+  private readonly _bodyDragListener: RichDragListener;
   /**
    * Stable array backing the body drag listener. Contents are refreshed in
    * place by rebuildHandlesAndDragListener() when the path gains or loses
@@ -95,12 +95,19 @@ export class GlassView extends BaseOpticalElementView {
     // instead, so vertex dragging is intentionally disabled for them.
     this.isPrism = handleVerts === undefined && glass.type === "Glass";
     this.rebuildHandlesAndDragListener();
+    this._bodyDragListener = attachTranslationDrag(
+      this.glassPath,
+      this.bodyDragPoints,
+      this,
+      this.modelViewTransform,
+      this.glassTandem.createTandem("bodyDragListener"),
+    );
 
     this.rebuild();
   }
 
   /**
-   * Rebuild handles, add/remove buttons (for prisms), and body drag listener
+   * Rebuild handles, add/remove buttons, and body drag points
    * from the current glass.path. Call when path length changes.
    */
   protected rebuildHandlesAndDragListener(): void {
@@ -171,15 +178,6 @@ export class GlassView extends BaseOpticalElementView {
           v.y = p.y;
         },
       });
-    }
-    if (!this._bodyDragListener) {
-      this._bodyDragListener = attachTranslationDrag(
-        this.glassPath,
-        this.bodyDragPoints,
-        this,
-        this.modelViewTransform,
-        this.glassTandem.createTandem("bodyDragListener"),
-      );
     }
   }
 

@@ -6,7 +6,7 @@
  * the segment.
  */
 
-import { dotRandom } from "scenerystack/dot";
+import { dotRandom, roundSymmetric } from "scenerystack/dot";
 import { DEFAULT_BEAM_BRIGHTNESS } from "../../../OpticsLabConstants.js";
 import { ELEMENT_TYPE_BEAM } from "../../../OpticsLabStrings.js";
 
@@ -41,9 +41,11 @@ export class BeamSource extends BaseLightSource {
       return [];
     }
 
-    const maxN = Math.max(1, Math.round(segLen * rayDensity * BEAM_RAY_DENSITY_SCALE));
+    const maxN = Math.max(1, roundSymmetric(segLen * rayDensity * BEAM_RAY_DENSITY_SCALE));
     const isContinuous = this.brightness >= BRIGHTNESS_CONTINUOUS_THRESHOLD;
-    const n = isContinuous ? maxN : Math.max(1, Math.round((this.brightness / BRIGHTNESS_CONTINUOUS_THRESHOLD) * maxN));
+    const n = isContinuous
+      ? maxN
+      : Math.max(1, roundSymmetric((this.brightness / BRIGHTNESS_CONTINUOUS_THRESHOLD) * maxN));
     const stepX = (this.p2.x - this.p1.x) / n;
     const stepY = (this.p2.y - this.p1.y) / n;
     const normal = Math.atan2(stepX, stepY) + Math.PI / 2.0;
