@@ -206,7 +206,7 @@ export class RayTracingCommonView extends ScreenView {
   private readonly _deleteElement: ((element: OpticalElement) => void) | null = null;
 
   /** Stored so it can be removed from window on dispose. */
-  private readonly _handleKeyDown!: (event: KeyboardEvent) => void;
+  private readonly _handleKeyDown: (event: KeyboardEvent) => void;
 
   /**
    * Remove an element's tandem from the global tandem tree so it and its children
@@ -667,8 +667,10 @@ export class RayTracingCommonView extends ScreenView {
       if (!this.isVisible()) {
         return;
       }
-      const target = event.target as HTMLElement;
-      const isTextInput = target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable;
+      const target = event.target;
+      const isTextInput =
+        target instanceof HTMLElement &&
+        (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable);
 
       if (event.key === "Escape") {
         if (!isTextInput) {

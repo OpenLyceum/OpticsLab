@@ -35,9 +35,7 @@ export interface SceneCommand {
  * Usage:
  *   history.execute(new EditPropertyCommand(element, 'refIndex', oldVal, newVal));
  */
-export class EditPropertyCommand<T extends Record<string, unknown>, K extends keyof T & string>
-  implements SceneCommand
-{
+export class EditPropertyCommand<T extends object, K extends keyof T & string> implements SceneCommand {
   public readonly description: string;
   private readonly target: T;
   private readonly property: K;
@@ -73,34 +71,29 @@ export class EditPropertyCommand<T extends Record<string, unknown>, K extends ke
  */
 export class BatchPropertyCommand implements SceneCommand {
   public readonly description: string;
-  private readonly entries: Array<{
-    target: Record<string, unknown>;
-    property: string;
-    oldValue: unknown;
-    newValue: unknown;
-  }>;
+  private readonly edits: readonly Pick<SceneCommand, "execute" | "undo">[];
   private readonly onChange: (() => void) | undefined;
 
   public constructor(
-    entries: Array<{ target: Record<string, unknown>; property: string; oldValue: unknown; newValue: unknown }>,
+    edits: readonly Pick<SceneCommand, "execute" | "undo">[],
     description: string,
     onChange?: () => void,
   ) {
-    this.entries = entries;
+    this.edits = edits;
     this.description = description;
     this.onChange = onChange;
   }
 
   public execute(): void {
-    for (const e of this.entries) {
-      e.target[e.property] = e.newValue;
+    for (const edit of this.edits) {
+      edit.execute();
     }
     this.onChange?.();
   }
 
   public undo(): void {
-    for (const e of this.entries) {
-      e.target[e.property] = e.oldValue;
+    for (const edit of this.edits) {
+      edit.undo();
     }
     this.onChange?.();
   }

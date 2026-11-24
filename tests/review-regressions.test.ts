@@ -64,6 +64,31 @@ function roundTrip(el: { serialize(): Record<string, unknown>; id: string }): Re
   return deserializeElement(state);
 }
 
+describe("OpticsScene JSON import", () => {
+  it("loads valid elements, preserves their IDs, and skips malformed neighbors", () => {
+    const scene = new OpticsScene(Tandem.OPT_OUT);
+    const beam = new BeamSource(point(0, 0), point(0, 1));
+    scene.addElement(beam, false);
+
+    const roundTripped = OpticsScene.fromJSON(scene.toJSON());
+    expect(roundTripped?.toJSON()).toBe(scene.toJSON());
+
+    const mixed = OpticsScene.fromJSON(
+      JSON.stringify({
+        settings: { showGrid: true, snapToGrid: "false" },
+        elements: [
+          { type: "Glass", path: [null, { x: 1, y: 0 }, { x: 0, y: 1 }], refIndex: 1.5 },
+          { ...beam.serialize(), id: beam.id },
+          { ...beam.serialize(), brightness: "invalid" },
+        ],
+      }),
+    );
+    expect(mixed?.getAllElements().map((element) => element.id)).toEqual([beam.id]);
+    expect(mixed?.showGridProperty.value).toBe(true);
+    expect(OpticsScene.fromJSON("[]")).toBeNull();
+  });
+});
+
 // ── 1. IdealLens back-side deflection ───────────────────────────────────────
 
 describe("IdealLens deflection sign", () => {
