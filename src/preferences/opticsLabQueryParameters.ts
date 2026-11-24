@@ -69,6 +69,28 @@ const opticsLabQueryParameters = QueryStringMachine.getAll({
     public: true,
   },
 
+  /** Sign convention used for spherical lens radii. */
+  signConvention: {
+    type: "string",
+    defaultValue: "newCartesian",
+    validValues: ["newCartesian", "realIsPositive"],
+    public: true,
+  },
+
+  /** Enable Fresnel partial reflection at glass surfaces. */
+  partialReflectionEnabled: {
+    type: "boolean",
+    defaultValue: false,
+    public: true,
+  },
+
+  /** Display curvature in place of the radius of curvature. */
+  useCurvatureDisplay: {
+    type: "boolean",
+    defaultValue: false,
+    public: true,
+  },
+
   // ── Tools panel (RayTracingCommonView) ─────────────────────────────────────
 
   /** Show the measuring tape at startup. */

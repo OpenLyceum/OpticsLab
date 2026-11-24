@@ -73,18 +73,21 @@ export class OpticsLabPreferencesModel {
       ...(tandem && { tandem: tandem.createTandem("gridSpacingProperty") }),
     });
 
-    this.signConventionProperty = new StringUnionProperty<SignConvention>("newCartesian", {
-      validValues: ["newCartesian", "realIsPositive"],
-      ...(tandem && { tandem: tandem.createTandem("signConventionProperty") }),
-    });
+    this.signConventionProperty = new StringUnionProperty<SignConvention>(
+      opticsLabQueryParameters.signConvention as SignConvention,
+      {
+        validValues: ["newCartesian", "realIsPositive"],
+        ...(tandem && { tandem: tandem.createTandem("signConventionProperty") }),
+      },
+    );
 
     this.partialReflectionEnabledProperty = new BooleanProperty(
-      false,
+      opticsLabQueryParameters.partialReflectionEnabled,
       tandem ? { tandem: tandem.createTandem("partialReflectionEnabledProperty") } : undefined,
     );
 
     this.useCurvatureDisplayProperty = new BooleanProperty(
-      false,
+      opticsLabQueryParameters.useCurvatureDisplay,
       tandem ? { tandem: tandem.createTandem("useCurvatureDisplayProperty") } : undefined,
     );
 
