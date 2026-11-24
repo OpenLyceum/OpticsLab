@@ -5,7 +5,7 @@
  * directions. The angular spacing of rays depends on rayDensity.
  */
 
-import { dotRandom } from "scenerystack/dot";
+import { dotRandom, roundSymmetric } from "scenerystack/dot";
 import { DEFAULT_POINT_SOURCE_BRIGHTNESS } from "../../../OpticsLabConstants.js";
 import { ELEMENT_TYPE_POINT_SOURCE } from "../../../OpticsLabStrings.js";
 
@@ -35,7 +35,7 @@ export class PointSourceElement extends BaseLightSource {
     const isContinuous = this.brightness >= BRIGHTNESS_CONTINUOUS_THRESHOLD;
     const numRays = isContinuous
       ? maxRays
-      : Math.max(1, Math.round((this.brightness / BRIGHTNESS_CONTINUOUS_THRESHOLD) * maxRays));
+      : Math.max(1, roundSymmetric((this.brightness / BRIGHTNESS_CONTINUOUS_THRESHOLD) * maxRays));
     const angularStep = (Math.PI * 2) / numRays;
     const startAngle = mode === "observer" ? -angularStep * 2 + 1e-6 : 0;
     // In discrete mode every ray has fixed intensity (BRIGHTNESS_CONTINUOUS_THRESHOLD).

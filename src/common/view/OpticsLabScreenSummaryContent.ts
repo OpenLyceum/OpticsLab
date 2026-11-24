@@ -15,7 +15,7 @@ export class OpticsLabScreenSummaryContent extends ScreenSummaryContent {
         : a11y.noSelectionStringProperty,
     );
     const name = new DynamicProperty<string, string, TReadOnlyProperty<string>>(nameProperty);
-    const currentDetails = new DerivedProperty(
+    const currentDetailsProperty = new DerivedProperty(
       [
         scene.opticalElementsGroup.countProperty,
         selectedElementProperty,
@@ -31,11 +31,11 @@ export class OpticsLabScreenSummaryContent extends ScreenSummaryContent {
     super({
       playAreaContent: a11y.screenSummary.playAreaStringProperty,
       controlAreaContent: a11y.screenSummary.controlAreaStringProperty,
-      currentDetailsContent: currentDetails,
+      currentDetailsContent: currentDetailsProperty,
       interactionHintContent: a11y.screenSummary.interactionHintStringProperty,
     });
     this.disposeEmitter.addListener(() => {
-      currentDetails.dispose();
+      currentDetailsProperty.dispose();
       name.dispose();
       nameProperty.dispose();
     });

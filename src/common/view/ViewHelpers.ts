@@ -17,6 +17,7 @@
  */
 
 import type { TReadOnlyProperty } from "scenerystack/axon";
+import { roundSymmetric } from "scenerystack/dot";
 import { Shape } from "scenerystack/kite";
 import type { ModelViewTransform2 } from "scenerystack/phetcommon";
 import { Circle, InteractiveHighlighting, type Node, Path, RichDragListener } from "scenerystack/scenery";
@@ -80,7 +81,7 @@ function projectOntoSegmentClamped(p: Point, segP1: Point, segP2: Point): { proj
 /** Snaps a single model coordinate to the nearest grid line if close enough. */
 function snapCoord(v: number): number {
   const spacing = viewSnapState.gridSpacingM;
-  const nearest = Math.round(v / spacing) * spacing;
+  const nearest = roundSymmetric(v / spacing) * spacing;
   return Math.abs(v - nearest) <= spacing * GRID_SNAP_THRESHOLD_FRACTION ? nearest : v;
 }
 

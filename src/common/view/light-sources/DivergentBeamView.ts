@@ -7,6 +7,7 @@
  */
 
 import { BooleanProperty } from "scenerystack/axon";
+import { roundSymmetric } from "scenerystack/dot";
 import { Shape } from "scenerystack/kite";
 import type { ModelViewTransform2 } from "scenerystack/phetcommon";
 import { Path, type RichDragListener } from "scenerystack/scenery";
@@ -126,7 +127,7 @@ export class DivergentBeamView extends BaseOpticalElementView {
 
     const c = VisibleColor.wavelengthToColor(this.source.wavelength);
     const { r, g, b } = c;
-    this.shieldPath.stroke = `rgba(${Math.round(r * 0.47)},${Math.round(g * 0.37)},${Math.round(b * 0.12)},0.85)`;
+    this.shieldPath.stroke = `rgba(${roundSymmetric(r * 0.47)},${roundSymmetric(g * 0.37)},${roundSymmetric(b * 0.12)},0.85)`;
     this.beamPath.stroke = `rgba(${r},${g},${b},0.92)`;
     this.fanPath.stroke = `rgba(${r},${g},${b},0.50)`;
 

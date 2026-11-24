@@ -8,7 +8,7 @@
  * π/2 = down (positive y-axis), consistent with Math.atan2(dy, dx).
  */
 
-import { dotRandom } from "scenerystack/dot";
+import { dotRandom, roundSymmetric } from "scenerystack/dot";
 import { DEFAULT_ARC_BRIGHTNESS, DEFAULT_ARC_CONE_HALF_ANGLE_RAD } from "../../../OpticsLabConstants.js";
 import { ELEMENT_TYPE_ARC_SOURCE } from "../../../OpticsLabStrings.js";
 import type { Bounds, Point } from "../optics/Geometry.js";
@@ -63,7 +63,7 @@ export class ArcLightSource extends BaseLightSource {
     const isContinuous = this.brightness >= BRIGHTNESS_CONTINUOUS_THRESHOLD;
     const numRays = isContinuous
       ? maxRays
-      : Math.max(1, Math.round((this.brightness / BRIGHTNESS_CONTINUOUS_THRESHOLD) * maxRays));
+      : Math.max(1, roundSymmetric((this.brightness / BRIGHTNESS_CONTINUOUS_THRESHOLD) * maxRays));
     const angularStep = beta / numRays;
     const b = this.normalizeBrightness(rayDensity);
 

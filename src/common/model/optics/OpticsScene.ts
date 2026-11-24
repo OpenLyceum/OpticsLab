@@ -7,7 +7,7 @@
  */
 
 import { BooleanProperty, Emitter, Multilink, NumberProperty, Property, StringUnionProperty } from "scenerystack/axon";
-import { Range } from "scenerystack/dot";
+import { Range, roundSymmetric } from "scenerystack/dot";
 import { IOType, NullableIO, ObjectLiteralIO, PhetioGroup, PhetioObject, Tandem } from "scenerystack/tandem";
 import {
   DEFAULT_MAX_RAY_DEPTH,
@@ -574,7 +574,7 @@ export class OpticsScene extends PhetioObject {
     if (typeof s["maxRayDepth"] === "number" && Number.isFinite(s["maxRayDepth"])) {
       out.maxRayDepth = Math.max(
         MAX_RAY_DEPTH_PROPERTY_MIN,
-        Math.min(MAX_RAY_DEPTH_PROPERTY_MAX, Math.round(s["maxRayDepth"])),
+        Math.min(MAX_RAY_DEPTH_PROPERTY_MAX, roundSymmetric(s["maxRayDepth"])),
       );
     }
     if (typeof s["gridSize"] === "number" && Number.isFinite(s["gridSize"])) {

@@ -14,7 +14,7 @@
  */
 
 import type { Bounds2 } from "scenerystack/dot";
-import { toFixed } from "scenerystack/dot";
+import { roundSymmetric, toFixed } from "scenerystack/dot";
 import { type EmptySelfOptions, optionize } from "scenerystack/phet-core";
 import type { ModelViewTransform2 } from "scenerystack/phetcommon";
 import { CanvasNode, type CanvasNodeOptions } from "scenerystack/scenery";
@@ -235,7 +235,7 @@ export class RayPropagationView extends CanvasNode {
         continue;
       }
 
-      const bucket = Math.min(RAY_ALPHA_BUCKETS, Math.round(alpha * RAY_ALPHA_BUCKETS));
+      const bucket = Math.min(RAY_ALPHA_BUCKETS, roundSymmetric(alpha * RAY_ALPHA_BUCKETS));
       if (!extBuckets[bucket]) {
         extBuckets[bucket] = [];
       }

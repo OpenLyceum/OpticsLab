@@ -14,6 +14,7 @@
  *   - "observer" : Show rays as seen from a specific observer position
  */
 
+import { roundSymmetric } from "scenerystack/dot";
 import {
   DEFAULT_MAX_RAY_DEPTH,
   DEFAULT_MIN_BRIGHTNESS,
@@ -613,7 +614,7 @@ export class RayTracer {
     const thresholdM = RAY_CONVERGENCE_THRESHOLD / PIXELS_PER_METER;
     const seen = new Set<string>();
     for (const c of candidates) {
-      const key = `${Math.round(c.position.x / thresholdM)},${Math.round(c.position.y / thresholdM)}`;
+      const key = `${roundSymmetric(c.position.x / thresholdM)},${roundSymmetric(c.position.y / thresholdM)}`;
       if (!seen.has(key)) {
         seen.add(key);
         images.push(c);

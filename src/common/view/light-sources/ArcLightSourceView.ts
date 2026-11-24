@@ -7,6 +7,7 @@
  * the y-axis inversion without requiring manual angle-sign adjustments.
  */
 
+import { roundSymmetric } from "scenerystack/dot";
 import { Shape } from "scenerystack/kite";
 import type { ModelViewTransform2 } from "scenerystack/phetcommon";
 import { type Circle, Path, RichDragListener, type RichDragListenerOptions } from "scenerystack/scenery";
@@ -282,7 +283,7 @@ export class ArcLightSourceView extends BaseOpticalElementView {
 
     // ── Spokes ───────────────────────────────────────────────────────────────
     const fraction = Math.min(1, beta / (2 * Math.PI));
-    const numSpokes = Math.max(ARC_SOURCE_MIN_SPOKE_COUNT, Math.round(ARC_SOURCE_SPOKE_COUNT * fraction));
+    const numSpokes = Math.max(ARC_SOURCE_MIN_SPOKE_COUNT, roundSymmetric(ARC_SOURCE_SPOKE_COUNT * fraction));
     const step = beta / numSpokes;
     const scale = Math.abs(modelViewTransform.modelToViewDeltaX(1)); // px/m = 100
     const innerR = ARC_SOURCE_GLOW_RADIUS_PX / scale; // model metres for glow-radius px
