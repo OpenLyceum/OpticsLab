@@ -23,9 +23,6 @@ coverage/
 playwright-report/
 test-results/
 
-# CI security-audit artifact (written by Baton security-audit before lint)
-audit.json
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
